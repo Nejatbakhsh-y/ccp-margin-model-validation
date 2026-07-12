@@ -1,0 +1,8 @@
+field,type,definition
+series_id,string,FRED series identifier.
+date,date,Observation date.
+value,float,Numeric observation; FRED period markers are converted to missing.
+realtime_start,date,Beginning of the FRED real-time period.
+realtime_end,date,End of the FRED real-time period.
+source,string,Data-provider lineage.
+retrieved_at_utc,string,UTC retrieval timestamp.

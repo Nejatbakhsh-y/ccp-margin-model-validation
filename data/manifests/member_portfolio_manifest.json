@@ -1,0 +1,14 @@
+{
+  "example_file": "data/synthetic/example_member_positions.csv",
+  "example_sha256": "586928c433c5f7120146035dca72a637211425f781cab8e64834edad696e12a1",
+  "generated_at_utc": "2026-07-12T19:00:43+00:00",
+  "members": 30,
+  "positions": 178,
+  "positions_file": "data/synthetic/member_positions.csv",
+  "positions_sha256": "407eb6796607f5249feb3feeca0ce5dc94cd9d32640df6ece0df939a32659f9b",
+  "random_seed": 2026,
+  "reference_date": "2026-07-10",
+  "status": "completed",
+  "summary_file": "data/synthetic/member_portfolio_summary.csv",
+  "summary_sha256": "148abaf47ef6a0ca777dd761a69420d456df21c6c0c42318a8557f69aaf604ee"
+}

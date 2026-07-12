@@ -1,0 +1,14 @@
+field,type,definition
+date,date,Trading date; timezone removed after daily-data retrieval.
+ticker,string,Yahoo Finance ticker identifier.
+open,float,Unadjusted daily opening price.
+high,float,Unadjusted daily high price.
+low,float,Unadjusted daily low price.
+close,float,Unadjusted daily closing price returned with auto_adjust=False.
+adj_close,float,Closing price adjusted for applicable distributions and splits.
+volume,float,Reported daily trading volume.
+dividends,float,"Cash dividend corporate action, when available."
+stock_splits,float,"Stock-split factor, when available."
+capital_gains,float,"Capital-gain distribution, when available."
+source,string,Data-provider lineage.
+retrieved_at_utc,string,UTC retrieval timestamp.

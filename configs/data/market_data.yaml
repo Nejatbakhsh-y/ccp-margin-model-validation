@@ -1,0 +1,73 @@
+market_data:
+  provider: yahoo_finance
+  interval: 1d
+  tickers:
+    - SPY
+    - QQQ
+    - IWM
+    - DIA
+    - EFA
+    - EEM
+    - XLK
+    - XLF
+    - XLE
+    - XLV
+    - XLI
+    - XLP
+    - XLY
+    - XLU
+    - VNQ
+    - TLT
+    - IEF
+    - SHY
+    - TIP
+    - AGG
+    - LQD
+    - GLD
+    - DBC
+  download:
+    retries: 3
+    retry_pause_seconds: 2.0
+    timeout_seconds: 30
+    repair: false
+  validation:
+    max_staleness_calendar_days: 10
+    minimum_nonmissing_volume_fraction: 0.99
+
+fred:
+  base_url: https://api.stlouisfed.org/fred
+  series:
+    VIXCLS:
+      description: CBOE Volatility Index
+      expected_frequency: Daily
+    DGS2:
+      description: Market Yield on U.S. Treasury Securities at 2-Year Constant Maturity
+      expected_frequency: Daily
+    DGS10:
+      description: Market Yield on U.S. Treasury Securities at 10-Year Constant Maturity
+      expected_frequency: Daily
+    T10Y2Y:
+      description: 10-Year Treasury Constant Maturity Minus 2-Year Treasury Constant Maturity
+      expected_frequency: Daily
+    NFCI:
+      description: Chicago Fed National Financial Conditions Index
+      expected_frequency: Weekly
+    BAMLH0A0HYM2:
+      description: ICE BofA US High Yield Index Option-Adjusted Spread
+      expected_frequency: Daily
+  download:
+    retries: 4
+    backoff_factor: 1.0
+    timeout_seconds: 30
+  vintage_policy: latest_available_at_retrieval
+
+cleaning:
+  require_common_calendar: true
+  drop_rows_missing_adjusted_close: true
+  do_not_forward_fill_prices: true
+
+synthetic_portfolios:
+  maximum_single_position_weight: 0.40
+  short_position_probability: 0.35
+  dirichlet_concentration: 2.0
+  maximum_weight_sampling_attempts: 10000

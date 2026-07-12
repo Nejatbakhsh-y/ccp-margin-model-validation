@@ -1,0 +1,14 @@
+{
+  "common_price_dates": 4910,
+  "common_return_dates": 4909,
+  "first_common_price_date": "2007-01-03",
+  "forward_fill_used": false,
+  "generated_at_utc": "2026-07-12T19:00:23+00:00",
+  "last_common_price_date": "2026-07-10",
+  "long_rows": 112930,
+  "manifest_file": "data/manifests/clean_market_dataset_manifest.csv",
+  "manifest_sha256": "6186f20a340d62b2f9d0c59be6fe8298d714cbe22526a42d43e2c92fefd28c34",
+  "minimum_observed_completeness": 1.0,
+  "status": "completed",
+  "ticker_count": 23
+}

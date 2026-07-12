@@ -1,0 +1,20 @@
+{
+  "combined_file": "data/raw/macro/fred_series_raw.parquet",
+  "combined_sha256": "3f1244fe775bc567b0060c7d0a5daa2b290e9080f520965eb259d2bcb10835c6",
+  "end_date": "2026-07-12",
+  "generated_at_utc": "2026-07-12T18:56:49+00:00",
+  "manifest_file": "data/manifests/fred_data_manifest.csv",
+  "manifest_sha256": "f7889ffa52a2f8715bdb8dd66c6f0e7f580cbaf627aba38c70e1d1f65916a438",
+  "series_completed": [
+    "BAMLH0A0HYM2",
+    "DGS10",
+    "DGS2",
+    "NFCI",
+    "T10Y2Y",
+    "VIXCLS"
+  ],
+  "start_date": "2007-01-01",
+  "status": "completed",
+  "total_observations": 22190,
+  "vintage_policy": "latest_available_at_retrieval"
+}

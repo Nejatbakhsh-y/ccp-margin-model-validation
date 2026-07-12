@@ -1,0 +1,13 @@
+field,type,definition
+member_id,string,Synthetic clearing-member identifier.
+position_id,string,Unique synthetic position identifier.
+ticker,string,Underlying market-data ticker.
+direction,string,LONG or SHORT position direction.
+absolute_weight,float,Position share of member gross notional.
+signed_weight,float,Direction-adjusted portfolio weight.
+reference_date,date,Date used to convert notional into quantity.
+reference_price,float,Adjusted close on the reference date.
+quantity,float,Signed units of the underlying asset.
+absolute_notional,float,Positive contribution to gross notional.
+signed_notional,float,Direction-adjusted notional.
+currency,string,Configured project currency.

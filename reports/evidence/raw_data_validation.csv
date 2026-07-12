@@ -1,0 +1,376 @@
+dataset,item,check,severity,status,observed,threshold,detail,validated_at_utc
+market,SPY,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,SPY,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,SPY,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,SPY,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,SPY,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,SPY,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,SPY,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,SPY,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,SPY,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,SPY,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,SPY,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,SPY,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,SPY,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,SPY,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,SPY,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,QQQ,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,QQQ,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,QQQ,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,QQQ,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,QQQ,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,QQQ,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,QQQ,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,QQQ,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,QQQ,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,QQQ,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,QQQ,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,QQQ,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,QQQ,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,QQQ,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,QQQ,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,IWM,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,IWM,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,IWM,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,IWM,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,IWM,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,IWM,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,IWM,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,IWM,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,IWM,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,IWM,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,IWM,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,IWM,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,IWM,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,IWM,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,IWM,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,DIA,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,DIA,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,DIA,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,DIA,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,DIA,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,DIA,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,DIA,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,DIA,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,DIA,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,DIA,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,DIA,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,DIA,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,DIA,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,DIA,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,DIA,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,EFA,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,EFA,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,EFA,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,EFA,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,EFA,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,EFA,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,EFA,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,EFA,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,EFA,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,EFA,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,EFA,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,EFA,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,EFA,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,EFA,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,EFA,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,EEM,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,EEM,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,EEM,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,EEM,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,EEM,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,EEM,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,EEM,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,EEM,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,EEM,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,EEM,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,EEM,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,EEM,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,EEM,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,EEM,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,EEM,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,XLK,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,XLK,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,XLK,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,XLK,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,XLK,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLK,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLK,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLK,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLK,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLK,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,XLK,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,XLK,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,XLK,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,XLK,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,XLK,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,XLF,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,XLF,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,XLF,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,XLF,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,XLF,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLF,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLF,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLF,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLF,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLF,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,XLF,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,XLF,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,XLF,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,XLF,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,XLF,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,XLE,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,XLE,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,XLE,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,XLE,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,XLE,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLE,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLE,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLE,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLE,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLE,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,XLE,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,XLE,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,XLE,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,XLE,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,XLE,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,XLV,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,XLV,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,XLV,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,XLV,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,XLV,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLV,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLV,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLV,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLV,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLV,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,XLV,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,XLV,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,XLV,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,XLV,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,XLV,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,XLI,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,XLI,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,XLI,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,XLI,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,XLI,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLI,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLI,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLI,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLI,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLI,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,XLI,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,XLI,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,XLI,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,XLI,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,XLI,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,XLP,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,XLP,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,XLP,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,XLP,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,XLP,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLP,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLP,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLP,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLP,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLP,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,XLP,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,XLP,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,XLP,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,XLP,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,XLP,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,XLY,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,XLY,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,XLY,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,XLY,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,XLY,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLY,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLY,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLY,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLY,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLY,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,XLY,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,XLY,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,XLY,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,XLY,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,XLY,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,XLU,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,XLU,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,XLU,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,XLU,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,XLU,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLU,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLU,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLU,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLU,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,XLU,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,XLU,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,XLU,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,XLU,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,XLU,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,XLU,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,VNQ,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,VNQ,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,VNQ,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,VNQ,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,VNQ,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,VNQ,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,VNQ,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,VNQ,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,VNQ,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,VNQ,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,VNQ,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,VNQ,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,VNQ,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,VNQ,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,VNQ,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,TLT,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,TLT,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,TLT,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,TLT,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,TLT,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,TLT,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,TLT,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,TLT,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,TLT,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,TLT,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,TLT,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,TLT,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,TLT,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,TLT,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,TLT,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,IEF,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,IEF,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,IEF,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,IEF,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,IEF,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,IEF,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,IEF,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,IEF,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,IEF,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,IEF,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,IEF,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,IEF,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,IEF,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,IEF,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,IEF,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,SHY,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,SHY,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,SHY,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,SHY,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,SHY,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,SHY,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,SHY,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,SHY,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,SHY,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,SHY,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,SHY,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,SHY,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,SHY,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,SHY,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,SHY,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,TIP,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,TIP,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,TIP,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,TIP,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,TIP,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,TIP,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,TIP,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,TIP,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,TIP,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,TIP,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,TIP,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,TIP,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,TIP,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,TIP,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,TIP,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,AGG,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,AGG,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,AGG,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,AGG,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,AGG,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,AGG,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,AGG,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,AGG,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,AGG,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,AGG,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,AGG,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,AGG,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,AGG,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,AGG,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,AGG,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,LQD,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,LQD,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,LQD,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,LQD,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,LQD,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,LQD,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,LQD,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,LQD,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,LQD,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,LQD,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,LQD,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,LQD,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,LQD,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,LQD,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,LQD,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,GLD,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,GLD,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,GLD,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,GLD,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,GLD,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,GLD,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,GLD,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,GLD,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,GLD,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,GLD,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,GLD,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,GLD,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,GLD,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,GLD,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,GLD,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+market,DBC,required_columns,ERROR,PASS,[],[],All required market fields must be retained.,2026-07-12T18:59:34+00:00
+market,DBC,nonempty,ERROR,PASS,4910,> 0,Raw ticker file must contain observations.,2026-07-12T18:59:34+00:00
+market,DBC,unique_ticker_date,ERROR,PASS,0,0,Duplicate ticker-date rows are prohibited.,2026-07-12T18:59:34+00:00
+market,DBC,valid_dates,ERROR,PASS,0,0,Dates must parse without coercion failures.,2026-07-12T18:59:34+00:00
+market,DBC,positive_open,ERROR,PASS,0,0,open must be positive when present.,2026-07-12T18:59:34+00:00
+market,DBC,positive_high,ERROR,PASS,0,0,high must be positive when present.,2026-07-12T18:59:34+00:00
+market,DBC,positive_low,ERROR,PASS,0,0,low must be positive when present.,2026-07-12T18:59:34+00:00
+market,DBC,positive_close,ERROR,PASS,0,0,close must be positive when present.,2026-07-12T18:59:34+00:00
+market,DBC,positive_adj_close,ERROR,PASS,0,0,adj_close must be positive when present.,2026-07-12T18:59:34+00:00
+market,DBC,nonnegative_volume,ERROR,PASS,0,0,Trading volume cannot be negative.,2026-07-12T18:59:34+00:00
+market,DBC,adjusted_close_completeness,ERROR,PASS,1.0,0.995,Adjusted-close completeness must meet the project threshold.,2026-07-12T18:59:34+00:00
+market,DBC,volume_completeness,WARNING,PASS,1.0,0.99,Volume completeness is monitored separately from price completeness.,2026-07-12T18:59:34+00:00
+market,DBC,date_range_start,WARNING,PASS,2007-01-03,on or near 2007-01-01,A later first date can reduce the common historical window.,2026-07-12T18:59:34+00:00
+market,DBC,latest_observation_staleness,WARNING,PASS,2,<= 10,Calendar-day tolerance accommodates weekends and market holidays.,2026-07-12T18:59:34+00:00
+market,DBC,configured_date_range,ERROR,PASS,0,0,Raw observations must remain within the configured inclusive date range.,2026-07-12T18:59:34+00:00
+fred,VIXCLS,required_columns,ERROR,PASS,[],[],All required FRED fields must be retained.,2026-07-12T18:59:34+00:00
+fred,VIXCLS,nonempty,ERROR,PASS,5094,> 0,Raw series file must contain observations.,2026-07-12T18:59:34+00:00
+fred,VIXCLS,unique_series_date,ERROR,PASS,0,0,Duplicate FRED series-date rows are prohibited.,2026-07-12T18:59:34+00:00
+fred,VIXCLS,numeric_observations_present,ERROR,PASS,4941,> 0,At least one numeric observation is required.,2026-07-12T18:59:34+00:00
+fred,VIXCLS,missing_value_fraction,WARNING,PASS,0.03003534,<= 0.05,FRED period markers and non-publication dates may create missing values.,2026-07-12T18:59:34+00:00
+fred,DGS2,required_columns,ERROR,PASS,[],[],All required FRED fields must be retained.,2026-07-12T18:59:34+00:00
+fred,DGS2,nonempty,ERROR,PASS,5094,> 0,Raw series file must contain observations.,2026-07-12T18:59:34+00:00
+fred,DGS2,unique_series_date,ERROR,PASS,0,0,Duplicate FRED series-date rows are prohibited.,2026-07-12T18:59:34+00:00
+fred,DGS2,numeric_observations_present,ERROR,PASS,4883,> 0,At least one numeric observation is required.,2026-07-12T18:59:34+00:00
+fred,DGS2,missing_value_fraction,WARNING,PASS,0.04142128,<= 0.05,FRED period markers and non-publication dates may create missing values.,2026-07-12T18:59:34+00:00
+fred,DGS10,required_columns,ERROR,PASS,[],[],All required FRED fields must be retained.,2026-07-12T18:59:34+00:00
+fred,DGS10,nonempty,ERROR,PASS,5094,> 0,Raw series file must contain observations.,2026-07-12T18:59:34+00:00
+fred,DGS10,unique_series_date,ERROR,PASS,0,0,Duplicate FRED series-date rows are prohibited.,2026-07-12T18:59:34+00:00
+fred,DGS10,numeric_observations_present,ERROR,PASS,4883,> 0,At least one numeric observation is required.,2026-07-12T18:59:34+00:00
+fred,DGS10,missing_value_fraction,WARNING,PASS,0.04142128,<= 0.05,FRED period markers and non-publication dates may create missing values.,2026-07-12T18:59:34+00:00
+fred,T10Y2Y,required_columns,ERROR,PASS,[],[],All required FRED fields must be retained.,2026-07-12T18:59:34+00:00
+fred,T10Y2Y,nonempty,ERROR,PASS,5095,> 0,Raw series file must contain observations.,2026-07-12T18:59:34+00:00
+fred,T10Y2Y,unique_series_date,ERROR,PASS,0,0,Duplicate FRED series-date rows are prohibited.,2026-07-12T18:59:34+00:00
+fred,T10Y2Y,numeric_observations_present,ERROR,PASS,4884,> 0,At least one numeric observation is required.,2026-07-12T18:59:34+00:00
+fred,T10Y2Y,missing_value_fraction,WARNING,PASS,0.04141315,<= 0.05,FRED period markers and non-publication dates may create missing values.,2026-07-12T18:59:34+00:00
+fred,NFCI,required_columns,ERROR,PASS,[],[],All required FRED fields must be retained.,2026-07-12T18:59:34+00:00
+fred,NFCI,nonempty,ERROR,PASS,1018,> 0,Raw series file must contain observations.,2026-07-12T18:59:34+00:00
+fred,NFCI,unique_series_date,ERROR,PASS,0,0,Duplicate FRED series-date rows are prohibited.,2026-07-12T18:59:34+00:00
+fred,NFCI,numeric_observations_present,ERROR,PASS,1018,> 0,At least one numeric observation is required.,2026-07-12T18:59:34+00:00
+fred,NFCI,missing_value_fraction,WARNING,PASS,0.0,<= 0.05,FRED period markers and non-publication dates may create missing values.,2026-07-12T18:59:34+00:00
+fred,BAMLH0A0HYM2,required_columns,ERROR,PASS,[],[],All required FRED fields must be retained.,2026-07-12T18:59:34+00:00
+fred,BAMLH0A0HYM2,nonempty,ERROR,PASS,795,> 0,Raw series file must contain observations.,2026-07-12T18:59:34+00:00
+fred,BAMLH0A0HYM2,unique_series_date,ERROR,PASS,0,0,Duplicate FRED series-date rows are prohibited.,2026-07-12T18:59:34+00:00
+fred,BAMLH0A0HYM2,numeric_observations_present,ERROR,PASS,787,> 0,At least one numeric observation is required.,2026-07-12T18:59:34+00:00
+fred,BAMLH0A0HYM2,missing_value_fraction,WARNING,PASS,0.01006289,<= 0.05,FRED period markers and non-publication dates may create missing values.,2026-07-12T18:59:34+00:00

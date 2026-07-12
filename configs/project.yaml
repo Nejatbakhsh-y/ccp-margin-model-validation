@@ -8,6 +8,12 @@ project:
   environment: development
   configuration_status: preliminary
 
+data:
+  start_date: "2007-01-01"
+  end_date: null
+  price_field: adjusted_close
+  minimum_completeness: 0.995
+
 portfolio:
   number_of_members: 30
   minimum_positions: 3
