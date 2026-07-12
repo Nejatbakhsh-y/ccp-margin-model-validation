@@ -541,35 +541,98 @@ The model must not be approved when:
 
 The model must not be tuned merely to pass validation tests.
 
-Model changes must have:
+Model development, calibration, and modification decisions must be based on
+sound conceptual, empirical, operational, and risk-management considerations.
+Validation results must not be used to reverse-engineer a passing outcome.
+
+Any model change made after reviewing validation results must have:
 
 - A documented conceptual rationale.
 - A documented empirical rationale.
-- Approval through model-change governance.
-- Separate development evidence.
-- Separate validation evidence.
-- An assessment of overfitting risk.
-- An assessment across normal periods.
-- An assessment across stressed periods.
-- An assessment across relevant portfolios.
+- A clear description of the identified deficiency or limitation.
+- Approval through the applicable model-change governance process.
+- Separate model-development evidence.
+- Separate independent-validation evidence.
+- An assessment of model-selection and overfitting risk.
+- An assessment across normal market periods.
+- An assessment across stressed market periods.
+- An assessment across relevant products and portfolios.
+- An assessment of the effect on margin adequacy.
+- An assessment of the effect on procyclicality.
+- An assessment of the effect on model stability.
 - Re-execution of all materially affected validation tests.
+- Preservation of the original model results and validation evidence.
+- Documentation of the model version, configuration, data period, and code
+  version associated with the change.
 
 The following practices are prohibited:
 
-- Changing parameters solely because a validation test failed.
-- Selecting a favorable data period after reviewing validation results.
-- Excluding unfavorable portfolios without documented justification.
+- Changing model parameters solely because a validation test failed.
+- Repeatedly adjusting parameters until a statistical test produces a passing
+  result.
+- Selecting a favorable calibration period after reviewing validation results.
+- Selecting a favorable backtesting period after reviewing validation results.
+- Excluding unfavorable portfolios without documented conceptual
+  justification.
+- Excluding unfavorable clearing members without documented justification.
 - Removing unfavorable stress scenarios.
-- Changing validation thresholds after observing results solely to obtain a
-  passing classification.
+- Reducing stress severity solely to obtain favorable results.
+- Changing validation thresholds after observing the results solely to obtain
+  a passing classification.
+- Changing exception definitions solely to improve backtesting performance.
+- Changing data-cleaning rules solely to eliminate unfavorable observations.
 - Reporting only the most favorable model specification.
+- Reporting only favorable benchmark comparisons.
+- Suppressing unfavorable sensitivity or stability results.
 - Replacing failed results without preserving the original evidence.
+- Allowing the model owner to select validation methods solely to improve the
+  likelihood of approval.
+- Allowing the model owner to alter independent-validation conclusions.
 
-Parameter changes must be evaluated as formal model changes and may require
-partial or full revalidation.
+When model changes are proposed following a failed or unfavorable validation
+result, the model owner must document:
 
----
+- The original model specification.
+- The original validation result.
+- The reason the result was considered deficient.
+- The proposed model change.
+- The conceptual basis for the change.
+- The empirical evidence supporting the change.
+- Alternative changes considered.
+- The expected effect of the change.
+- The potential unintended consequences.
+- The approval authority for the change.
+- The model version in which the change was implemented.
 
+The independent validator must determine whether the proposed change:
+
+- Addresses the underlying model weakness.
+- Is conceptually justified.
+- Is supported by sufficient empirical evidence.
+- Creates new model risk.
+- Increases overfitting or model-selection risk.
+- Remains appropriate across normal and stressed conditions.
+- Remains appropriate across the intended product and portfolio universe.
+- Requires partial or full revalidation.
+
+Parameter changes must be treated as formal model changes when they materially
+affect model output, risk sensitivity, margin adequacy, backtesting,
+procyclicality, stability, or intended use.
+
+A successful result obtained after model modification does not invalidate or
+replace the original failed result. Both the original result and the revised
+result must remain preserved in the validation evidence.
+
+Material validation-driven tuning, manipulation of validation evidence, or
+suppression of unfavorable results may result in:
+
+- A formal validation finding.
+- Escalation to the validation authority.
+- A requirement for additional independent review.
+- Partial or full revalidation.
+- Conditional approval.
+- Withdrawal of conditional approval.
+- A not-approved validation conclusion.
 ## 9. Preservation of Failed Tests and Negative Results
 
 All failed tests, unexpected outcomes, exceptions, unfavorable benchmark
