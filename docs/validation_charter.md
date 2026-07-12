@@ -633,6 +633,9 @@ suppression of unfavorable results may result in:
 - Conditional approval.
 - Withdrawal of conditional approval.
 - A not-approved validation conclusion.
+
+---
+
 ## 9. Preservation of Failed Tests and Negative Results
 
 All failed tests, unexpected outcomes, exceptions, unfavorable benchmark
