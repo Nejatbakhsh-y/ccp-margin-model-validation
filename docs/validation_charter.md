@@ -996,27 +996,207 @@ of independent revalidation.
 
 ## 13. Ongoing Monitoring Expectations
 
-The validation conclusion must define ongoing monitoring requirements,
-including, where applicable:
+The independent-validation conclusion must define the ongoing monitoring
+requirements necessary to confirm that the model continues to operate within
+its approved scope, assumptions, limitations, performance expectations, and
+risk appetite.
+
+Monitoring requirements must be proportionate to the model's materiality,
+complexity, portfolio impact, data dependencies, implementation risk, and
+validation findings.
+
+Required monitoring must include, where applicable:
 
 - Daily or periodic backtesting.
 - Exception-rate monitoring.
-- Traffic-light classification.
+- Kupiec unconditional-coverage monitoring.
+- Christoffersen independence and conditional-coverage monitoring.
+- Basel traffic-light classification.
 - Margin-shortfall monitoring.
 - Benchmark-model comparison.
+- Challenger-model comparison.
 - Sensitivity monitoring.
-- Stability monitoring.
+- Parameter-stability monitoring.
+- Model-output stability monitoring.
 - Procyclicality monitoring.
 - Concentration monitoring.
+- Liquidity-risk monitoring.
+- Gap-risk monitoring.
+- Portfolio-composition monitoring.
 - Data-quality monitoring.
+- Missing-data monitoring.
+- Stale-price monitoring.
 - Configuration-change monitoring.
+- Code-version monitoring.
+- Production-reconciliation monitoring.
 - Model-performance thresholds.
+- Warning thresholds.
 - Escalation thresholds.
 - Required management reporting.
+- Finding-management triggers.
 - Revalidation triggers.
 
-Monitoring results that breach approved thresholds must be documented,
-investigated, and escalated.
+Each required monitoring metric must identify:
+
+- Unique monitoring identifier.
+- Monitoring metric name.
+- Monitoring objective.
+- Applicable model component.
+- Calculation methodology.
+- Data source.
+- Monitoring frequency.
+- Observation window.
+- Responsible monitoring owner.
+- Independent-review responsibility.
+- Approved threshold.
+- Warning threshold.
+- Escalation threshold.
+- Required response when a threshold is breached.
+- Required reporting recipient.
+- Evidence location.
+- Retention requirement.
+- Related finding, change, or revalidation trigger.
+
+Monitoring identifiers must use the following format:
+
+`MON-YYYY-NNN`
+
+where:
+
+- `YYYY` is the year in which the monitoring requirement was established.
+- `NNN` is a sequential three-digit number.
+
+Examples include:
+
+- `MON-2026-001`
+- `MON-2026-002`
+- `MON-2026-003`
+
+Monitoring status classifications must include:
+
+- Within threshold.
+- Warning threshold breached.
+- Escalation threshold breached.
+- Under investigation.
+- Remediation in progress.
+- Pending validation review.
+- Closed.
+- Not applicable.
+
+Where traffic-light classification is used, the approved classification rules
+must be documented in the monitoring plan and applied consistently.
+
+At a minimum:
+
+- Green indicates performance within approved limits.
+- Amber indicates deterioration requiring investigation, increased monitoring,
+  or management attention.
+- Red indicates material deterioration requiring escalation, model-use
+  restriction, remediation, or revalidation assessment.
+
+A monitoring result that breaches an approved warning or escalation threshold
+must be:
+
+- Preserved.
+- Recorded in the monitoring register.
+- Investigated.
+- Supported by reproducible evidence.
+- Assessed for model and portfolio impact.
+- Assessed for data or implementation defects.
+- Assessed against existing findings and limitations.
+- Assigned to a responsible owner.
+- Reported within the required escalation period.
+- Tracked until an approved disposition is reached.
+
+The monitoring-breach record must contain:
+
+- Monitoring identifier.
+- Breach identifier.
+- Breach date.
+- Metric result.
+- Applicable threshold.
+- Breach classification.
+- Affected portfolios or model components.
+- Preliminary impact assessment.
+- Root cause, when known.
+- Immediate action taken.
+- Compensating controls.
+- Responsible owner.
+- Target resolution date.
+- Management response.
+- Independent-validator review.
+- Finding identifier, when applicable.
+- Change identifier, when applicable.
+- Revalidation decision, when applicable.
+- Closure assessment.
+- Closure date.
+
+Monitoring-breach identifiers must use the following format:
+
+`BRH-YYYY-NNN`
+
+Examples include:
+
+- `BRH-2026-001`
+- `BRH-2026-002`
+
+A threshold breach must trigger a formal validation finding when the breach
+identifies a material weakness that requires remediation and formal tracking.
+
+A threshold breach must trigger a change and revalidation assessment when it
+indicates that:
+
+- Model performance has deteriorated materially.
+- Model assumptions may no longer be valid.
+- Market behavior has changed materially.
+- Portfolio composition has changed materially.
+- A compensating control has failed.
+- An implementation defect may exist.
+- Model use has moved outside the validated scope.
+- Prior validation conclusions may no longer remain reliable.
+
+Monitoring results must not be deleted, suppressed, overwritten, or replaced
+solely by later favorable results.
+
+Corrected calculations and successful reruns must preserve:
+
+- The original monitoring result.
+- The original breach classification.
+- The identified cause.
+- The corrective action.
+- The revised code, data, or configuration version.
+- The rerun result.
+- The final assessment.
+
+The model owner may perform routine monitoring activities but cannot
+unilaterally:
+
+- Remove a monitoring breach.
+- Change an approved threshold.
+- Reduce a breach classification.
+- Close a material breach.
+- Determine that revalidation is unnecessary after a material breach.
+
+Material threshold changes require independent-validator review and must be
+processed through the change and revalidation framework.
+
+Monitoring results must be reported at the frequency established in the
+approved monitoring plan. Material breaches must be escalated without waiting
+for the next routine reporting cycle.
+
+The independent validator must periodically assess whether:
+
+- The monitoring metrics remain appropriate.
+- Thresholds remain risk-sensitive.
+- Monitoring data remain reliable.
+- Breach responses remain timely.
+- Compensating controls remain effective.
+- Monitoring results support the continued validity of the validation
+  conclusion.
+
+All monitoring calculations, threshold changes, breach investigations,
+management responses, validator reviews, findings, and revalidation decisions
+must remain version-controlled and traceable.
 
 ---
 
