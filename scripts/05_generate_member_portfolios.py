@@ -1,234 +1,210 @@
-"""Generate reproducible synthetic clearing-member portfolios."""
+"""Generate deterministic synthetic clearing-member portfolios.
+
+Run from the project root:
+    python scripts/05_generate_member_portfolios.py
+
+An explicit input can be supplied when the processed market-data file has a
+non-standard name:
+    python scripts/05_generate_member_portfolios.py --input data/processed/FILE.parquet
+"""
 
 from __future__ import annotations
 
-import math
+import argparse
+import json
 import sys
 from pathlib import Path
+from typing import Any
 
-import numpy as np
 import pandas as pd
+import yaml
 
-from _data_pipeline_common import (
-    ROOT,
-    configure_logging,
-    ensure_directories,
-    load_configs,
-    relative_path,
-    sha256_file,
-    utc_now_iso,
-    write_json,
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+SRC_DIR = PROJECT_ROOT / "src"
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
+from ccp_margin.portfolio.concentration import calculate_concentration_metrics
+from ccp_margin.portfolio.exposures import calculate_exposures
+from ccp_margin.portfolio.generator import (
+    PortfolioGenerationConfig,
+    canonical_portfolio_sha256,
+    generate_synthetic_portfolios,
+)
+from ccp_margin.portfolio.liquidity import calculate_liquidity_metrics
+
+DEFAULT_INPUT_CANDIDATES = (
+    "data/processed/validated_market_data.parquet",
+    "data/processed/market_data_clean.parquet",
+    "data/processed/market_data.parquet",
+    "data/processed/prices_clean.parquet",
+    "data/processed/market_prices.parquet",
+    "data/processed/validated_market_data.csv",
+    "data/processed/market_data_clean.csv",
+    "data/processed/market_data.csv",
+    "data/processed/prices_clean.csv",
 )
 
-SCRIPT = Path(__file__).stem
-LOGGER = configure_logging(SCRIPT)
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--config",
+        type=Path,
+        default=Path("configs/project.yaml"),
+        help="Project YAML configuration file.",
+    )
+    parser.add_argument(
+        "--input",
+        type=Path,
+        default=None,
+        help="Cleaned long-form market-data parquet or CSV file.",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("data/processed"),
+        help="Directory for portfolio outputs.",
+    )
+    return parser.parse_args()
 
 
-def sample_weights(
-    rng: np.random.Generator,
-    number_of_positions: int,
-    concentration: float,
-    maximum_weight: float,
-    maximum_attempts: int,
-) -> np.ndarray:
-    if maximum_weight * number_of_positions < 1.0:
-        raise ValueError(
-            "maximum_single_position_weight is infeasible for the configured minimum positions."
+def load_yaml(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        raise FileNotFoundError(f"Configuration file not found: {path}")
+    with path.open("r", encoding="utf-8") as handle:
+        raw = yaml.safe_load(handle) or {}
+    if not isinstance(raw, dict):
+        raise ValueError("The project YAML root must be a mapping.")
+    return raw
+
+
+def resolve_input(explicit_input: Path | None) -> Path:
+    if explicit_input is not None:
+        path = explicit_input if explicit_input.is_absolute() else PROJECT_ROOT / explicit_input
+        if not path.exists():
+            raise FileNotFoundError(f"Market-data input not found: {path}")
+        return path
+
+    for relative in DEFAULT_INPUT_CANDIDATES:
+        candidate = PROJECT_ROOT / relative
+        if candidate.exists():
+            return candidate
+
+    processed_dir = PROJECT_ROOT / "data" / "processed"
+    available = []
+    if processed_dir.exists():
+        available = sorted(
+            str(path.relative_to(PROJECT_ROOT))
+            for path in processed_dir.iterdir()
+            if path.suffix.lower() in {".parquet", ".csv"}
         )
-    alpha = np.full(number_of_positions, concentration, dtype=float)
-    for _ in range(maximum_attempts):
-        weights = rng.dirichlet(alpha)
-        if float(weights.max()) <= maximum_weight:
-            return weights
-    raise RuntimeError(
-        "Unable to sample portfolio weights within the concentration limit. "
-        "Increase maximum_single_position_weight or dirichlet_concentration."
+    available_text = "\n".join(f"  - {path}" for path in available) or "  (none)"
+    raise FileNotFoundError(
+        "No cleaned market-data file was found under data/processed. "
+        "Use --input with the correct filename. Available tabular files:\n"
+        + available_text
     )
 
 
-def main() -> int:
-    ensure_directories()
-    project_config, data_config = load_configs()
+def read_table(path: Path) -> pd.DataFrame:
+    suffix = path.suffix.lower()
+    if suffix == ".parquet":
+        return pd.read_parquet(path)
+    if suffix == ".csv":
+        return pd.read_csv(path)
+    raise ValueError(f"Unsupported input format: {path.suffix}")
 
-    project_settings = project_config["project"]
-    portfolio_settings = project_config["portfolio"]
-    synthetic_settings = data_config["synthetic_portfolios"]
 
-    seed = int(project_settings["random_seed"])
-    rng = np.random.default_rng(seed)
+def write_outputs(
+    positions: pd.DataFrame,
+    output_dir: Path,
+    config: PortfolioGenerationConfig,
+    input_path: Path,
+) -> None:
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-    number_of_members = int(portfolio_settings["number_of_members"])
-    minimum_positions = int(portfolio_settings["minimum_positions"])
-    maximum_positions = int(portfolio_settings["maximum_positions"])
-    gross_notional_min = float(portfolio_settings["gross_notional_min"])
-    gross_notional_max = float(portfolio_settings["gross_notional_max"])
+    positions_path = output_dir / "clearing_member_positions.parquet"
+    exposures_path = output_dir / "portfolio_exposures.parquet"
+    concentration_path = output_dir / "portfolio_concentration.parquet"
+    liquidity_path = output_dir / "portfolio_liquidity.parquet"
+    registry_path = output_dir / "portfolio_registry.csv"
+    manifest_path = output_dir / "portfolio_generation_manifest.json"
 
-    maximum_weight = float(synthetic_settings["maximum_single_position_weight"])
-    short_probability = float(synthetic_settings["short_position_probability"])
-    concentration = float(synthetic_settings["dirichlet_concentration"])
-    maximum_attempts = int(synthetic_settings["maximum_weight_sampling_attempts"])
+    exposures = calculate_exposures(positions)
+    concentration = calculate_concentration_metrics(positions)
+    liquidity = calculate_liquidity_metrics(positions)
 
-    if not 0.0 <= short_probability <= 1.0:
-        raise ValueError("short_position_probability must be between 0 and 1.")
-    if gross_notional_min <= 0 or gross_notional_max < gross_notional_min:
-        raise ValueError("Gross-notional limits are invalid.")
+    positions.to_parquet(positions_path, index=False)
+    exposures.to_parquet(exposures_path, index=False)
+    concentration.to_parquet(concentration_path, index=False)
+    liquidity.to_parquet(liquidity_path, index=False)
 
-    price_path = ROOT / "data" / "processed" / "adjusted_close_wide.parquet"
-    if not price_path.exists():
-        raise FileNotFoundError(
-            f"Missing {relative_path(price_path)}. Run scripts/04_build_clean_market_dataset.py first."
+    latest_date = positions["valuation_date"].max()
+    latest = positions.loc[positions["valuation_date"] == latest_date].copy()
+    registry = (
+        latest.groupby(
+            ["member_id", "portfolio_id", "portfolio_category"],
+            sort=True,
+            observed=True,
         )
-    prices = pd.read_parquet(price_path).sort_index()
-    if prices.empty:
-        raise ValueError("The clean adjusted-close dataset is empty.")
-
-    reference_date = pd.Timestamp(prices.index.max())
-    reference_prices = pd.to_numeric(prices.loc[reference_date], errors="coerce").dropna()
-    reference_prices = reference_prices[reference_prices > 0]
-    available_tickers = reference_prices.index.astype(str).tolist()
-    if len(available_tickers) < maximum_positions:
-        raise ValueError("Insufficient assets for the configured maximum_positions value.")
-
-    position_rows: list[dict[str, object]] = []
-    summary_rows: list[dict[str, object]] = []
-
-    for member_number in range(1, number_of_members + 1):
-        member_id = f"CM{member_number:03d}"
-        number_of_positions = int(rng.integers(minimum_positions, maximum_positions + 1))
-        selected = rng.choice(available_tickers, size=number_of_positions, replace=False)
-
-        weights = sample_weights(
-            rng=rng,
-            number_of_positions=number_of_positions,
-            concentration=concentration,
-            maximum_weight=maximum_weight,
-            maximum_attempts=maximum_attempts,
+        .agg(
+            position_count=("security_id", "nunique"),
+            gross_market_value=("market_value", lambda values: values.abs().sum()),
+            net_market_value=("market_value", "sum"),
         )
-        directions = np.where(rng.random(number_of_positions) < short_probability, -1.0, 1.0)
-
-        log_min = math.log10(gross_notional_min)
-        log_max = math.log10(gross_notional_max)
-        gross_notional = float(10 ** rng.uniform(log_min, log_max))
-
-        absolute_notionals = weights * gross_notional
-        signed_notionals = absolute_notionals * directions
-        long_notional = float(signed_notionals[signed_notionals > 0].sum())
-        short_notional = float(-signed_notionals[signed_notionals < 0].sum())
-        net_notional = float(signed_notionals.sum())
-
-        for position_number, (ticker, weight, direction, absolute_notional, signed_notional) in enumerate(
-            zip(selected, weights, directions, absolute_notionals, signed_notionals, strict=True),
-            start=1,
-        ):
-            reference_price = float(reference_prices.loc[str(ticker)])
-            quantity = float(signed_notional / reference_price)
-            position_rows.append(
-                {
-                    "member_id": member_id,
-                    "position_id": f"{member_id}-P{position_number:02d}",
-                    "ticker": str(ticker),
-                    "direction": "LONG" if direction > 0 else "SHORT",
-                    "absolute_weight": float(weight),
-                    "signed_weight": float(weight * direction),
-                    "reference_date": reference_date.date().isoformat(),
-                    "reference_price": reference_price,
-                    "quantity": quantity,
-                    "absolute_notional": float(absolute_notional),
-                    "signed_notional": float(signed_notional),
-                    "currency": str(project_settings["currency"]),
-                }
-            )
-
-        summary_rows.append(
-            {
-                "member_id": member_id,
-                "number_of_positions": number_of_positions,
-                "gross_notional": gross_notional,
-                "long_notional": long_notional,
-                "short_notional": short_notional,
-                "net_notional": net_notional,
-                "largest_absolute_weight": float(weights.max()),
-                "weight_hhi": float(np.square(weights).sum()),
-                "reference_date": reference_date.date().isoformat(),
-                "currency": str(project_settings["currency"]),
-            }
-        )
-
-    positions = pd.DataFrame(position_rows)
-    summaries = pd.DataFrame(summary_rows)
-
-    # Reconciliation controls.
-    reconciled = positions.groupby("member_id").agg(
-        calculated_gross_notional=("absolute_notional", "sum"),
-        calculated_net_notional=("signed_notional", "sum"),
-        calculated_positions=("position_id", "count"),
-        calculated_weight_sum=("absolute_weight", "sum"),
+        .reset_index()
     )
-    check = summaries.set_index("member_id").join(reconciled)
-    if not np.allclose(check["gross_notional"], check["calculated_gross_notional"], rtol=1e-10):
-        raise AssertionError("Gross-notional reconciliation failed.")
-    if not np.allclose(check["net_notional"], check["calculated_net_notional"], rtol=1e-10):
-        raise AssertionError("Net-notional reconciliation failed.")
-    if not np.allclose(check["calculated_weight_sum"], 1.0, rtol=1e-10):
-        raise AssertionError("Absolute portfolio weights do not sum to one.")
+    registry["reference_valuation_date"] = pd.Timestamp(latest_date).date().isoformat()
+    registry.to_csv(registry_path, index=False)
 
-    synthetic_directory = ROOT / "data" / "synthetic"
-    positions_path = synthetic_directory / "member_positions.csv"
-    summaries_path = synthetic_directory / "member_portfolio_summary.csv"
-    example_path = synthetic_directory / "example_member_positions.csv"
-    positions.to_csv(positions_path, index=False)
-    summaries.to_csv(summaries_path, index=False)
-    positions[positions["member_id"].isin(["CM001", "CM002", "CM003"])].to_csv(
-        example_path, index=False
-    )
-
-    dictionary = pd.DataFrame(
-        [
-            ("member_id", "string", "Synthetic clearing-member identifier."),
-            ("position_id", "string", "Unique synthetic position identifier."),
-            ("ticker", "string", "Underlying market-data ticker."),
-            ("direction", "string", "LONG or SHORT position direction."),
-            ("absolute_weight", "float", "Position share of member gross notional."),
-            ("signed_weight", "float", "Direction-adjusted portfolio weight."),
-            ("reference_date", "date", "Date used to convert notional into quantity."),
-            ("reference_price", "float", "Adjusted close on the reference date."),
-            ("quantity", "float", "Signed units of the underlying asset."),
-            ("absolute_notional", "float", "Positive contribution to gross notional."),
-            ("signed_notional", "float", "Direction-adjusted notional."),
-            ("currency", "string", "Configured project currency."),
-        ],
-        columns=["field", "type", "definition"],
-    )
-    dictionary.to_csv(
-        ROOT / "data" / "manifests" / "member_portfolio_data_dictionary.csv", index=False
-    )
-
-    manifest_path = ROOT / "data" / "manifests" / "member_portfolio_manifest.json"
-    write_json(
-        manifest_path,
-        {
-            "status": "completed",
-            "random_seed": seed,
-            "members": number_of_members,
-            "positions": int(len(positions)),
-            "reference_date": reference_date.date().isoformat(),
-            "positions_file": relative_path(positions_path),
-            "positions_sha256": sha256_file(positions_path),
-            "summary_file": relative_path(summaries_path),
-            "summary_sha256": sha256_file(summaries_path),
-            "example_file": relative_path(example_path),
-            "example_sha256": sha256_file(example_path),
-            "generated_at_utc": utc_now_iso(),
+    manifest = {
+        "input_file": str(input_path.resolve()),
+        "random_seed": config.random_seed,
+        "number_of_members": config.number_of_members,
+        "minimum_positions": config.minimum_positions,
+        "maximum_positions": config.maximum_positions,
+        "gross_notional_min": config.gross_notional_min,
+        "gross_notional_max": config.gross_notional_max,
+        "categories": list(config.categories),
+        "position_rows": int(len(positions)),
+        "valuation_date_min": positions["valuation_date"].min().date().isoformat(),
+        "valuation_date_max": positions["valuation_date"].max().date().isoformat(),
+        "portfolio_sha256": canonical_portfolio_sha256(positions),
+        "output_files": {
+            "positions": str(positions_path.resolve()),
+            "exposures": str(exposures_path.resolve()),
+            "concentration": str(concentration_path.resolve()),
+            "liquidity": str(liquidity_path.resolve()),
+            "registry": str(registry_path.resolve()),
         },
+    }
+    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+
+    print("Synthetic clearing-member portfolios generated successfully.")
+    print(f"Input: {input_path}")
+    print(f"Seed: {config.random_seed}")
+    print(f"Members: {config.number_of_members}")
+    print(f"Position rows: {len(positions):,}")
+    print(f"Date range: {manifest['valuation_date_min']} to {manifest['valuation_date_max']}")
+    print(f"SHA-256: {manifest['portfolio_sha256']}")
+    print(f"Positions: {positions_path}")
+    print(f"Manifest: {manifest_path}")
+
+
+def main() -> None:
+    args = parse_args()
+    config_path = args.config if args.config.is_absolute() else PROJECT_ROOT / args.config
+    output_dir = (
+        args.output_dir if args.output_dir.is_absolute() else PROJECT_ROOT / args.output_dir
     )
-    LOGGER.info(
-        "Generated %d members and %d positions using seed %d",
-        number_of_members,
-        len(positions),
-        seed,
-    )
-    return 0
+    raw_config = load_yaml(config_path)
+    generation_config = PortfolioGenerationConfig.from_mapping(raw_config)
+    input_path = resolve_input(args.input)
+    market_data = read_table(input_path)
+    positions = generate_synthetic_portfolios(market_data, generation_config)
+    write_outputs(positions, output_dir, generation_config, input_path)
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()

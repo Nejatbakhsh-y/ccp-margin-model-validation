@@ -24,6 +24,115 @@ portfolio:
   allow_short_positions: true
   rebalance_frequency: monthly
 
+  categories:
+    - diversified_long_only
+    - concentrated_equity
+    - technology_heavy
+    - small_cap_heavy
+    - international_equity
+    - rates_heavy
+    - credit_heavy
+    - long_short
+    - leveraged
+    - liquidity_stressed
+
+  generation:
+    deterministic: true
+    use_project_random_seed: true
+    preserve_static_security_selection: true
+    revalue_over_full_price_history: true
+    require_complete_price_history: false
+    reject_missing_prices: true
+    reject_non_positive_prices: true
+    reject_duplicate_security_dates: true
+
+  category_parameters:
+    diversified_long_only:
+      allow_short_positions: false
+      leverage_multiplier: 1.0
+      concentration_profile: low
+      liquidity_profile: normal
+
+    concentrated_equity:
+      allow_short_positions: false
+      leverage_multiplier: 1.0
+      concentration_profile: high
+      liquidity_profile: normal
+
+    technology_heavy:
+      allow_short_positions: false
+      leverage_multiplier: 1.0
+      concentration_profile: medium
+      preferred_sector: Technology
+      liquidity_profile: normal
+
+    small_cap_heavy:
+      allow_short_positions: false
+      leverage_multiplier: 1.0
+      concentration_profile: medium
+      preferred_asset_class: Equity
+      liquidity_profile: medium
+
+    international_equity:
+      allow_short_positions: false
+      leverage_multiplier: 1.0
+      concentration_profile: medium
+      preferred_asset_class: International Equity
+      liquidity_profile: normal
+
+    rates_heavy:
+      allow_short_positions: false
+      leverage_multiplier: 1.0
+      concentration_profile: medium
+      preferred_asset_class: Rates
+      liquidity_profile: normal
+
+    credit_heavy:
+      allow_short_positions: false
+      leverage_multiplier: 1.0
+      concentration_profile: medium
+      preferred_asset_class: Credit
+      liquidity_profile: medium
+
+    long_short:
+      allow_short_positions: true
+      leverage_multiplier: 1.0
+      concentration_profile: medium
+      liquidity_profile: normal
+
+    leveraged:
+      allow_short_positions: true
+      leverage_multiplier: 2.0
+      concentration_profile: medium
+      liquidity_profile: normal
+
+    liquidity_stressed:
+      allow_short_positions: false
+      leverage_multiplier: 1.0
+      concentration_profile: medium
+      liquidity_profile: stressed
+
+  required_position_fields:
+    - valuation_date
+    - member_id
+    - portfolio_id
+    - security_id
+    - quantity
+    - price
+    - market_value
+    - long_short_flag
+    - sector
+    - asset_class
+    - liquidity_bucket
+
+  output_files:
+    positions: data/processed/clearing_member_positions.parquet
+    exposures: data/processed/portfolio_exposures.parquet
+    concentration: data/processed/portfolio_concentration.parquet
+    liquidity: data/processed/portfolio_liquidity.parquet
+    registry: data/processed/portfolio_registry.csv
+    manifest: data/processed/portfolio_generation_manifest.json
+
 config_files:
   data: configs/data/sources.yaml
   primary_model: configs/models/primary_model.yaml
