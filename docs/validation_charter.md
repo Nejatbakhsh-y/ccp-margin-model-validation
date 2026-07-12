@@ -667,78 +667,141 @@ A successful rerun does not erase the original failure.
 
 ## 10. Independence Control
 
-Independent validation must remain organizationally, procedurally, and
-technically separate from primary model development.
 
-The following controls apply:
+Independent validation must remain organizationally, procedurally, and technically separate from primary model development throughout the model lifecycle.
 
-- Primary model code remains under `src/ccp_margin/models/`.
-- Independent-validation code remains under
-  `src/ccp_margin/validation/`.
-- Core validation calculations are independently implemented.
-- Validation does not import private primary-model functions to duplicate model
-  results.
-- Validation methods are selected by the independent validator.
-- Differences between primary and independent implementations are investigated
-  and documented.
-- The model owner cannot approve their own model.
-- The model owner cannot determine finding severity.
-- The model owner cannot close validation findings without validator review.
-- Failed tests and negative results cannot be removed by the model owner.
-- Material model changes require validation reassessment.
-- Validation conclusions must remain traceable to independently generated
-  evidence.
-- Material disagreements must be documented and escalated.
-- Validation personnel must disclose conflicts that could impair independence.
+The following independence controls apply:
 
-Development assistance may be provided to the validator for administrative,
-environmental, or data-access purposes, but such assistance must not determine
-validation methodology or conclusions.
+* Primary model code must remain under `src/ccp_margin/models/`.
+* Independent-validation code must remain under `src/ccp_margin/validation/`.
+* Core validation calculations, including VaR reproduction, backtesting exceptions, statistical tests, benchmark comparisons, and reconciliation calculations, must be independently implemented.
+* Validation code must not import private functions, internal implementation utilities, or intermediate results from the primary model merely to reproduce the primary model output.
+* Shared public data schemas, approved configuration values, and documented interfaces may be used where necessary, provided they do not compromise independent calculation.
+* Validation methodology, test design, materiality thresholds, benchmark selection, challenger selection, sampling decisions, and conclusions must be determined by the independent validator.
+* Differences between primary-model and independent-validation results must be investigated, reconciled where possible, and documented.
+* The model owner cannot approve their own model.
+* The model owner cannot assign or reduce validation-finding severity.
+* The model owner cannot close a validation finding without independent-validator review and documented closure approval.
+* Failed tests, exceptions, unexpected outcomes, and negative results cannot be deleted, suppressed, overwritten, or removed by the model owner.
+* Material model, data, methodology, parameter, configuration, or implementation changes require validation reassessment.
+* Validation conclusions must remain traceable to independently generated code, calculations, tests, evidence, and professional judgment.
+* Material disagreements between the model owner and independent validator must be documented and escalated to the designated validation authority.
+* Validation personnel must disclose any actual, potential, or perceived conflict of interest that could impair independence.
+* Validation evidence must remain under version control and must clearly identify the validator, execution date, code version, configuration version, data version, results, and conclusions.
+
+Development assistance may be provided to the independent validator for administrative, environment-configuration, infrastructure, data-access, or technical-support purposes. Such assistance must be documented when material and must not determine or influence:
+
+* Validation methodology.
+* Test selection.
+* Test implementation.
+* Finding classification.
+* Finding severity.
+* Interpretation of results.
+* Remediation acceptance.
+* Approval recommendations.
+* Final validation conclusions.
+
+Any situation that could compromise validation independence must be disclosed, documented, assessed, and escalated before the affected validation conclusion is issued.
 
 ---
 
 ## 11. Finding Management
 
-Every formal finding must contain:
 
-- Unique finding identifier.
-- Finding title.
-- Severity.
-- Affected model component.
-- Date identified.
-- Description of the issue.
-- Supporting evidence.
-- Root cause, when known.
-- Potential impact.
-- Required remediation.
-- Recommended compensating controls.
-- Responsible owner.
-- Target completion date.
-- Current status.
-- Management response.
-- Validator review notes.
-- Validator closure assessment.
-- Closure date, when applicable.
 
-Permitted finding statuses include:
+Every formal validation finding must be recorded, tracked, reviewed, and retained from initial identification through final disposition.
 
-- Open.
-- Remediation in progress.
-- Pending validation review.
-- Risk accepted.
-- Closed.
-- Overdue.
+Each finding record must contain:
+
+* Unique finding identifier.
+* Finding title.
+* Severity.
+* Affected model component.
+* Date identified.
+* Description of the issue.
+* Supporting evidence.
+* Root cause, when known.
+* Potential impact.
+* Required remediation.
+* Recommended compensating controls.
+* Responsible owner.
+* Target completion date.
+* Current status.
+* Management response.
+* Validator review notes.
+* Validator closure assessment.
+* Closure date, when applicable.
+
+Finding identifiers must use the following format:
+
+`FIND-YYYY-NNN`
+
+where:
+
+* `YYYY` is the year in which the finding was identified.
+* `NNN` is a sequential three-digit number.
+
+Examples include:
+
+* `FIND-2026-001`
+* `FIND-2026-002`
+* `FIND-2026-003`
+
+Permitted severity classifications are:
+
+* Critical.
+* High.
+* Moderate.
+* Low.
+* Observation.
+
+Permitted finding statuses are:
+
+* Open.
+* Remediation in progress.
+* Pending validation review.
+* Risk accepted.
+* Closed.
+* Overdue.
+
+Finding statuses must be applied as follows:
+
+* **Open** means that the finding has been issued and remediation has not been completed.
+* **Remediation in progress** means that the responsible owner is actively implementing corrective action.
+* **Pending validation review** means that management has submitted remediation evidence for independent-validator assessment.
+* **Risk accepted** means that authorized management has formally accepted the residual risk instead of completing full remediation. Risk acceptance does not constitute validation closure.
+* **Closed** means that the independent validator has confirmed that all closure requirements have been satisfied.
+* **Overdue** means that the target completion date has passed and the finding has not been closed.
 
 A finding may be closed only after the independent validator confirms that:
 
-- Required remediation is complete.
-- Supporting evidence is sufficient.
-- Relevant tests have been rerun.
-- The issue has been resolved.
-- No material residual risk remains unaddressed.
+* Required remediation is complete.
+* Supporting evidence is sufficient.
+* Relevant tests have been rerun.
+* Original failed results remain preserved.
+* Rerun results are documented.
+* The identified issue has been resolved.
+* No material residual risk remains unaddressed.
+* Any required compensating controls have been implemented.
+* The closure conclusion is supported by independently reviewed evidence.
 
-Management acceptance of risk does not automatically constitute validation
-closure.
+The model owner or remediation owner may request closure but cannot independently close a validation finding.
+
+Management acceptance of risk does not automatically constitute validation closure. A risk-accepted finding must remain separately identifiable, supported by documented approval, and subject to monitoring, escalation, reassessment, or expiration requirements established by the validation authority.
+
+Any change to a finding's severity, status, target date, remediation requirement, or disposition must be documented with:
+
+* Date of the change.
+* Previous value.
+* Revised value.
+* Reason for the change.
+* Person requesting the change.
+* Independent-validator review.
+* Approval authority, when applicable.
+
+Finding evidence must remain version-controlled and traceable. Previous finding records, management responses, failed tests, remediation submissions, and validator assessments must not be overwritten or deleted.
+
+Closed findings must remain in the permanent validation record.
 
 ---
 
