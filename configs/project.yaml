@@ -232,3 +232,51 @@ config_files:
   validation: configs/validation/validation.yaml
   stress_scenarios: configs/stress/scenarios.yaml
   monitoring_thresholds: configs/monitoring/thresholds.yaml
+
+  margin:
+  base_margin:
+    var_col: base_var
+    floor_usd: 0.0
+    cap_usd: null
+
+  liquidity_addon:
+    parameter_source: >-
+      PRELIMINARY PLACEHOLDER - replace with an approved liquidation-cost,
+      bid-ask-spread, market-depth, and time-to-liquidate study.
+    rates_by_bucket:
+      high: 0.001
+      medium: 0.003
+      low: 0.010
+      stressed: 0.025
+    minimum_usd: 0.0
+    maximum_fraction_of_gross: 0.05
+
+  concentration_addon:
+    parameter_source: >-
+      PRELIMINARY PLACEHOLDER - replace with an approved concentration study,
+      observed liquidation-impact analysis, and governance-approved thresholds.
+    single_name_threshold: 0.20
+    single_name_rate: 0.10
+    sector_threshold: 0.40
+    sector_rate: 0.05
+    aggregation_method: max
+    minimum_usd: 0.0
+    maximum_fraction_of_gross: 0.10
+
+  gap_risk_addon:
+    parameter_source: >-
+      PRELIMINARY PLACEHOLDER - replace with an approved historical gap-event,
+      jump-risk, default-event, and extreme-move study.
+    shocks_by_asset_class:
+      equity: 0.080
+      rates: 0.025
+      credit: 0.050
+    minimum_usd: 0.0
+    maximum_fraction_of_gross: 0.20
+
+  stress_buffer:
+    parameter_source: >-
+      PRELIMINARY PLACEHOLDER - replace with an approved extreme-but-plausible
+      stress-scenario library and governance-approved coverage policy.
+    required_coverage_ratio: 1.00
+    maximum_buffer_usd: null
