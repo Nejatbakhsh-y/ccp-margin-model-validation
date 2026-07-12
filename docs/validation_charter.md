@@ -1202,7 +1202,7 @@ must remain version-controlled and traceable.
 
 ## 14. Charter Enforcement
 
-This charter applies throughout:
+This charter applies throughout the complete model lifecycle, including:
 
 - Model design.
 - Model development.
@@ -1211,18 +1211,291 @@ This charter applies throughout:
 - Finding remediation.
 - Model approval.
 - Model implementation.
+- Production use.
 - Ongoing monitoring.
 - Model change.
 - Revalidation.
+- Model-use restriction.
+- Model suspension.
 - Model retirement.
+
+The charter applies to:
+
+- Model owners.
+- Model developers.
+- Data owners.
+- Technology and implementation personnel.
+- Independent validators.
+- Remediation owners.
+- Monitoring owners.
+- Model users.
+- Approval authorities.
+- Governance committees.
+- Any third party performing activities within the model lifecycle.
+
+Compliance with this charter must be demonstrated through documented,
+reproducible, version-controlled, and independently reviewable evidence.
+
+### 14.1 Required Charter Compliance
+
+Each lifecycle activity must comply with the applicable requirements for:
+
+- Role separation.
+- Validation independence.
+- Documentation.
+- Testing.
+- Evidence preservation.
+- Finding management.
+- Change control.
+- Revalidation.
+- Ongoing monitoring.
+- Approval authority.
+- Escalation.
+- Record retention.
+
+A model must not be approved solely because required governance evidence is
+expected to be completed later.
+
+Missing, incomplete, inconsistent, or non-reproducible evidence must be
+evaluated as a potential validation deficiency.
+
+### 14.2 Charter Deviations
+
+A deviation exists when a model-lifecycle activity does not comply with an
+applicable requirement of this charter.
 
 Deviations from this charter must be:
 
+- Identified promptly.
 - Documented.
 - Justified.
 - Risk assessed.
-- Approved by the validation authority.
+- Assigned to a responsible owner.
+- Supported by compensating controls, when necessary.
+- Reviewed by the independent validator.
+- Approved or rejected by the designated validation authority.
+- Assigned an effective date.
+- Assigned an expiration or review date.
 - Retained as part of the model-governance evidence.
+- Monitored until resolved, expired, superseded, or incorporated through a
+  formally approved charter amendment.
 
-Unapproved deviations may result in a formal validation finding and may prevent
-model approval.
+A deviation must not be approved merely to avoid a validation finding,
+remediation requirement, model-use restriction, or revalidation requirement.
+
+The model owner may request a deviation but cannot approve their own deviation.
+
+The independent validator must assess whether the proposed deviation:
+
+- Impairs validation independence.
+- Limits the required scope of validation.
+- Prevents independent reproduction.
+- Weakens evidence preservation.
+- Affects finding severity or closure.
+- Changes approval criteria.
+- Creates material model risk.
+- Requires model-use restrictions.
+- Requires partial or full revalidation.
+- Requires escalation to a higher approval authority.
+
+### 14.3 Deviation Identification
+
+Each charter deviation must use the following identifier:
+
+`DEV-YYYY-NNN`
+
+where:
+
+- `YYYY` is the year in which the deviation was identified.
+- `NNN` is a sequential three-digit number.
+
+Examples include:
+
+- `DEV-2026-001`
+- `DEV-2026-002`
+- `DEV-2026-003`
+
+Each deviation record must contain:
+
+- Unique deviation identifier.
+- Deviation title.
+- Date identified.
+- Requesting party.
+- Responsible owner.
+- Applicable charter section.
+- Description of the deviation.
+- Reason for the deviation.
+- Duration of the deviation.
+- Affected model components and lifecycle activities.
+- Model-risk assessment.
+- Operational-risk assessment.
+- Regulatory or policy implications.
+- Impact on validation independence.
+- Impact on model approval.
+- Impact on existing findings.
+- Proposed compensating controls.
+- Required monitoring.
+- Required model-use restrictions.
+- Independent-validator assessment.
+- Validation-authority decision.
+- Effective date.
+- Expiration or review date.
+- Current status.
+- Resolution requirements.
+- Closure assessment.
+- Closure date, when applicable.
+- Supporting-evidence references.
+
+Permitted deviation statuses are:
+
+- Draft.
+- Pending independent review.
+- Pending authority decision.
+- Approved.
+- Rejected.
+- Remediation in progress.
+- Expired.
+- Superseded.
+- Closed.
+
+### 14.4 Approval Conditions
+
+An approved deviation must clearly state:
+
+- The exact charter requirement affected.
+- The approved exception.
+- The rationale for approval.
+- The residual risk.
+- The compensating controls.
+- The responsible owner.
+- Any model-use restrictions.
+- Monitoring requirements.
+- Escalation thresholds.
+- Required remediation.
+- The effective date.
+- The expiration or mandatory review date.
+- Conditions for extension.
+- Conditions requiring immediate withdrawal.
+
+Approval of a deviation does not amend the charter.
+
+A recurring or permanent conflict with the charter must be addressed through:
+
+- Remediation of the underlying process.
+- A formally reviewed and approved charter amendment.
+- Model-use restriction.
+- Model suspension.
+- Model retirement.
+
+Indefinite deviation approval is not permitted without a documented charter
+amendment or equivalent governance action.
+
+### 14.5 Emergency Deviations
+
+An emergency deviation may be used only when immediate action is necessary to
+address a material operational, market, data, technology, or risk-management
+event.
+
+An emergency deviation must:
+
+- Be documented as soon as practicable.
+- Identify the emergency condition.
+- State why normal approval could not be obtained in advance.
+- Identify the temporary action taken.
+- Define temporary controls.
+- Define model-use restrictions.
+- Be escalated immediately.
+- Receive retrospective independent-validator review.
+- Receive formal validation-authority disposition.
+- Include a short, defined expiration period.
+- Be withdrawn when the emergency condition no longer exists.
+
+Emergency treatment does not eliminate documentation, review, evidence, or
+remediation requirements.
+
+### 14.6 Prohibited Deviations
+
+A deviation must not be used to:
+
+- Permit the model owner to approve their own model.
+- Permit the model owner to determine finding severity.
+- Permit the model owner to close validation findings without validator review.
+- Remove failed tests or unfavorable evidence.
+- Suppress material validation results.
+- Alter independent-validator conclusions.
+- Avoid required revalidation after a material change.
+- Approve a model with an unresolved critical finding.
+- Conceal a material implementation defect.
+- Bypass required escalation.
+- Falsify, overwrite, or delete governance evidence.
+- Retroactively authorize conduct that materially impaired validation
+  independence.
+
+A requested deviation involving any prohibited activity must be rejected and
+escalated.
+
+### 14.7 Noncompliance and Enforcement Actions
+
+An unapproved, expired, violated, or inadequately controlled deviation may
+result in:
+
+- A formal validation finding.
+- Increased finding severity.
+- Additional testing.
+- Increased monitoring.
+- Mandatory remediation.
+- Model-use restrictions.
+- Conditional approval.
+- Withdrawal of conditional approval.
+- Deferral of model approval.
+- Denial of model approval.
+- Partial or full revalidation.
+- Suspension of production use.
+- Escalation to senior management or the designated governance committee.
+- Model retirement when risks cannot be adequately controlled.
+
+The independent validator must assess the effect of charter noncompliance on
+the reliability of the validation conclusion.
+
+Material noncompliance must be escalated without waiting for the next routine
+reporting cycle.
+
+### 14.8 Deviation Closure
+
+A deviation may be closed only after the independent validator confirms that:
+
+- The deviation has ended.
+- Required remediation is complete.
+- Compensating controls operated as approved.
+- Required monitoring was performed.
+- Applicable restrictions were observed.
+- Supporting evidence is sufficient.
+- Related findings have been addressed or remain appropriately tracked.
+- No material residual risk remains unaddressed.
+- Closure has been approved by the appropriate authority, when required.
+
+Expiration of an approved deviation does not automatically constitute closure.
+
+An expired deviation that remains unresolved must be treated as unapproved
+noncompliance and evaluated for a formal finding, model-use restriction, or
+revalidation.
+
+### 14.9 Evidence and Traceability
+
+All deviation requests, assessments, decisions, extensions, rejections,
+compensating controls, monitoring results, evidence, findings, and closure
+decisions must remain version-controlled and traceable.
+
+Original records must not be overwritten or deleted.
+
+Any revision must preserve:
+
+- The prior version.
+- The reason for the revision.
+- The requesting party.
+- The review date.
+- The independent-validator assessment.
+- The approval authority.
+- The revised effective and expiration dates.
+
+Unapproved deviations may prevent model approval or continued model use.
