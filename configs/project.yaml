@@ -133,6 +133,97 @@ portfolio:
     registry: data/processed/portfolio_registry.csv
     manifest: data/processed/portfolio_generation_manifest.json
 
+primary_model:
+  type: historical_simulation
+  confidence_level: 0.99
+  lookback_days: 500
+
+  mpor_days:
+    - 1
+    - 3
+    - 5
+
+  multi_day_method: observed_overlapping
+  use_current_positions: true
+  preserve_full_pnl_distribution: true
+  produce_component_attribution: true
+  deterministic: true
+
+  missing_risk_factor_policy: raise
+  minimum_observations: 250
+
+  independence_testing:
+    use_non_overlapping_returns: true
+    disclose_overlapping_serial_dependence: true
+
+challenger_model:
+  type: parametric_var
+  confidence_level: 0.99
+  lookback_days: 500
+
+  covariance_method: ewma
+  ewma_lambda: 0.94
+  include_mean: false
+
+  mpor_days:
+    - 1
+    - 3
+    - 5
+
+  multi_day_method: sqrt_time
+  direct_returns_overlapping: true
+
+  distribution: normal
+
+  student_t_sensitivity:
+    enabled: true
+    degrees_of_freedom: 6.0
+    standardize_to_unit_variance: true
+
+  covariance_controls:
+    enforce_symmetry: true
+    apply_psd_correction: true
+    psd_method: eigenvalue_clipping
+    eigenvalue_floor: 1.0e-12
+    preserve_marginal_variances: true
+    renormalize_correlation_diagonal: true
+
+  correlation_controls:
+    enabled: true
+    stress_multiplier: 1.25
+    clip_lower_bound: -0.999
+    clip_upper_bound: 0.999
+    reapply_psd_correction: true
+
+  attribution:
+    produce_component_var: true
+    produce_standalone_var: true
+    produce_diversification_benefit: true
+    reconciliation_tolerance: 1.0e-08
+
+  missing_risk_factor_policy: raise
+  minimum_observations: 250
+  deterministic: true
+
+  diagnostic_comparisons:
+    historical_window_instability: true
+    correlation_sensitivity: true
+    tail_risk_underestimation: true
+    volatility_reactivity: true
+    diversification_assumptions: true
+
+validation:
+  significance_level: 0.05
+
+  independence_testing:
+    use_non_overlapping_multi_day_observations: true
+    disclose_overlapping_horizon_dependence: true
+
+  challenger_comparison:
+    enabled: true
+    treat_challenger_as_benchmark_only: true
+    challenger_not_presumed_superior: true
+
 config_files:
   data: configs/data/sources.yaml
   primary_model: configs/models/primary_model.yaml
