@@ -1,0 +1,40 @@
+﻿primary_model:
+  name: primary_historical_simulation
+  type: historical_simulation
+  model_role: primary
+
+  confidence_level: 0.99
+  lookback_days: 500
+  mpor_days:
+    - 1
+    - 3
+    - 5
+
+  return_method: simple
+  return_aggregation: overlapping_compounded_returns
+  quantile_method: higher
+  loss_sign_convention: positive_values_are_losses
+  portfolio_valuation: linear_position_revaluation
+
+  observation_requirements:
+    minimum_observations: 250
+    require_complete_window: true
+
+  weighting:
+    type: equal
+    decay_factor: null
+
+  scaling:
+    use_square_root_time: false
+    use_empirical_multi_day_returns: true
+
+  margin:
+    apply_non_negative_floor: true
+    minimum_base_margin: 0.0
+    rounding_decimals: 2
+
+  implementation:
+    preserve_intermediate_returns: true
+    preserve_scenario_pnl: true
+    preserve_quantile_inputs: true
+    deterministic_output: true

@@ -1,0 +1,48 @@
+﻿margin_addons:
+  configuration_status: preliminary
+  calibration_required_before_approval: true
+  enabled: true
+
+  aggregation:
+    method: additive
+    apply_after_base_margin: true
+    apply_non_negative_floor: true
+    minimum_total_margin: 0.0
+
+  components:
+    volatility:
+      enabled: true
+      short_window_days: 20
+      long_window_days: 250
+      volatility_ratio_trigger: 1.50
+      addon_rate: 0.10
+      maximum_addon_rate: 0.50
+
+    liquidity:
+      enabled: true
+      average_daily_volume_window: 60
+      maximum_participation_rate: 0.10
+      days_to_liquidate_threshold: 3.0
+      excess_day_addon_rate: 0.005
+      maximum_addon_rate: 0.25
+      missing_volume_policy: conservative_default
+      missing_volume_addon_rate: 0.05
+
+    concentration:
+      enabled: true
+      single_position_weight_threshold: 0.25
+      excess_weight_addon_rate: 0.20
+      maximum_addon_rate: 0.30
+      use_absolute_exposure_weights: true
+
+    gap_risk:
+      enabled: true
+      overnight_return_threshold: 0.05
+      addon_rate: 0.10
+      maximum_addon_rate: 0.30
+
+  evidence:
+    preserve_component_results: true
+    preserve_pre_floor_values: true
+    preserve_threshold_breaches: true
+    preserve_total_addon_reconciliation: true

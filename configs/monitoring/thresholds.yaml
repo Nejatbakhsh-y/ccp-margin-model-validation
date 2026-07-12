@@ -1,0 +1,59 @@
+﻿monitoring_thresholds:
+  backtesting:
+    rolling_window_days: 250
+    expected_exception_rate: 0.01
+
+    traffic_light:
+      green_maximum_exceptions: 4
+      amber_minimum_exceptions: 5
+      amber_maximum_exceptions: 9
+      red_minimum_exceptions: 10
+
+    exception_rate:
+      warning: 0.015
+      critical: 0.025
+
+  margin_shortfall:
+    warning_ratio: 0.05
+    critical_ratio: 0.10
+    maximum_consecutive_shortfalls: 2
+
+  benchmark_divergence:
+    warning_relative_difference: 0.10
+    critical_relative_difference: 0.20
+
+  margin_stability:
+    one_day_change_warning: 0.25
+    one_day_change_critical: 0.50
+    five_day_change_warning: 0.40
+    five_day_change_critical: 0.75
+
+  procyclicality:
+    peak_to_trough_ratio_warning: 2.00
+    peak_to_trough_ratio_critical: 3.00
+    stressed_to_normal_ratio_warning: 1.50
+    stressed_to_normal_ratio_critical: 2.00
+
+  concentration:
+    single_position_weight_warning: 0.25
+    single_position_weight_critical: 0.40
+    top_three_weight_warning: 0.60
+    top_three_weight_critical: 0.80
+
+  data_quality:
+    minimum_completeness: 0.995
+    stale_price_warning_days: 2
+    stale_price_critical_days: 5
+    duplicate_records_allowed: 0
+    invalid_price_records_allowed: 0
+
+  configuration_change:
+    require_configuration_checksum: true
+    require_change_log: true
+    require_revalidation_assessment: true
+    unauthorized_change_severity: high
+
+  escalation:
+    warning_requires_documentation: true
+    critical_requires_immediate_escalation: true
+    critical_requires_model_use_assessment: true

@@ -1,0 +1,42 @@
+﻿challenger_model:
+  name: challenger_parametric_ewma
+  type: parametric_ewma
+  model_role: challenger
+
+  confidence_level: 0.99
+  ewma_lambda: 0.94
+  distribution: normal
+  mean_return_assumption: zero
+  covariance_method: ewma
+
+  mpor_days:
+    - 1
+    - 3
+    - 5
+
+  observation_requirements:
+    minimum_observations: 250
+    require_complete_window: true
+
+  scaling:
+    method: square_root_of_time
+    use_square_root_time: true
+
+  portfolio_valuation: linear_position_revaluation
+  loss_sign_convention: positive_values_are_losses
+
+  numerical_controls:
+    covariance_regularization: 1.0e-10
+    minimum_variance: 1.0e-12
+    require_positive_semidefinite_covariance: true
+
+  margin:
+    apply_non_negative_floor: true
+    minimum_base_margin: 0.0
+    rounding_decimals: 2
+
+  implementation:
+    preserve_covariance_matrices: true
+    preserve_position_exposures: true
+    preserve_intermediate_calculations: true
+    deterministic_output: true

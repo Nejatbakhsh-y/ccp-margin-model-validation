@@ -1,0 +1,28 @@
+﻿schema_version: "1.0"
+
+project:
+  name: ccp-margin-model-validation
+  description: Independent validation framework for a CCP margin model
+  currency: USD
+  random_seed: 2026
+  environment: development
+  configuration_status: preliminary
+
+portfolio:
+  number_of_members: 30
+  minimum_positions: 3
+  maximum_positions: 10
+  gross_notional_min: 10000000
+  gross_notional_max: 1000000000
+  allow_long_positions: true
+  allow_short_positions: true
+  rebalance_frequency: monthly
+
+config_files:
+  data: configs/data/sources.yaml
+  primary_model: configs/models/primary_model.yaml
+  challenger_model: configs/models/challenger_model.yaml
+  margin_addons: configs/models/margin_addons.yaml
+  validation: configs/validation/validation.yaml
+  stress_scenarios: configs/stress/scenarios.yaml
+  monitoring_thresholds: configs/monitoring/thresholds.yaml

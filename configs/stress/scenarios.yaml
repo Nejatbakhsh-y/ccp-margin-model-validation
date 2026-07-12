@@ -1,0 +1,72 @@
+﻿stress_scenarios:
+  configuration_status: preliminary
+  preserve_scenario_results: true
+
+  historical:
+    - id: global_financial_crisis_2008
+      name: Global Financial Crisis
+      start_date: "2008-09-15"
+      end_date: "2009-03-09"
+      enabled: true
+
+    - id: covid_market_shock_2020
+      name: COVID-19 Market Shock
+      start_date: "2020-02-19"
+      end_date: "2020-03-23"
+      enabled: true
+
+    - id: inflation_rate_shock_2022
+      name: 2022 Inflation and Interest-Rate Shock
+      start_date: "2022-01-03"
+      end_date: "2022-10-24"
+      enabled: true
+
+  hypothetical:
+    - id: severe_equity_decline
+      name: Severe Equity Market Decline
+      enabled: true
+      shocks:
+        equity_return: -0.20
+        treasury_return: 0.03
+        credit_return: -0.08
+        commodity_return: -0.10
+        real_estate_return: -0.15
+        currency_return: 0.05
+
+    - id: treasury_rate_increase
+      name: Parallel Treasury Yield Increase
+      enabled: true
+      shocks:
+        treasury_yield_shift_bps: 200
+        equity_return: -0.08
+        credit_return: -0.06
+        real_estate_return: -0.10
+
+    - id: credit_spread_widening
+      name: Severe Credit Spread Widening
+      enabled: true
+      shocks:
+        investment_grade_spread_shift_bps: 150
+        high_yield_spread_shift_bps: 300
+        credit_return: -0.12
+        equity_return: -0.08
+
+    - id: combined_market_dislocation
+      name: Combined Equity, Rate, Credit, and Liquidity Shock
+      enabled: true
+      shocks:
+        equity_return: -0.25
+        treasury_yield_shift_bps: 250
+        investment_grade_spread_shift_bps: 200
+        high_yield_spread_shift_bps: 400
+        credit_return: -0.15
+        commodity_return: -0.15
+        real_estate_return: -0.20
+        currency_return: 0.08
+        liquidity_multiplier: 2.00
+
+  reverse_stress:
+    enabled: true
+    target_margin_shortfall_ratio: 0.10
+    maximum_iterations: 1000
+    convergence_tolerance: 1.0e-6
