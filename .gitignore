@@ -10,3 +10,15 @@ htmlcov/
 *.egg-info/
 build/
 dist/
+
+# Generated project data
+data/raw/
+data/interim/
+data/processed/
+
+# Generated validation logs
+reports/evidence/logs/
+
+# Local runtime files
+*.log
+*.db
