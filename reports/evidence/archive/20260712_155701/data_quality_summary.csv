@@ -1,0 +1,15 @@
+run_id,check_id,check_name,severity,status,exception_count,affected_security_count,description,evaluated_at_utc
+20260712T195352Z,DQ001,Duplicate dates within a security and source,HIGH,PASS,0,0,No security/source combination may contain repeated dates.,2026-07-12T19:53:52+00:00
+20260712T195352Z,DQ002,Duplicate security-date rows,HIGH,PASS,0,0,Each security-date key must be unique before cleaning.,2026-07-12T19:53:52+00:00
+20260712T195352Z,DQ003,Missing prices,HIGH,FAIL,1,1,Model-price completeness must satisfy the configured minimum.,2026-07-12T19:53:52+00:00
+20260712T195352Z,DQ004,Non-positive prices,CRITICAL,PASS,0,0,Adjusted prices used by the model must be strictly positive.,2026-07-12T19:53:52+00:00
+20260712T195352Z,DQ005,Missing volume,MEDIUM,PASS,0,0,Volume must be available unless explicitly documented as unavailable.,2026-07-12T19:53:52+00:00
+20260712T195352Z,DQ006,Stale prices,MEDIUM,PASS,0,0,Repeated unchanged prices must not exceed the configured stale run.,2026-07-12T19:53:52+00:00
+20260712T195352Z,DQ007,Extreme returns,HIGH,PASS,0,0,Absolute one-day returns above the configured threshold require review.,2026-07-12T19:53:52+00:00
+20260712T195352Z,DQ008,Corporate-action discontinuities,HIGH,PASS,0,0,Large price jumps or adjustment-ratio changes require review.,2026-07-12T19:53:52+00:00
+20260712T195352Z,DQ009,Inconsistent calendars,MEDIUM,WARN,1,1,Each security must align sufficiently with the reference calendar.,2026-07-12T19:53:52+00:00
+20260712T195352Z,DQ010,Insufficient history,HIGH,PASS,0,0,Each security must meet the configured minimum valid-price history.,2026-07-12T19:53:52+00:00
+20260712T195352Z,DQ011,Unavailable primary data source,HIGH,PASS,0,0,Requested securities must have a usable primary or approved fallback source.,2026-07-12T19:53:52+00:00
+20260712T195352Z,DQ012,Alternative-source behavior,MEDIUM,PASS,0,0,Fallback use and fallback failure must be explicitly evidenced.,2026-07-12T19:53:52+00:00
+20260712T195352Z,DQ013,Reproducibility of downloads,HIGH,PASS,0,0,Comparable reruns must not change unexplained historical content.,2026-07-12T19:53:52+00:00
+20260712T195352Z,DQ014,Data manifest completeness,HIGH,FAIL,1,0,Current manifest records must contain all required evidence fields.,2026-07-12T19:53:52+00:00

@@ -1,0 +1,4 @@
+run_id,check_id,check_name,severity,security_id,date,field,observed_value,threshold,message
+,,,,HYG,,model_price_completeness,0.9863543788187372,>=0.9950,HYG completeness is 98.6354%; 67 panel price observations are missing.
+,,,,HYG,,calendar_gap_ratio,0.013645621181262729,<= 1.00%,HYG is absent from 1.36% of reference-calendar dates.
+20260712T195352Z,DQ014,Data manifest completeness,HIGH,,,manifest_values,run_id|dataset_name|file_path|file_format|row_count|column_count|content_sha256|schema_sha256|config_sha256|request_sha256|generated_at_utc|status,all required values populated,Latest manifest record for  is incomplete.

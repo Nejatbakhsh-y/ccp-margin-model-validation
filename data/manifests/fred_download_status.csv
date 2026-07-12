@@ -1,0 +1,7 @@
+run_id,series_id,requested_start_date,requested_end_date,primary_client,api_key_available,primary_status,fallback_client,fallback_attempted,fallback_status,selected_client,row_count,error_message,download_timestamp_utc
+20260712T195340Z,DFF,2007-01-01,,fred_api,True,SUCCESS,pandas_datareader,False,NOT_ATTEMPTED,fred_api,7130,,2026-07-12T19:53:40+00:00
+20260712T195340Z,DGS2,2007-01-01,,fred_api,True,SUCCESS,pandas_datareader,False,NOT_ATTEMPTED,fred_api,5094,,2026-07-12T19:53:41+00:00
+20260712T195340Z,DGS10,2007-01-01,,fred_api,True,SUCCESS,pandas_datareader,False,NOT_ATTEMPTED,fred_api,5094,,2026-07-12T19:53:41+00:00
+20260712T195340Z,T10Y2Y,2007-01-01,,fred_api,True,SUCCESS,pandas_datareader,False,NOT_ATTEMPTED,fred_api,5095,,2026-07-12T19:53:42+00:00
+20260712T195340Z,VIXCLS,2007-01-01,,fred_api,True,SUCCESS,pandas_datareader,False,NOT_ATTEMPTED,fred_api,5094,,2026-07-12T19:53:42+00:00
+20260712T195340Z,BAMLH0A0HYM2,2007-01-01,,fred_api,True,SUCCESS,pandas_datareader,False,NOT_ATTEMPTED,fred_api,795,,2026-07-12T19:53:43+00:00
