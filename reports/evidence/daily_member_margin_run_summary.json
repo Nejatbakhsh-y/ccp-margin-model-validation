@@ -1,0 +1,13 @@
+{
+  "calculation_date": "2026-07-10",
+  "calculation_timestamp_utc": "2026-07-12T23:58:16+00:00",
+  "history_end_date": "2026-07-10",
+  "history_row_count": 30,
+  "history_start_date": "2026-07-10",
+  "maximum_reconciliation_error": 0.0,
+  "member_count": 30,
+  "output": "C:\\Users\\nejat\\OneDrive\\Desktop\\UN\\Skills\\GitHub 2026\\ccp-margin-model-validation\\data\\processed\\daily_member_margin.parquet",
+  "rows_written": 30,
+  "status": "passed",
+  "total_margin_sum": 1936577651.6053464
+}

@@ -1,5 +1,4 @@
-﻿schema_version: "1.0"
-
+schema_version: '1.0'
 project:
   name: ccp-margin-model-validation
   description: Independent validation framework for a CCP margin model
@@ -7,13 +6,11 @@ project:
   random_seed: 2026
   environment: development
   configuration_status: preliminary
-
 data:
-  start_date: "2007-01-01"
+  start_date: '2007-01-01'
   end_date: null
   price_field: adjusted_close
   minimum_completeness: 0.995
-
 portfolio:
   number_of_members: 30
   minimum_positions: 3
@@ -23,19 +20,17 @@ portfolio:
   allow_long_positions: true
   allow_short_positions: true
   rebalance_frequency: monthly
-
   categories:
-    - diversified_long_only
-    - concentrated_equity
-    - technology_heavy
-    - small_cap_heavy
-    - international_equity
-    - rates_heavy
-    - credit_heavy
-    - long_short
-    - leveraged
-    - liquidity_stressed
-
+  - diversified_long_only
+  - concentrated_equity
+  - technology_heavy
+  - small_cap_heavy
+  - international_equity
+  - rates_heavy
+  - credit_heavy
+  - long_short
+  - leveraged
+  - liquidity_stressed
   generation:
     deterministic: true
     use_project_random_seed: true
@@ -45,86 +40,74 @@ portfolio:
     reject_missing_prices: true
     reject_non_positive_prices: true
     reject_duplicate_security_dates: true
-
   category_parameters:
     diversified_long_only:
       allow_short_positions: false
       leverage_multiplier: 1.0
       concentration_profile: low
       liquidity_profile: normal
-
     concentrated_equity:
       allow_short_positions: false
       leverage_multiplier: 1.0
       concentration_profile: high
       liquidity_profile: normal
-
     technology_heavy:
       allow_short_positions: false
       leverage_multiplier: 1.0
       concentration_profile: medium
       preferred_sector: Technology
       liquidity_profile: normal
-
     small_cap_heavy:
       allow_short_positions: false
       leverage_multiplier: 1.0
       concentration_profile: medium
       preferred_asset_class: Equity
       liquidity_profile: medium
-
     international_equity:
       allow_short_positions: false
       leverage_multiplier: 1.0
       concentration_profile: medium
       preferred_asset_class: International Equity
       liquidity_profile: normal
-
     rates_heavy:
       allow_short_positions: false
       leverage_multiplier: 1.0
       concentration_profile: medium
       preferred_asset_class: Rates
       liquidity_profile: normal
-
     credit_heavy:
       allow_short_positions: false
       leverage_multiplier: 1.0
       concentration_profile: medium
       preferred_asset_class: Credit
       liquidity_profile: medium
-
     long_short:
       allow_short_positions: true
       leverage_multiplier: 1.0
       concentration_profile: medium
       liquidity_profile: normal
-
     leveraged:
       allow_short_positions: true
       leverage_multiplier: 2.0
       concentration_profile: medium
       liquidity_profile: normal
-
     liquidity_stressed:
       allow_short_positions: false
       leverage_multiplier: 1.0
       concentration_profile: medium
       liquidity_profile: stressed
-
   required_position_fields:
-    - valuation_date
-    - member_id
-    - portfolio_id
-    - security_id
-    - quantity
-    - price
-    - market_value
-    - long_short_flag
-    - sector
-    - asset_class
-    - liquidity_bucket
-
+  - valuation_date
+  - member_id
+  - portfolio_id
+  - security_id
+  - quantity
+  - price
+  - market_value
+  - long_short_flag
+  - sector
+  - asset_class
+  - liquidity_bucket
   output_files:
     positions: data/processed/clearing_member_positions.parquet
     exposures: data/processed/portfolio_exposures.parquet
@@ -132,54 +115,42 @@ portfolio:
     liquidity: data/processed/portfolio_liquidity.parquet
     registry: data/processed/portfolio_registry.csv
     manifest: data/processed/portfolio_generation_manifest.json
-
 primary_model:
   type: historical_simulation
   confidence_level: 0.99
   lookback_days: 500
-
   mpor_days:
-    - 1
-    - 3
-    - 5
-
+  - 1
+  - 3
+  - 5
   multi_day_method: observed_overlapping
   use_current_positions: true
   preserve_full_pnl_distribution: true
   produce_component_attribution: true
   deterministic: true
-
   missing_risk_factor_policy: raise
   minimum_observations: 250
-
   independence_testing:
     use_non_overlapping_returns: true
     disclose_overlapping_serial_dependence: true
-
 challenger_model:
   type: parametric_var
   confidence_level: 0.99
   lookback_days: 500
-
   covariance_method: ewma
   ewma_lambda: 0.94
   include_mean: false
-
   mpor_days:
-    - 1
-    - 3
-    - 5
-
+  - 1
+  - 3
+  - 5
   multi_day_method: sqrt_time
   direct_returns_overlapping: true
-
   distribution: normal
-
   student_t_sensitivity:
     enabled: true
     degrees_of_freedom: 6.0
     standardize_to_unit_variance: true
-
   covariance_controls:
     enforce_symmetry: true
     apply_psd_correction: true
@@ -187,43 +158,35 @@ challenger_model:
     eigenvalue_floor: 1.0e-12
     preserve_marginal_variances: true
     renormalize_correlation_diagonal: true
-
   correlation_controls:
     enabled: true
     stress_multiplier: 1.25
     clip_lower_bound: -0.999
     clip_upper_bound: 0.999
     reapply_psd_correction: true
-
   attribution:
     produce_component_var: true
     produce_standalone_var: true
     produce_diversification_benefit: true
     reconciliation_tolerance: 1.0e-08
-
   missing_risk_factor_policy: raise
   minimum_observations: 250
   deterministic: true
-
   diagnostic_comparisons:
     historical_window_instability: true
     correlation_sensitivity: true
     tail_risk_underestimation: true
     volatility_reactivity: true
     diversification_assumptions: true
-
 validation:
   significance_level: 0.05
-
   independence_testing:
     use_non_overlapping_multi_day_observations: true
     disclose_overlapping_horizon_dependence: true
-
   challenger_comparison:
     enabled: true
     treat_challenger_as_benchmark_only: true
     challenger_not_presumed_superior: true
-
 config_files:
   data: configs/data/sources.yaml
   primary_model: configs/models/primary_model.yaml
@@ -232,51 +195,35 @@ config_files:
   validation: configs/validation/validation.yaml
   stress_scenarios: configs/stress/scenarios.yaml
   monitoring_thresholds: configs/monitoring/thresholds.yaml
-
-  margin:
+margin:
   base_margin:
     var_col: base_var
     floor_usd: 0.0
     cap_usd: null
-
   liquidity_addon:
-    parameter_source: >-
-      PRELIMINARY PLACEHOLDER - replace with an approved liquidation-cost,
-      bid-ask-spread, market-depth, and time-to-liquidate study.
     rates_by_bucket:
       high: 0.001
       medium: 0.003
-      low: 0.010
+      low: 0.01
       stressed: 0.025
     minimum_usd: 0.0
     maximum_fraction_of_gross: 0.05
-
   concentration_addon:
-    parameter_source: >-
-      PRELIMINARY PLACEHOLDER - replace with an approved concentration study,
-      observed liquidation-impact analysis, and governance-approved thresholds.
-    single_name_threshold: 0.20
-    single_name_rate: 0.10
-    sector_threshold: 0.40
+    single_name_threshold: 0.2
+    single_name_rate: 0.1
+    sector_threshold: 0.4
     sector_rate: 0.05
     aggregation_method: max
     minimum_usd: 0.0
-    maximum_fraction_of_gross: 0.10
-
+    maximum_fraction_of_gross: 0.1
   gap_risk_addon:
-    parameter_source: >-
-      PRELIMINARY PLACEHOLDER - replace with an approved historical gap-event,
-      jump-risk, default-event, and extreme-move study.
-    shocks_by_asset_class:
-      equity: 0.080
+    rates_by_asset_class:
+      equity: 0.08
       rates: 0.025
-      credit: 0.050
+      credit: 0.05
+      commodity: 0.1
     minimum_usd: 0.0
-    maximum_fraction_of_gross: 0.20
-
+    maximum_fraction_of_gross: 0.2
   stress_buffer:
-    parameter_source: >-
-      PRELIMINARY PLACEHOLDER - replace with an approved extreme-but-plausible
-      stress-scenario library and governance-approved coverage policy.
-    required_coverage_ratio: 1.00
+    required_coverage_ratio: 1.0
     maximum_buffer_usd: null
