@@ -537,8 +537,6 @@ The model must not be approved when:
 - The model exceeds approved risk appetite.
 - Compensating controls are inadequate.
 
----
-
 ## 8. Prohibition on Validation-Driven Tuning
 
 The model must not be tuned merely to pass validation tests.
