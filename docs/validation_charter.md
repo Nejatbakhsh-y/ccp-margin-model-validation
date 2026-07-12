@@ -807,8 +807,12 @@ Closed findings must remain in the permanent validation record.
 
 ## 12. Change and Revalidation Triggers
 
-Partial or full revalidation is required when material changes occur,
-including:
+Partial or full revalidation is required when a material change, deterioration,
+defect, control failure, or change in model use could affect the model's
+conceptual soundness, implementation integrity, performance, limitations, or
+risk profile.
+
+Revalidation triggers include:
 
 - Methodology changes.
 - Parameter changes.
@@ -838,8 +842,155 @@ including:
 - Failure of a compensating control.
 - Expiration of conditional approval.
 
+Additional revalidation triggers include:
+
+- Changes to model assumptions or limitations.
+- Changes to valuation or pricing methods.
+- Changes to risk-factor mappings.
+- Changes to data-quality controls.
+- Changes to missing-data treatment.
+- Changes to corporate-action treatment.
+- Changes to holiday or non-trading-day treatment.
+- Changes to portfolio netting or offset rules.
+- Changes to stressed-period selection.
+- Changes to model calibration windows.
+- Changes to model thresholds or materiality limits.
+- Changes to model dependencies or software libraries that could affect results.
+- Migration to a new platform, operating environment, database, or execution
+  infrastructure.
+- Changes to production interfaces, scheduling, orchestration, or downstream
+  consumption.
+- Repeated operational incidents or unexplained calculation differences.
+- Discovery that validation evidence is incomplete, inaccurate, or not
+  reproducible.
+- Failure to complete required remediation by an approved deadline.
+- Material findings issued by internal audit, external audit, regulators, or
+  other independent reviewers.
+- Changes that invalidate previously approved compensating controls.
+- Model performance outside approved monitoring thresholds.
+- Model use outside the previously validated scope.
+
+Every proposed or completed material change must be documented through a
+change-impact assessment.
+
+The change-impact assessment must contain:
+
+- Unique change identifier.
+- Change title.
+- Date identified or proposed.
+- Requesting party.
+- Responsible implementation owner.
+- Description of the change.
+- Business or risk rationale.
+- Affected model components.
+- Affected data, code, configuration, assumptions, and documentation.
+- Expected impact on margin calculations.
+- Expected impact on model risk.
+- Applicable revalidation triggers.
+- Materiality assessment.
+- Proposed revalidation scope.
+- Required testing.
+- Required evidence.
+- Implementation date.
+- Independent-validator review.
+- Validation decision.
+- Required conditions or restrictions.
+- Final approval or escalation record.
+
+Change identifiers must use the following format:
+
+`CHG-YYYY-NNN`
+
+where:
+
+- `YYYY` is the year in which the change was identified.
+- `NNN` is a sequential three-digit number.
+
+Examples include:
+
+- `CHG-2026-001`
+- `CHG-2026-002`
+- `CHG-2026-003`
+
+The independent validator must classify the required response as one of the
+following:
+
+- No additional validation required.
+- Targeted validation review.
+- Partial revalidation.
+- Full revalidation.
+- Immediate model-use restriction or suspension pending review.
+
+A targeted validation review may be appropriate when the change is limited,
+well understood, and does not materially alter the model methodology, risk
+profile, or approved use.
+
+Partial revalidation may include selected activities such as:
+
+- Independent recalculation.
+- Code review.
+- Data reconciliation.
+- Configuration review.
+- Backtesting.
+- Benchmark comparison.
+- Sensitivity testing.
+- Stress testing.
+- Margin-shortfall analysis.
+- Procyclicality analysis.
+- Implementation testing.
+- Documentation review.
+- Review of compensating controls.
+
+Full revalidation may be required when:
+
+- Core model methodology changes.
+- The model's approved purpose or scope changes materially.
+- A new material asset class, market, or product is introduced.
+- A material implementation defect affects historical or current results.
+- Performance deterioration is significant or persistent.
+- Multiple related changes collectively alter the model risk profile.
+- Prior validation conclusions are no longer reliable.
+- Conditional approval expires without satisfactory remediation.
+- Regulatory or validation authority requirements mandate full revalidation.
+
 The independent validator determines the required depth and scope of
-revalidation based on the materiality of the change.
+revalidation based on:
+
+- Nature of the change.
+- Magnitude of the change.
+- Components affected.
+- Model-risk significance.
+- Portfolio and financial impact.
+- Implementation complexity.
+- Performance implications.
+- Data implications.
+- Regulatory implications.
+- Operational dependencies.
+- Existing findings.
+- Effectiveness of compensating controls.
+- Reliability of available evidence.
+- Cumulative impact of related changes.
+
+The model owner may propose a revalidation scope but cannot make the final
+revalidation determination.
+
+A material change must not be placed into unrestricted production use before
+the required independent review is completed, unless an authorized exception
+is documented with:
+
+- Business justification.
+- Risk assessment.
+- Temporary controls.
+- Model-use restrictions.
+- Approval authority.
+- Expiration date.
+- Required follow-up validation.
+
+All revalidation decisions, testing, evidence, conclusions, conditions, and
+approvals must remain version-controlled and traceable.
+
+Completion of implementation testing does not by itself constitute completion
+of independent revalidation.
 
 ---
 
