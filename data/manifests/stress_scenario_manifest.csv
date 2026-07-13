@@ -1,0 +1,21 @@
+scenario_id,scenario_type,scenario_name,start_date,end_date,description
+HIST_2008_GFC,historical,2008 global financial crisis,2008-09-02,2009-03-09,Peak-stress window spanning the Lehman failure and equity-market trough.
+HIST_2011_US_DOWNGRADE,historical,2011 U.S. downgrade and equity stress,2011-07-22,2011-10-03,"U.S. sovereign downgrade, equity selloff, and risk-off market stress."
+HIST_2015_2016_DISLOCATIONS,historical,2015-2016 market dislocations,2015-08-18,2016-02-11,"China devaluation, commodity weakness, credit stress, and global risk aversion."
+HIST_2020_COVID,historical,March 2020 COVID shock,2020-02-19,2020-03-23,COVID-19 market collapse from the pre-crisis equity peak to the March trough.
+HIST_2022_INFLATION_RATES,historical,2022 inflation and interest-rate shock,2022-01-03,2022-10-14,Joint equity and fixed-income losses during rapid monetary tightening.
+HIST_2023_REGIONAL_BANKS,historical,2023 regional-bank stress,2023-03-01,2023-05-04,"Silicon Valley Bank, Signature Bank, and First Republic stress window."
+HYP_CORRELATIONS_TO_ONE,hypothetical,Correlations converge toward one,,,"All off-diagonal correlations are set to 0.95; current volatilities, a 5-day square-root horizon, and the 99.00% normal quantile are used."
+HYP_CREDIT_SPREAD_WIDER_100BP,hypothetical,Credit spreads wider by 100 basis points,,,Credit ETF price returns use the first-order spread-duration approximation -SD*spread_change.
+HYP_CREDIT_SPREAD_WIDER_250BP,hypothetical,Credit spreads wider by 250 basis points,,,Credit ETF price returns use the first-order spread-duration approximation -SD*spread_change.
+HYP_CREDIT_SPREAD_WIDER_500BP,hypothetical,Credit spreads wider by 500 basis points,,,Credit ETF price returns use the first-order spread-duration approximation -SD*spread_change.
+HYP_EQUITY_DOWN_10,hypothetical,Equity prices down 10%,,,Configured equity securities receive a -10.00% simple return; other securities receive zero direct price shock.
+HYP_EQUITY_DOWN_20,hypothetical,Equity prices down 20%,,,Configured equity securities receive a -20.00% simple return; other securities receive zero direct price shock.
+HYP_EQUITY_DOWN_30,hypothetical,Equity prices down 30%,,,Configured equity securities receive a -30.00% simple return; other securities receive zero direct price shock.
+HYP_LARGEST_MEMBER_DEFAULT_STRESSED_LIQUIDITY,hypothetical,Largest member defaults during stressed liquidity,,,"Largest member by gross exposure receives the maximum configured equity, rates, and credit shocks, plus the largest-position-gap and stressed-volume assumptions concurrently."
+HYP_LARGEST_POSITION_GAP_25,hypothetical,Largest position gaps by 25%,,,The member's largest absolute position receives a 25% adverse overnight price gap; direction is adverse for both long and short positions.
+HYP_TSY_YIELD_UP_100BP,hypothetical,Treasury yields up 100 basis points,,,Treasury ETF price returns use the duration-convexity approximation -D*dy + 0.5*C*dy^2 with explicitly configured parameters.
+HYP_TSY_YIELD_UP_200BP,hypothetical,Treasury yields up 200 basis points,,,Treasury ETF price returns use the duration-convexity approximation -D*dy + 0.5*C*dy^2 with explicitly configured parameters.
+HYP_TSY_YIELD_UP_300BP,hypothetical,Treasury yields up 300 basis points,,,Treasury ETF price returns use the duration-convexity approximation -D*dy + 0.5*C*dy^2 with explicitly configured parameters.
+HYP_VOLATILITY_DOUBLED,hypothetical,Volatility doubled,,,Overlapping 5-day returns are centered and deviations are multiplied by 2; the 99.00% empirical loss quantile is calculated over the latest 500 daily observations.
+HYP_VOLUME_DOWN_80,hypothetical,Trading volume falls by 80%,,,Liquidity add-ons scale by remaining_volume^(-0.5); an 80% decline produces a 2.236068 multiplier.

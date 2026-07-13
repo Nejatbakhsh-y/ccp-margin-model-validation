@@ -1,0 +1,83 @@
+schema_version: "1.0"
+configuration_status: preliminary_placeholder
+
+# IMPORTANT GOVERNANCE WARNING
+# These dates, durations, convexities, spread durations, correlation assumptions,
+# and liquidity-impact assumptions are transparent implementation placeholders.
+# They are not approved production calibrations. Before production use, replace
+# them through documented model-change governance and independent validation.
+
+historical_scenarios:
+  - scenario_id: HIST_2008_GFC
+    name: 2008 global financial crisis
+    start_date: "2008-09-02"
+    end_date: "2009-03-09"
+    description: Peak-stress window spanning the Lehman failure and equity-market trough.
+
+  - scenario_id: HIST_2011_US_DOWNGRADE
+    name: 2011 U.S. downgrade and equity stress
+    start_date: "2011-07-22"
+    end_date: "2011-10-03"
+    description: U.S. sovereign downgrade, equity selloff, and risk-off market stress.
+
+  - scenario_id: HIST_2015_2016_DISLOCATIONS
+    name: 2015-2016 market dislocations
+    start_date: "2015-08-18"
+    end_date: "2016-02-11"
+    description: China devaluation, commodity weakness, credit stress, and global risk aversion.
+
+  - scenario_id: HIST_2020_COVID
+    name: March 2020 COVID shock
+    start_date: "2020-02-19"
+    end_date: "2020-03-23"
+    description: COVID-19 market collapse from the pre-crisis equity peak to the March trough.
+
+  - scenario_id: HIST_2022_INFLATION_RATES
+    name: 2022 inflation and interest-rate shock
+    start_date: "2022-01-03"
+    end_date: "2022-10-14"
+    description: Joint equity and fixed-income losses during rapid monetary tightening.
+
+  - scenario_id: HIST_2023_REGIONAL_BANKS
+    name: 2023 regional-bank stress
+    start_date: "2023-03-01"
+    end_date: "2023-05-04"
+    description: Silicon Valley Bank, Signature Bank, and First Republic stress window.
+
+hypothetical_scenarios:
+  equity_down_pct: [0.10, 0.20, 0.30]
+  treasury_yield_up_bps: [100, 200, 300]
+  credit_spread_wider_bps: [100, 250, 500]
+  volatility_multiplier: 2.0
+  correlation_target: 0.95
+  trading_volume_decline_pct: 0.80
+  liquidity_impact_exponent: 0.50
+  largest_position_gap_pct: 0.25
+  confidence_level: 0.99
+  horizon_days: 5
+  lookback_days: 500
+
+  # Security classifications are explicit. Unknown instruments in a shocked
+  # category must be added here; the implementation does not silently assign
+  # unapproved risk parameters.
+  equity_securities: [SPY, QQQ, IWM, EFA, EEM, VNQ]
+  treasury_securities: [TLT, IEF]
+  credit_securities: [LQD, HYG]
+
+  treasury_duration_years:
+    TLT: 17.0
+    IEF: 7.5
+
+  treasury_convexity_years2:
+    TLT: 290.0
+    IEF: 65.0
+
+  credit_spread_duration_years:
+    LQD: 8.0
+    HYG: 3.5
+
+reverse_stress:
+  # Fractional price shock; 1.0 represents a 100% adverse move.
+  maximum_shock_pct: 1.0
+  tolerance: 0.00000001
+  maximum_iterations: 200

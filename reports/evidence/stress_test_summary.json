@@ -1,0 +1,24 @@
+{
+  "as_of_date": "2026-07-10",
+  "configuration_status": "preliminary_placeholder",
+  "execution_timestamp_utc": "2026-07-13T02:46:42+00:00",
+  "historical_scenario_count": 6,
+  "hypothetical_scenario_count": 14,
+  "largest_margin_shortfall": 358333835.53930163,
+  "margin_breach_rows": 118,
+  "member_count": 30,
+  "members_with_at_least_one_breach": 30,
+  "model_version": "6854260",
+  "outputs": {
+    "reverse_results_csv": "reports\\evidence\\reverse_stress_results.csv",
+    "reverse_results_parquet": "data\\processed\\reverse_stress_results.parquet",
+    "scenario_manifest_csv": "data\\manifests\\stress_scenario_manifest.csv",
+    "stress_results_csv": "reports\\evidence\\stress_test_results.csv",
+    "stress_results_parquet": "data\\processed\\stress_test_results.parquet"
+  },
+  "status": "completed",
+  "stress_result_rows": 571,
+  "total_scenario_count": 20,
+  "worst_member_id": "CM009",
+  "worst_scenario_id": "HIST_2008_GFC"
+}
