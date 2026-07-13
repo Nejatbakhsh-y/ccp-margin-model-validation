@@ -1,0 +1,9 @@
+parameter,scenario_count,mean_absolute_margin_change_pct,maximum_absolute_margin_change_pct,mean_absolute_exception_rate_change,maximum_absolute_exception_rate_change,mean_absolute_shortfall_change_pct,maximum_absolute_shortfall_change_pct,minimum_member_rank_correlation,maximum_absolute_member_rank_change,maximum_absolute_margin_elasticity,stability_flag,review_reasons
+confidence_level,2,0.000828461321143843,0.0016544038230945936,0.0,0.0,0.0,0.0,1.0,0.0,0.003275719569727292,STABLE,
+lookback_days,4,6.797442466725749,18.93968446728677,3.3333333333333335e-05,0.00013333333333333334,0.0,0.0,0.9946607341490545,2.0,0.2729061162433252,STABLE,
+mpor_days,2,35.91784572624424,38.68480355719305,0.0,0.0,0.0,0.0,0.9835372636262514,5.0,0.16575443947647708,REVIEW,margin_change
+ewma_lambda,2,0.00017299418558044017,0.00034346955196778783,0.0,0.0,0.0,0.0,1.0,0.0,8.071534471243029e-05,STABLE,
+concentration_threshold,2,12.833199003268662,13.016335952361159,0.0,0.0,0.0,0.0,0.9973303670745273,2.0,0.26032671904722315,STABLE,
+liquidity_threshold_adv,2,2.251641588791424,2.6818961800311176,0.0,0.0,0.0,0.0,0.9995550611790879,1.0,0.036427739951034606,STABLE,
+stress_buffer,3,19.6969696969697,36.36363636363635,0.0,0.0,0.0,0.0,1.0,0.0,0.09090909090909101,REVIEW,margin_change
+correlation_shock,2,0.0025170692477948123,0.0049770807958923816,0.0,0.0,0.0,0.0,1.0,0.0,,STABLE,

@@ -1,0 +1,16 @@
+{
+  "methodology": "one_at_a_time",
+  "baseline_scenario_id": "baseline",
+  "scenario_count": 20,
+  "non_baseline_scenario_count": 19,
+  "significance_level": 0.05,
+  "top_member_count": 5,
+  "stability_review_thresholds": {
+    "max_absolute_margin_change_pct": 25.0,
+    "max_absolute_exception_rate_change": 0.01,
+    "max_absolute_shortfall_change_pct": 25.0,
+    "minimum_member_rank_correlation": 0.9
+  },
+  "configuration_status": "preliminary",
+  "warning": "Stability review thresholds are preliminary diagnostic thresholds and are not approved production limits."
+}

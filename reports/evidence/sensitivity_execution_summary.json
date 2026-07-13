@@ -1,0 +1,40 @@
+{
+  "calculation_assumptions": {
+    "adv_window": 20,
+    "backtest_dates": 250,
+    "base_margin_rule": "maximum_of_primary_and_challenger",
+    "concentration_addon_rate": 0.1,
+    "gap_risk_quantile": 0.999,
+    "liquidity_addon_rate": 0.05,
+    "maximum_forward_mpor": 5,
+    "maximum_lookback": 1000,
+    "position_snapshot_mode": "dated_position_snapshots"
+  },
+  "executed_at_utc": "2026-07-13T02:07:17+00:00",
+  "limitations": [
+    "Historical positions use the latest eligible snapshot.",
+    "Numerical margin parameters remain preliminary calibrations.",
+    "The liquidity add-on uses position quantity divided by trailing ADV.",
+    "Total base margin is the maximum of primary and challenger VaR."
+  ],
+  "manifest": "C:\\Users\\nejat\\OneDrive\\Desktop\\UN\\Skills\\GitHub 2026\\ccp-margin-model-validation\\data\\processed\\sensitivity_scenario_manifest.csv",
+  "member_count": 30,
+  "output": "C:\\Users\\nejat\\OneDrive\\Desktop\\UN\\Skills\\GitHub 2026\\ccp-margin-model-validation\\data\\processed\\sensitivity_scenario_results.parquet",
+  "position_snapshot_mode": "dated_position_snapshots",
+  "position_source": "C:\\Users\\nejat\\OneDrive\\Desktop\\UN\\Skills\\GitHub 2026\\ccp-margin-model-validation\\data\\processed\\clearing_member_positions.parquet",
+  "required_columns": [
+    "scenario_id",
+    "date",
+    "member_id",
+    "margin",
+    "realized_loss"
+  ],
+  "return_observations": 4909,
+  "row_count": 150000,
+  "scenario_count": 20,
+  "security_count": 23,
+  "status": "completed",
+  "test_date_count": 250,
+  "test_date_end": "2026-07-02",
+  "test_date_start": "2025-07-07"
+}

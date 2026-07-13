@@ -1,0 +1,73 @@
+schema_version: "1.0"
+
+methodology:
+  design: one_at_a_time
+  description: >
+    Change one parameter at a time while holding all other parameters at the
+    documented baseline. This isolates parameter effects and avoids conflating
+    interactions with first-order sensitivity.
+  configuration_status: preliminary
+
+baseline:
+  confidence_level: 0.99
+  lookback_days: 500
+  mpor_days: 1
+  ewma_lambda: 0.94
+  concentration_threshold: 0.20
+  liquidity_threshold_adv: 0.10
+  stress_buffer: 0.10
+  correlation_shock: current
+
+parameter_sets:
+  confidence_level:
+    - 0.975
+    - 0.99
+    - 0.995
+  lookback_days:
+    - 153
+    - 250
+    - 500
+    - 750
+    - 1000
+  mpor_days:
+    - 1
+    - 3
+    - 5
+  ewma_lambda:
+    - 0.90
+    - 0.94
+    - 0.97
+  concentration_threshold:
+    - 0.10
+    - 0.20
+    - 0.30
+  liquidity_threshold_adv:
+    - 0.05
+    - 0.10
+    - 0.20
+  stress_buffer:
+    - 0.00
+    - 0.10
+    - 0.25
+    - 0.50
+  correlation_shock:
+    - current
+    - plus_25_percent
+    - near_one
+
+reporting:
+  top_member_count: 5
+  significance_level: 0.05
+
+  # PRELIMINARY PLACEHOLDER review thresholds.
+  # These are diagnostic escalation thresholds, not production approval limits.
+  stability_review_thresholds:
+    max_absolute_margin_change_pct: 25.0
+    max_absolute_exception_rate_change: 0.01
+    max_absolute_shortfall_change_pct: 25.0
+    minimum_member_rank_correlation: 0.90
+
+paths:
+  manifest: data/processed/sensitivity_scenario_manifest.csv
+  scenario_results: data/processed/sensitivity_scenario_results.parquet
+  report_directory: reports/validation/sensitivity
