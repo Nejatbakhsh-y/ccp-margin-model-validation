@@ -1,3 +1,97 @@
+[CmdletBinding()]
+param(
+    [switch]$SkipInstall,
+    [switch]$NoLaunch,
+    [switch]$CommitAndPush
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = "Stop"
+
+function Write-Section {
+    param([Parameter(Mandatory = $true)][string]$Text)
+    Write-Host ""
+    Write-Host ("=" * 78) -ForegroundColor DarkCyan
+    Write-Host $Text -ForegroundColor Cyan
+    Write-Host ("=" * 78) -ForegroundColor DarkCyan
+}
+
+function Resolve-ProjectRoot {
+    $current = $PSScriptRoot
+    $parent = Split-Path -Parent $PSScriptRoot
+
+    foreach ($candidate in @($current, $parent)) {
+        if (
+            (Test-Path (Join-Path $candidate ".venv\Scripts\python.exe")) -and
+            (Test-Path (Join-Path $candidate "src\ccp_margin")) -and
+            (Test-Path (Join-Path $candidate "data\processed"))
+        ) {
+            return (Resolve-Path $candidate).Path
+        }
+    }
+
+    throw @"
+The CCP project root could not be identified.
+
+Save this file as:
+scripts\19_build_streamlit_dashboard.ps1
+
+inside:
+C:\Users\nejat\OneDrive\Desktop\UN\Skills\GitHub 2026\ccp-margin-model-validation
+"@
+}
+
+function Ensure-Requirement {
+    param(
+        [Parameter(Mandatory = $true)][string]$PackageName,
+        [Parameter(Mandatory = $true)][string]$Requirement
+    )
+
+    $existing = Get-Content -Path $script:RequirementsPath -ErrorAction SilentlyContinue
+    $pattern = "^\s*" + [regex]::Escape($PackageName) + "(\s|\[|=|<|>|!|~)"
+    $found = $false
+
+    foreach ($line in $existing) {
+        if ($line -match $pattern) {
+            $found = $true
+            break
+        }
+    }
+
+    if (-not $found) {
+        $CurrentRequirementText = [System.IO.File]::ReadAllText($script:RequirementsPath)
+        $Prefix = if ($CurrentRequirementText.Length -gt 0 -and -not $CurrentRequirementText.EndsWith("`n")) { [Environment]::NewLine } else { "" }
+        [System.IO.File]::AppendAllText(
+            $script:RequirementsPath,
+            $Prefix + $Requirement + [Environment]::NewLine,
+            [System.Text.UTF8Encoding]::new($false)
+        )
+        Write-Host "Added requirement: $Requirement"
+    }
+    else {
+        Write-Host "Requirement already present: $PackageName"
+    }
+}
+
+$ProjectRoot = Resolve-ProjectRoot
+Set-Location $ProjectRoot
+
+$Python = Join-Path $ProjectRoot ".venv\Scripts\python.exe"
+$DashboardDir = Join-Path $ProjectRoot "dashboard"
+$StreamlitDir = Join-Path $ProjectRoot ".streamlit"
+$AppPath = Join-Path $DashboardDir "app.py"
+$ConfigPath = Join-Path $StreamlitDir "config.toml"
+$script:RequirementsPath = Join-Path $ProjectRoot "requirements.txt"
+
+Write-Section "Step 19 - Build the Streamlit dashboard"
+Write-Host "Project root: $ProjectRoot"
+Write-Host "Python:       $Python"
+
+New-Item -ItemType Directory -Force -Path $DashboardDir | Out-Null
+New-Item -ItemType Directory -Force -Path $StreamlitDir | Out-Null
+
+Write-Section "Creating dashboard\app.py"
+$AppContent = @'
 from __future__ import annotations
 
 import math
@@ -899,3 +993,202 @@ def main() -> None:
 if __name__ == "__main__":
     main()
 
+'@
+Set-Content -Path $AppPath -Value $AppContent -Encoding UTF8
+Write-Host "Created: $AppPath" -ForegroundColor Green
+
+Write-Section "Creating .streamlit\config.toml"
+$ConfigContent = @'
+[theme]
+base = "light"
+primaryColor = "#1F4E79"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F3F6F9"
+textColor = "#17202A"
+font = "sans serif"
+
+[server]
+headless = true
+runOnSave = true
+
+[browser]
+gatherUsageStats = false
+'@
+[System.IO.File]::WriteAllText(`n    $ConfigPath,`n    $ConfigContent.TrimStart(),`n    [System.Text.UTF8Encoding]::new($false)`n)
+Write-Host "Created: $ConfigPath" -ForegroundColor Green
+
+Write-Section "Updating Python dependencies"
+if (-not (Test-Path $script:RequirementsPath)) {
+    New-Item -ItemType File -Path $script:RequirementsPath -Force | Out-Null
+}
+
+Ensure-Requirement -PackageName "streamlit" -Requirement "streamlit>=1.36"
+Ensure-Requirement -PackageName "pandas" -Requirement "pandas>=2.0"
+Ensure-Requirement -PackageName "numpy" -Requirement "numpy>=1.24"
+Ensure-Requirement -PackageName "scipy" -Requirement "scipy>=1.11"
+Ensure-Requirement -PackageName "pyarrow" -Requirement "pyarrow>=15"
+Ensure-Requirement -PackageName "duckdb" -Requirement "duckdb>=1.0"
+
+if (-not $SkipInstall) {
+    Write-Host "Installing requirements into the existing project virtual environment..."
+    & $Python -m pip install --upgrade pip
+    if ($LASTEXITCODE -ne 0) {
+        throw "pip upgrade failed."
+    }
+
+    & $Python -m pip install -r $script:RequirementsPath
+    if ($LASTEXITCODE -ne 0) {
+        throw "Dependency installation failed."
+    }
+}
+else {
+    Write-Host "Dependency installation skipped because -SkipInstall was supplied."
+}
+
+Write-Section "Validating the generated application"
+& $Python -m py_compile $AppPath
+if ($LASTEXITCODE -ne 0) {
+    throw "dashboard\app.py failed Python syntax validation."
+}
+
+& $Python -c "import streamlit, pandas, numpy, scipy, pyarrow; print('Streamlit:', streamlit.__version__); print('Pandas:', pandas.__version__); print('PyArrow:', pyarrow.__version__)"
+if ($LASTEXITCODE -ne 0) {
+    throw "Required dashboard packages could not be imported."
+}
+
+Write-Host "Python syntax and package validation passed." -ForegroundColor Green
+
+Write-Section "Prepared-result input inventory"
+$InputGroups = [ordered]@{
+    "Daily member margin" = @(
+        "data\processed\daily_member_margin.parquet",
+        "data\processed\daily_member_margin.csv"
+    )
+    "Backtesting results" = @(
+        "data\processed\backtesting_results.parquet",
+        "data\processed\backtesting_results.csv",
+        "data\processed\sensitivity_scenario_results.parquet"
+    )
+    "Sensitivity results" = @(
+        "data\processed\sensitivity_scenario_results.parquet",
+        "data\processed\sensitivity_scenario_results.csv"
+    )
+    "Stress results" = @(
+        "data\processed\stress_test_results.parquet",
+        "data\processed\stress_test_results.csv"
+    )
+    "Procyclicality or monitoring results" = @(
+        "data\processed\monitoring_metrics.parquet",
+        "data\processed\monitoring_metrics.csv",
+        "data\processed\procyclicality_metrics.parquet",
+        "data\processed\procyclicality_metrics.csv",
+        "reports\tables\procyclicality_summary.csv"
+    )
+    "Validation findings" = @(
+        "data\processed\validation_findings.parquet",
+        "data\processed\validation_findings.csv",
+        "reports\evidence\findings.csv",
+        "reports\findings_tracker.csv",
+        "reports\evidence\validation_findings.csv"
+    )
+}
+
+$MissingGroups = New-Object System.Collections.Generic.List[string]
+foreach ($group in $InputGroups.Keys) {
+    $found = $null
+    foreach ($relativePath in $InputGroups[$group]) {
+        $absolutePath = Join-Path $ProjectRoot $relativePath
+        if (Test-Path $absolutePath) {
+            $found = $relativePath
+            break
+        }
+    }
+
+    if ($null -ne $found) {
+        Write-Host ("[READY]   {0}: {1}" -f $group, $found) -ForegroundColor Green
+    }
+    else {
+        Write-Host ("[MISSING] {0}: no preferred file found" -f $group) -ForegroundColor Yellow
+        $MissingGroups.Add($group)
+    }
+}
+
+$DatabaseFiles = @(
+    Get-ChildItem -Path (Join-Path $ProjectRoot "data") -Recurse -File -ErrorAction SilentlyContinue |
+    Where-Object { $_.Extension -in @(".db", ".sqlite") }
+)
+if ($DatabaseFiles.Count -gt 0) {
+    foreach ($database in $DatabaseFiles) {
+        Write-Host ("[READY]   SQLite database: {0}" -f $database.FullName.Replace($ProjectRoot + "\", "")) -ForegroundColor Green
+    }
+}
+else {
+    Write-Host "[INFO]    No SQLite database discovered. File-based sources will be used." -ForegroundColor DarkGray
+}
+
+if ($MissingGroups.Count -gt 0) {
+    Write-Host ""
+    Write-Warning (
+        "Some optional dashboard areas have no preferred prepared file: " +
+        ($MissingGroups -join "; ") +
+        ". The application will still start and will display a precise missing-data notice on those pages."
+    )
+}
+
+if ($CommitAndPush) {
+    Write-Section "Committing and pushing the dashboard"
+    if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+        throw "Git is not available in the VS Code terminal."
+    }
+
+    $FilesToStage = @(
+        "dashboard",
+        ".streamlit\config.toml",
+        "requirements.txt"
+    )
+
+    $ScriptRelative = $MyInvocation.MyCommand.Path
+    if ($ScriptRelative.StartsWith($ProjectRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
+        $ScriptRelative = $ScriptRelative.Substring($ProjectRoot.Length).TrimStart("\")
+        $FilesToStage += $ScriptRelative
+    }
+
+    & git add -- $FilesToStage
+    if ($LASTEXITCODE -ne 0) {
+        throw "git add failed."
+    }
+
+    & git diff --cached --quiet
+    $DiffExitCode = $LASTEXITCODE
+    if ($DiffExitCode -eq 1) {
+        & git commit -m "Build Streamlit margin validation dashboard"
+        if ($LASTEXITCODE -ne 0) {
+            throw "git commit failed."
+        }
+
+        & git push
+        if ($LASTEXITCODE -ne 0) {
+            throw "git push failed."
+        }
+        Write-Host "Dashboard changes were committed and pushed." -ForegroundColor Green
+    }
+    elseif ($DiffExitCode -eq 0) {
+        Write-Host "No new dashboard changes required a commit."
+    }
+    else {
+        throw "Unable to evaluate staged Git changes."
+    }
+}
+
+Write-Section "Step 19 build completed"
+Write-Host "Application entry file: dashboard\app.py"
+Write-Host "Local command:          python -m streamlit run dashboard\app.py"
+Write-Host "Stop the local server with Ctrl+C."
+
+if (-not $NoLaunch) {
+    Write-Section "Launching the local Streamlit dashboard"
+    & $Python -m streamlit run $AppPath
+}
+else {
+    Write-Host "Launch skipped because -NoLaunch was supplied."
+}
