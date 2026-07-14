@@ -1,395 +1,369 @@
 # CCP Margin Model Independent Validation Framework
 
-> **Temporary README — work in progress**
->
-> This repository is under active development. The README will be revised as empirical testing, calibration, reporting, and validation documentation are completed.
+[![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
+[![Tests](https://img.shields.io/badge/tests-pytest-informational.svg)](#test-commands)
+[![Dashboard](https://img.shields.io/badge/dashboard-Streamlit-red.svg)](#dashboard-screenshot)
+[![Purpose](https://img.shields.io/badge/purpose-educational%20validation-lightgrey.svg)](#project-disclaimer)
 
-## Project Overview
+## Executive Description
 
-This repository contains a reproducible independent-validation framework for a central counterparty clearing organization initial margin model.
+This repository implements an end-to-end, reproducible framework for independently developing, challenging, and validating a central counterparty clearing margin model. The project covers synthetic clearing-member portfolios, public market data, primary and challenger margin methodologies, margin add-ons, backtesting, benchmark comparison, sensitivity analysis, stress testing, procyclicality assessment, implementation verification, validation findings, evidence generation, and an executive Streamlit dashboard.
 
-The project evaluates whether a CCP margin methodology is:
+The framework is designed as a model-risk-management portfolio project. It demonstrates how a validator can separate model development from independent review, translate conceptual requirements into testable controls, preserve reproducible evidence, and communicate conclusions, limitations, and remediation priorities.
 
-- Conceptually sound.
-- Implemented correctly.
-- Supported by suitable and reliable data.
-- Performing within documented expectations.
-- Stable across market conditions and parameter choices.
-- Adequately conservative under stressed conditions.
-- Supported by documented governance, limitations, and controls.
+## Business and Regulatory Motivation
 
-The framework combines primary and challenger margin models, statistical backtesting, stress testing, sensitivity testing, procyclicality analysis, implementation verification, data-quality controls, and model-risk governance.
+Central counterparties manage counterparty exposure by collecting margin from clearing members. A margin framework must remain sufficiently risk-sensitive to cover potential liquidation losses while avoiding unexplained instability, excessive procyclicality, weak implementation controls, or dependence on a single methodology.
 
-## Core Objectives
+This project applies independent-validation principles commonly used in financial model-risk management:
 
-1. Implement a historical-simulation initial margin model.
-2. Develop a parametric EWMA challenger model.
-3. Generate deterministic synthetic clearing-member portfolios.
-4. Incorporate liquidity, concentration, gap-risk, and stress-buffer components.
-5. Perform formal statistical backtesting.
-6. Analyze margin exceptions and shortfalls.
-7. Test model sensitivity and stability.
-8. Evaluate historical, hypothetical, and reverse-stress scenarios.
-9. Measure margin procyclicality.
-10. Produce reproducible independent-validation evidence.
+- clear model purpose, scope, assumptions, and limitations;
+- documented primary and challenger methodologies;
+- data-quality and implementation controls;
+- outcome analysis through backtesting and margin-shortfall testing;
+- parameter sensitivity and benchmark comparison;
+- historical, hypothetical, and reverse stress testing;
+- procyclicality measurement and stability analysis;
+- traceable findings, severity classification, and remediation evidence.
 
-## Current Project Status
+The implementation is not a regulatory approval, legal opinion, or representation of any clearing agency's proprietary methodology.
 
-The repository currently includes:
+## Project Disclaimer
 
-- Independent validation governance documentation.
-- A formal validation charter.
-- YAML-based configuration management.
-- Market-data and FRED-data pipelines.
-- Data-quality controls and exception reporting.
-- Synthetic clearing-member portfolio generation.
-- Historical-simulation primary margin model.
-- Parametric EWMA challenger model.
-- Liquidity, concentration, gap-risk, and stress-buffer components.
-- Statistical backtesting modules.
-- Sensitivity-testing infrastructure.
-- Historical, hypothetical, and reverse-stress testing.
-- Implementation-verification controls.
-- Automated pytest infrastructure.
+This repository is an independent educational and portfolio implementation
+using public and synthetic data. It is not an implementation of any
+proprietary DTCC, NSCC, FICC, OCC, CME, ICE, or other clearing-agency model.
+It is not intended for production margining, regulatory compliance, trading,
+investment, or risk-management decisions.
 
-The project remains under active development. Final empirical calibration, reporting, monitoring, and validation conclusions are still being completed.
+## Architecture Diagram
 
-## Margin Framework
-
-```text
-Total Initial Margin
-= Base VaR
-+ Liquidity Add-on
-+ Concentration Add-on
-+ Gap-Risk Add-on
-+ Stress Buffer
+```mermaid
+flowchart LR
+    A[Public Market Data] --> D[Data Download and Validation]
+    B[Public Macroeconomic Data] --> D
+    C[Synthetic Member Portfolios] --> E[Portfolio and Exposure Engine]
+    D --> F[Clean Prices and Returns]
+    E --> G[Primary Historical-Simulation Model]
+    F --> G
+    E --> H[Challenger Parametric EWMA Model]
+    F --> H
+    G --> I[Margin Components]
+    H --> J[Benchmark Comparison]
+    I --> K[Total Member Margin]
+    K --> L[Backtesting and Shortfall Analysis]
+    K --> M[Sensitivity Analysis]
+    K --> N[Stress Testing]
+    K --> O[Procyclicality Monitoring]
+    J --> P[Independent Validation Evidence]
+    L --> P
+    M --> P
+    N --> P
+    O --> P
+    P --> Q[Validation Report and Findings]
+    P --> R[Streamlit Dashboard]
 ```
 
-## Primary Margin Model
+## Model Inventory
 
-The primary historical-simulation methodology supports:
+| Component | Role | Core Methodology | Implementation Status |
+|---|---|---|---|
+| Primary margin model | Primary risk measure | 99% historical-simulation Value at Risk with configurable lookback and margin period of risk | Implemented |
+| Challenger margin model | Independent benchmark | Parametric variance-covariance VaR with EWMA covariance and correlation controls | Implemented |
+| Multi-day risk | Liquidation-horizon scaling | Direct multi-day returns and square-root-of-time comparison | Implemented within primary and challenger workflows |
+| Liquidity add-on | Market-liquidity risk | Position size relative to trading-volume or liquidity thresholds | Implemented |
+| Concentration add-on | Name and portfolio concentration | Exposure concentration relative to configured thresholds | Implemented |
+| Gap-risk add-on | Discontinuous price-move risk | Scenario-based or position-specific gap charge | Implemented |
+| Stress buffer | Tail and regime risk | Configurable stressed-loss buffer | Implemented |
+| Total margin | Aggregate requirement | Base margin plus applicable add-ons and buffers | Implemented |
+| Validation framework | Independent challenge | Coverage tests, independence tests, benchmark comparison, sensitivity, stress, shortfall, implementation verification, and procyclicality | Implemented |
 
-- Current portfolio positions.
-- Historical asset-return scenarios.
-- Full portfolio profit-and-loss distributions.
-- A configurable confidence level.
-- Configurable lookback windows.
-- One-day, three-day, and five-day margin periods of risk.
-- Directly observed overlapping multi-day returns.
-- Component-level attribution.
-- Missing-risk-factor controls.
-- Deterministic and reproducible calculations.
+## Margin Formula
 
-## Challenger Model
+For member \(m\) on date \(t\), the conceptual total initial-margin requirement is:
 
-The challenger methodology includes:
+\[
+IM_{m,t}
+=
+\max\left(
+BM_{m,t},
+SM_{m,t}
+\right)
++
+LA_{m,t}
++
+CA_{m,t}
++
+GA_{m,t}
++
+SB_{m,t},
+\]
 
-- Parametric variance-covariance VaR.
-- Exponentially weighted moving-average covariance estimation.
-- Configurable EWMA decay factors.
-- Correlation controls.
-- Positive-semidefinite covariance correction.
-- Square-root-of-time scaling.
-- Direct multi-day covariance estimation.
-- Normal and optional Student-t distribution assumptions.
+where:
 
-## Margin Add-ons
+- \(BM\) is base margin from the primary VaR model;
+- \(SM\) is any applicable stressed or benchmark floor;
+- \(LA\) is the liquidity add-on;
+- \(CA\) is the concentration add-on;
+- \(GA\) is the gap-risk add-on;
+- \(SB\) is the stress buffer.
 
-Separate components are implemented for:
+The exact aggregation logic is configuration-driven and should be interpreted together with the model documentation, assumptions, and limitations.
 
-- Liquidity risk.
-- Position concentration.
-- Gap and jump risk.
-- Stress buffering.
-- Total margin aggregation.
+## Validation Framework
 
-Add-on parameters are currently classified as **preliminary placeholders** unless supported by documented empirical calibration and formal governance approval.
+The independent-validation framework includes:
 
-Unknown liquidity buckets, asset classes, or configuration values are not silently assigned default rates. Configuration mismatches are designed to raise explicit errors.
+| Validation Area | Principal Tests and Evidence |
+|---|---|
+| Conceptual soundness | Methodology review, assumptions, risk coverage, model inventory, and benchmark rationale |
+| Data quality | Completeness, duplicates, missing observations, date continuity, schema checks, and exception evidence |
+| Outcome analysis | Backtesting exceptions, margin shortfalls, realized-loss coverage, and member-level diagnostics |
+| Statistical backtesting | Kupiec unconditional coverage; Christoffersen independence and conditional coverage |
+| Traffic-light assessment | Basel-style exception classification |
+| Benchmarking | Primary historical-simulation model versus parametric EWMA challenger |
+| Sensitivity and stability | Confidence level, lookback, MPOR, EWMA decay, add-on thresholds, stress buffers, and correlation shocks |
+| Stress testing | Historical, hypothetical, concentration, liquidity, wrong-way, and reverse-stress scenarios |
+| Procyclicality | Daily and weekly changes, jump frequencies, volatility relationships, stressed-to-calm ratios, and buffer behavior |
+| Implementation verification | Recalculation, deterministic execution, configuration checks, unit tests, and evidence reconciliation |
+| Findings management | Severity, impact, recommendation, owner, target date, status, and compensating controls |
 
-## Synthetic Clearing-Member Portfolios
+## Data Sources
 
-The portfolio generator uses a fixed random seed to create reproducible clearing-member portfolios.
+The project uses only public or synthetic inputs:
 
-Supported categories include:
+- public equity and exchange-traded-fund price histories;
+- public U.S. Treasury, interest-rate, volatility, and macroeconomic series obtained from FRED where configured;
+- deterministic synthetic clearing-member portfolios and positions;
+- locally generated model, validation, sensitivity, stress, and monitoring outputs.
 
-- Diversified long-only.
-- Concentrated equity.
-- Technology-heavy.
-- Small-cap-heavy.
-- International-equity.
-- Rates-heavy.
-- Credit-heavy.
-- Long-short.
-- Leveraged.
-- Liquidity-stressed.
-
-Position-level records include fields such as:
-
-```text
-valuation_date
-member_id
-portfolio_id
-security_id
-quantity
-price
-market_value
-long_short_flag
-sector
-asset_class
-liquidity_bucket
-```
-
-## Independent Validation Tests
-
-### Statistical Backtesting
-
-- Kupiec unconditional-coverage test.
-- Christoffersen independence test.
-- Christoffersen conditional-coverage test.
-- Basel traffic-light classification.
-- Exception-count analysis.
-- Margin-shortfall analysis.
-
-### Benchmark and Challenger Comparison
-
-- Primary-versus-challenger margin comparison.
-- Difference and ratio analysis.
-- Directional and rank consistency.
-- Portfolio-level and member-level divergence analysis.
-
-### Sensitivity and Stability Testing
-
-Controlled one-parameter-at-a-time scenarios cover:
-
-- Confidence level.
-- Lookback window.
-- Margin period of risk.
-- EWMA decay parameter.
-- Concentration threshold.
-- Liquidity threshold.
-- Stress-buffer level.
-- Correlation assumptions.
-
-### Implementation Verification
-
-- Configuration consistency.
-- Deterministic-result verification.
-- Independent recalculation.
-- Input-to-output reconciliation.
-- Missing-data behavior.
-- Numerical-tolerance testing.
-- Error-handling checks.
-- Reproducibility verification.
-
-## Stress Testing
-
-The framework includes historical, hypothetical, and reverse-stress testing.
-
-Historical periods include:
-
-- 2008 global financial crisis.
-- 2011 U.S. sovereign downgrade.
-- 2015–2016 market dislocations.
-- March 2020 COVID-19 market shock.
-- 2022 inflation and interest-rate shock.
-- 2023 regional-bank stress.
-
-Hypothetical scenarios include:
-
-- Equity declines of 10%, 20%, and 30%.
-- Yield shocks of 100, 200, and 300 basis points.
-- Credit-spread shocks of 100, 250, and 500 basis points.
-- Volatility doubling.
-- Correlations moving toward one.
-- Trading-volume reductions.
-- Large-position gap events.
-- Largest-member default scenarios.
-
-Reverse stress testing estimates the shock magnitude required to exhaust margin or breach a specified margin-coverage threshold.
-
-## Procyclicality Analysis
-
-The procyclicality framework evaluates:
-
-- Daily and weekly margin changes.
-- Peak-to-trough behavior.
-- Stressed-to-calm margin ratios.
-- Correlation between margin and realized volatility.
-- Correlation between margin changes and market losses.
-- Margin jumps above 10%, 20%, and 30%.
-- Clearing-member margin-call volatility.
-- Effects of margin floors and buffers.
-- Buffer depletion and replenishment.
-
-## Data Quality Controls
-
-The data-control framework tests for:
-
-- Duplicate dates.
-- Duplicate security-date records.
-- Missing prices.
-- Non-positive prices.
-- Missing volume.
-- Stale prices.
-- Extreme returns.
-- Corporate-action discontinuities.
-- Inconsistent market calendars.
-- Coverage and completeness failures.
-
-The pipeline produces data manifests, exception files, validation evidence, and summary tables.
+Raw data, secrets, credentials, and API keys must not be committed. Local secrets should be stored in `.env` or another excluded configuration mechanism.
 
 ## Repository Structure
 
 ```text
 ccp-margin-model-validation/
-├── configs/
-├── data/
-│   ├── raw/
-│   ├── interim/
-│   ├── processed/
-│   ├── synthetic/
-│   └── manifests/
-├── docs/
-├── notebooks/
-├── reports/
-│   ├── evidence/
-│   ├── figures/
-│   └── tables/
-├── scripts/
-├── src/
-│   └── ccp_margin/
-│       ├── data/
-│       ├── portfolio/
-│       ├── models/
-│       ├── margin/
-│       ├── validation/
-│       ├── stress/
-│       └── monitoring/
-├── tests/
-├── requirements.txt
-├── requirements-dev.txt
-└── README.md
+â”œâ”€â”€ .github/workflows/           # Continuous-integration workflows
+â”œâ”€â”€ .vscode/                     # VS Code project configuration
+â”œâ”€â”€ configs/                     # Project, model, validation, stress, and monitoring settings
+â”œâ”€â”€ dashboard/                   # Streamlit executive dashboard
+â”œâ”€â”€ data/
+â”‚   â”œâ”€â”€ raw/                     # Locally downloaded source data
+â”‚   â”œâ”€â”€ interim/                 # Intermediate transformations
+â”‚   â”œâ”€â”€ processed/               # Reproducible analytical datasets
+â”‚   â”œâ”€â”€ synthetic/               # Synthetic portfolio inputs
+â”‚   â””â”€â”€ manifests/               # Data lineage and ingestion manifests
+â”œâ”€â”€ docs/                        # Scope, charter, architecture, and supporting documentation
+â”œâ”€â”€ notebooks/exploratory/       # Non-production exploratory analysis
+â”œâ”€â”€ reports/
+â”‚   â”œâ”€â”€ figures/                 # Validation figures
+â”‚   â”œâ”€â”€ tables/                  # Validation tables
+â”‚   â””â”€â”€ evidence/                # Exceptions, findings, logs, and reproducibility evidence
+â”œâ”€â”€ scripts/                     # Ordered pipeline and validation entry points
+â”œâ”€â”€ sql/                         # Analytical database and SQL pipeline assets
+â”œâ”€â”€ src/ccp_margin/              # Reusable Python package
+â”œâ”€â”€ tests/                       # Unit and integration tests
+â”œâ”€â”€ requirements.txt             # Runtime dependencies
+â”œâ”€â”€ requirements-dev.txt         # Development and testing dependencies
+â””â”€â”€ README.md                    # Project overview and reproduction guide
 ```
 
-## Technology Stack
+## Installation Instructions
 
-- Python 3.11.
-- pandas.
-- NumPy.
-- SciPy.
-- PyYAML.
-- pyarrow.
-- pytest.
-- yfinance.
-- FRED data.
-- Git and GitHub.
-- Visual Studio Code.
-- Windows PowerShell.
+### Prerequisites
 
-The project is CPU-based and does not require CUDA, WSL, or a dedicated GPU.
+- Windows 10 or Windows 11;
+- Visual Studio Code;
+- Git;
+- Python 3.11;
+- PowerShell;
+- access to any externally configured public-data APIs.
 
-## Local Setup
-
-### Create and activate the virtual environment
+### Create and Activate the Environment
 
 ```powershell
+cd "C:\Users\nejat\OneDrive\Desktop\UN\Skills\GitHub 2026\ccp-margin-model-validation"
+
 python -m venv .venv
+Set-ExecutionPolicy -Scope Process Bypass
+.\.venv\Scripts\Activate.ps1
+
+python -m pip install --upgrade pip setuptools wheel
+python -m pip install -r requirements.txt
+python -m pip install -r requirements-dev.txt
+```
+
+### Configure Local Secrets
+
+Create a local `.env` file only when an API key is required. Do not commit `.env`.
+
+```text
+FRED_API_KEY=your_local_key
+```
+
+## Reproduction Commands
+
+Activate the project environment before executing the pipeline:
+
+```powershell
+cd "C:\Users\nejat\OneDrive\Desktop\UN\Skills\GitHub 2026\ccp-margin-model-validation"
 .\.venv\Scripts\Activate.ps1
 ```
 
-### Install dependencies
+The currently detected Python pipeline entry points are:
 
 ```powershell
-python -m pip install --upgrade pip setuptools wheel
-pip install -r requirements.txt
-pip install -r requirements-dev.txt
+python .\scripts\_daily_margin_common.py
+python .\scripts\_data_pipeline_common.py
+python .\scripts\00_validate_configuration.py
+python .\scripts\01_download_market_data.py
+python .\scripts\02_download_fred_data.py
+python .\scripts\03_validate_raw_data.py
+python .\scripts\04_build_clean_market_dataset.py
+python .\scripts\05_generate_member_portfolios.py
+python .\scripts\06_run_primary_model.py
+python .\scripts\07_run_challenger_model.py
+python .\scripts\08_calculate_margin_addons.py
+python .\scripts\09_run_daily_member_margin.py
+python .\scripts\12_run_stress_tests.py
+python .\scripts\14_run_validation_smoke_test.py
+python .\scripts\15_generate_sensitivity_manifest.py
+python .\scripts\15_generate_sensitivity_results.py
+python .\scripts\15_run_sensitivity_tests.py
+python .\scripts\17_generate_procyclicality_results.py
+python .\scripts\18_build_duckdb.py
 ```
 
-### Run automated tests
+Run the scripts in their numeric order unless a script's documentation explicitly states otherwise. The dashboard reads prepared result files and should not rebuild the full data pipeline at application startup.
+
+### Launch the Dashboard
 
 ```powershell
-pytest -q
+streamlit run .\dashboard\app.py
 ```
 
-### Run the data pipeline
+## Test Commands
+
+Run the complete test suite:
 
 ```powershell
-python scripts\01_download_market_data.py
-python scripts\02_download_fred_data.py
-python scripts\03_validate_raw_data.py
-python scripts\04_build_clean_market_dataset.py
-python scripts\05_generate_member_portfolios.py
+python -m pytest -q
 ```
 
-API keys and credentials must be stored locally and must not be committed to GitHub.
+Run unit tests only:
 
-## Reproducibility
+```powershell
+python -m pytest .\tests\unit -q
+```
 
-The project uses:
+Run tests with coverage:
 
-- Fixed random seeds.
-- Configuration-driven parameters.
-- Deterministic portfolio generation.
-- Version-controlled source code.
-- Explicit data manifests.
-- Independent validation scripts.
-- Automated tests.
-- Controlled scenario definitions.
-- Traceable analytical outputs.
-- Separation of primary and challenger methodologies.
+```powershell
+python -m pytest --cov=ccp_margin --cov-report=term-missing --cov-report=html
+```
 
-## Governance Principles
+Run static-quality checks when configured:
 
-- Validation independence.
-- Evidence-based conclusions.
-- Transparent assumptions.
-- Explicit model limitations.
-- Controlled parameter changes.
-- Reproducible results.
-- Documented finding severity.
-- Clear approval criteria.
-- Defined compensating controls.
-- Revalidation following material changes.
+```powershell
+python -m ruff check .
+python -m ruff format --check .
+```
 
-Validation is not treated as a process for confirming the model owner's preferred outcome. Conclusions are intended to be supported by independently generated evidence.
+## Results Summary
 
-## Important Limitations
+The framework produces auditable datasets, statistical-test outputs, figures, tables, evidence files, findings, and dashboard views. Availability depends on whether the associated pipeline steps have been executed in the local clone.
 
-This repository is an analytical, educational, and professional portfolio framework. It is not an approved production CCP margin system.
+| Output | Expected Path | Current Local Status |
+|---|---|---|
+| Clean market dataset | `data/processed/market_prices_clean.parquet` | Available |
+| Risk-factor returns | `data/processed/log_returns_wide.parquet` | Available |
+| Clearing-member positions | `data/processed/clearing_member_positions.parquet` | Available |
+| Portfolio exposures | `data/processed/portfolio_exposures.parquet` | Available |
+| Daily member margin | `data/processed/daily_member_margin.parquet` | Available |
+| Sensitivity results | `data/processed/sensitivity_scenario_results.parquet` | Available |
+| Stress-test results | `data/processed/stress_test_results.parquet` | Available |
+| Procyclicality results | `data/processed/procyclicality_results.parquet` | Not generated |
+| Data-quality summary | `reports/tables/data_quality_summary.csv` | Available |
+| Validation findings | `reports/evidence/validation_findings.csv` | Not generated |
+| Independent validation report | `reports/independent_validation_report.md` | Available |
+| Dashboard screenshot | `docs/assets/dashboard-overview.png` | Available |
 
-Current limitations include:
+Primary validation interpretation should be based on the generated independent-validation report and supporting evidence rather than on any single metric. A statistically acceptable exception rate does not, by itself, establish conceptual soundness, adequate stress coverage, appropriate calibration, or implementation correctness.
 
-- Synthetic clearing-member portfolios.
-- Public and simulated market data.
-- Preliminary parameter calibration.
-- Simplified product and risk-factor coverage.
-- No production default-management integration.
-- No claim of regulatory approval.
-- No claim that placeholder add-on rates are suitable for live clearing activity.
+## Dashboard Screenshot
 
-Production use would require formal calibration, independent review, legal and regulatory assessment, technology controls, security review, governance approval, and ongoing monitoring.
+The Streamlit dashboard presents executive results for daily member margin, exceptions, traffic-light status, Kupiec and Christoffersen tests, shortfalls, sensitivity analysis, stress testing, procyclicality, findings, and remediation.
 
-## Planned Enhancements
+![CCP margin model validation dashboard](docs/assets/dashboard-overview.png)
 
-- Completion of empirical sensitivity-result generation.
-- Expanded procyclicality analysis.
-- Additional backtesting diagnostics.
-- Automated validation-report generation.
-- Interactive dashboard development.
-- Expanded fixed-income and credit-risk coverage.
-- Additional stress scenarios.
-- Formal model-limitations register.
-- Findings and remediation workflow.
-- Continuous-integration enhancements.
-- Final independent validation report.
+## Findings Summary
 
-## Author
+The validation framework is structured to distinguish implementation defects, methodological limitations, calibration weaknesses, data-quality exceptions, and governance observations. Typical areas requiring explicit review include:
 
-**Yousef Nejatbakhsh, Ph.D.**
+1. empirical calibration of liquidity, concentration, gap-risk, and stress-buffer parameters;
+2. sensitivity of coverage and margin stability to confidence level, lookback, MPOR, and EWMA decay;
+3. treatment of concentrated, leveraged, illiquid, and long-short portfolios;
+4. independence and clustering of backtesting exceptions;
+5. stressed-period coverage and reverse-stress breakpoints;
+6. procyclical margin increases and buffer depletion or replenishment behavior;
+7. reconciliation among prepared datasets, validation tables, dashboard views, and the final report.
 
-This project was developed as a professional demonstration of quantitative model validation, CCP margin analytics, statistical backtesting, stress testing, reproducible research, model governance, and Python-based financial-risk implementation.
+Final conclusions, finding severities, compensating controls, and remediation statuses should be taken from `reports/independent_validation_report.md` and the corresponding evidence files.
 
-## Disclaimer
+## Limitations
 
-This repository is provided for research, education, and professional portfolio demonstration. It does not constitute financial, legal, regulatory, investment, clearing, margin, or risk-management advice.
+- The portfolios and clearing-member structures are synthetic.
+- Public market data cannot reproduce proprietary clearing-agency positions, liquidity measures, valuation controls, or default-management processes.
+- Add-on parameters require empirical calibration and governance approval before any operational interpretation.
+- Historical simulation is constrained by the observed sample and may not represent unobserved structural breaks.
+- Parametric VaR depends on distributional, covariance, correlation, and scaling assumptions.
+- Backtesting power is limited by the number of observations and exceptions.
+- Stress scenarios are illustrative and cannot establish complete tail-risk coverage.
+- Public price and macroeconomic sources may contain revisions, gaps, survivorship effects, or vendor-specific conventions.
+- The framework does not model every legal, operational, settlement, wrong-way-risk, collateral, or default-waterfall feature of a production CCP.
+- Local results may differ when source data, API responses, configurations, package versions, or execution dates change.
+
+## Future Extensions
+
+Potential extensions include:
+
+- empirically calibrated add-ons using public liquidity and transaction-cost proxies;
+- filtered historical simulation and volatility-rescaled returns;
+- expected shortfall and additional challenger models;
+- nonlinear instrument valuation and options portfolios;
+- collateral haircuts and wrong-way-risk overlays;
+- multi-currency and cross-asset portfolios;
+- default-fund and waterfall analytics;
+- automated model-change detection and monitoring thresholds;
+- containerized execution and scheduled continuous validation;
+- richer data-lineage, approval, issue-management, and audit-trail controls.
+
+## License
+
+No open-source license is granted unless a `LICENSE` file is present in the repository. In the absence of such a file, the source code and documentation remain subject to the repository owner's rights. The educational disclaimer above applies regardless of licensing status.
+
+## Citation Information
+
+When referencing this project, use the repository URL:
+
+`https://github.com/Nejatbakhsh-y/ccp-margin-model-validation`
+
+Suggested citation:
+
+> Nejatbakhsh, Yousef. *CCP Margin Model Independent Validation Framework*. GitHub repository, 2026. https://github.com/Nejatbakhsh-y/ccp-margin-model-validation.
+
+Suggested BibTeX:
+
+```bibtex
+@software{nejatbakhsh_ccp_margin_validation_2026,
+  author       = {Yousef Nejatbakhsh},
+  title        = {CCP Margin Model Independent Validation Framework},
+  year         = {2026},
+  url          = {https://github.com/Nejatbakhsh-y/ccp-margin-model-validation},
+  note         = {Independent educational and portfolio implementation using public and synthetic data}
+}
+```
+
+---
+
+README generated and validated on July 14, 2026.
