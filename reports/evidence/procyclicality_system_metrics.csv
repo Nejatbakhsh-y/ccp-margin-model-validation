@@ -1,0 +1,13 @@
+metric_date,metric_name,metric_value,threshold_value,status,details
+2026-07-02,system_margin_daily_pct_change,0.0006217426061640996,,INFORMATIONAL,Descriptive monitoring metric.
+2026-07-02,system_margin_weekly_pct_change,0.005674892753262828,,INFORMATIONAL,Descriptive monitoring metric.
+2026-07-02,system_peak_to_trough_margin_decline,0.07448489166044736,0.2,NORMAL,"Peak-to-trough margin decline; warning >20%, critical >30%."
+2026-07-02,system_stressed_to_calm_margin_ratio,1.0656118612617569,1.5,NORMAL,"Stressed/calm average-margin ratio; warning >1.50, critical >2.00."
+2026-07-02,system_margin_realized_volatility_correlation,0.3962264820772421,0.75,NORMAL,"Absolute Pearson correlation; warning >0.75, critical >0.85."
+2026-07-02,system_margin_change_market_loss_correlation,0.011651590653121243,0.75,NORMAL,"Absolute Pearson correlation; warning >0.75, critical >0.85."
+2026-07-02,system_jumps_over_10pct,0.0,5.0,NORMAL,More than five margin jumps above 10% is escalated.
+2026-07-02,system_jumps_over_20pct,0.0,0.0,NORMAL,Any margin jump above 20% is escalated.
+2026-07-02,system_jumps_over_30pct,0.0,0.0,NORMAL,Any margin jump above 30% is escalated.
+2026-07-02,system_margin_call_volatility,0.006999404294099585,0.1,NORMAL,"Standard deviation of daily margin changes; warning >10%, critical >20%."
+2026-07-02,system_buffer_depletion_events,0.0,5.0,NORMAL,More than five buffer-depletion events is escalated.
+2026-07-02,system_buffer_replenishment_events,0.0,,INFORMATIONAL,Descriptive replenishment-event count.

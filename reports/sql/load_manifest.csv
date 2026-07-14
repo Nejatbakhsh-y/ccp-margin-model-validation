@@ -1,0 +1,11 @@
+table_name,source_file,source_rows,loaded_rows,status,matched_columns,missing_columns
+market_prices,data\processed\market_prices_clean.parquet,49100,49100,LOADED,6,
+risk_factor_returns,data\processed\log_returns_wide.parquet,4909,112907,LOADED,7,
+member_positions,data\processed\clearing_member_positions.parquet,962360,962360,LOADED,11,
+portfolio_exposures,data\processed\portfolio_exposures.parquet,147300,147300,LOADED,8,top_position_weight|concentration_hhi|illiquid_exposure
+daily_margin,data\processed\daily_member_margin.parquet,30,30,LOADED,12,realized_loss
+backtesting_results,data\processed\sensitivity_scenario_results.parquet,150000,7500,LOADED,10,
+stress_results,data\processed\stress_test_results.parquet,571,571,LOADED,7,stressed_loss|breach_flag
+sensitivity_results,data\processed\sensitivity_scenario_results.parquet,150000,150000,LOADED,11,
+monitoring_metrics,data\processed\procyclicality_monitoring_metrics.csv,391,391,LOADED,8,
+validation_findings,reports\evidence\findings\finding_register.csv,0,0,LOADED,11,

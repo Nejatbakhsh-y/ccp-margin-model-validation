@@ -24,3 +24,6 @@ reports/evidence/logs/
 *.db
 # Temporary implementation bundles
 ccp_step*_bundle*.zip
+data/database/*.duckdb
+data/database/*.wal
+data/database/*.duckdb.wal
