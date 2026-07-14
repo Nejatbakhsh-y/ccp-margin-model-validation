@@ -220,10 +220,33 @@ def member_col(df: pd.DataFrame) -> str | None:
 
 
 def margin_col(df: pd.DataFrame) -> str | None:
-    return find_col(
+    recognized = find_col(
         df,
-        ["total_margin", "margin", "initial_margin", "margin_amount", "required_margin", "base_margin"],
+        [
+            "total_margin",
+            "total_initial_margin",
+            "margin",
+            "initial_margin",
+            "margin_amount",
+            "required_margin",
+            "total_required_margin",
+            "margin_requirement",
+            "aggregate_margin",
+            "base_margin",
+        ],
     )
+    if recognized:
+        return recognized
+
+    for column in df.columns:
+        normalized = re.sub(r"[^a-z0-9]+", "_", str(column).strip().lower()).strip("_")
+        if "margin" in normalized and any(
+            token in normalized
+            for token in ("total", "initial", "required", "requirement", "amount", "aggregate")
+        ):
+            return str(column)
+
+    return None
 
 
 def realized_loss_col(df: pd.DataFrame) -> str | None:
@@ -450,7 +473,7 @@ def page_executive_summary() -> None:
         exceptions = int(prepared["_exception"].sum())
         exception_rate = float(prepared["_exception"].mean()) if len(prepared) else np.nan
 
-    open_high = np.nan
+    open_high = 0 if findings_source != "Not found" else np.nan
     if not findings.empty:
         severity = find_col(findings, ["severity", "rating", "risk_rating"])
         status = find_col(findings, ["status", "finding_status", "remediation_status"])
@@ -485,11 +508,11 @@ def page_executive_summary() -> None:
         [
             {"Area": "Daily member margin", "Status": "Ready" if not daily.empty else "Missing", "Source": daily_source, "Rows": len(daily)},
             {"Area": "Backtesting", "Status": "Ready" if not backtest.empty else "Missing", "Source": back_source, "Rows": len(backtest)},
-            {"Area": "Validation tests", "Status": "Ready" if not validation.empty else "Missing", "Source": validation_source, "Rows": len(validation)},
+            {"Area": "Validation tests", "Status": "Ready" if (not validation.empty or not backtest.empty) else "Missing", "Source": validation_source if not validation.empty else (f"Derived from {back_source}" if not backtest.empty else "Not found"), "Rows": len(validation) if not validation.empty else len(backtest)},
             {"Area": "Sensitivity analysis", "Status": "Ready" if not sensitivity.empty else "Missing", "Source": sensitivity_source, "Rows": len(sensitivity)},
             {"Area": "Stress testing", "Status": "Ready" if not stress.empty else "Missing", "Source": stress_source, "Rows": len(stress)},
             {"Area": "Procyclicality", "Status": "Ready" if not procyclicality.empty else "Missing", "Source": procyclicality_source, "Rows": len(procyclicality)},
-            {"Area": "Findings", "Status": "Ready" if not findings.empty else "Missing", "Source": findings_source, "Rows": len(findings)},
+            {"Area": "Findings", "Status": "Ready" if findings_source != "Not found" else "Missing", "Source": findings_source, "Rows": len(findings)},
         ]
     )
     st.dataframe(readiness, width="stretch", hide_index=True)
@@ -838,6 +861,17 @@ def page_findings() -> None:
     st.title("Findings and Remediation")
     df, source = load_dataset("findings")
     if df.empty:
+        if source != "Not found":
+            source_caption(source, 0)
+            st.success("No validation findings are currently recorded.")
+            c1, c2, c3, c4 = st.columns(4)
+            c1.metric("Selected findings", 0)
+            c2.metric("Open findings", 0)
+            c3.metric("Open Critical/High", 0)
+            c4.metric("Overdue remediation", 0)
+            st.dataframe(df, width="stretch", hide_index=True)
+            return
+
         missing_panel("validation findings", DATASETS["findings"])
         return
     source_caption(source, len(df))
