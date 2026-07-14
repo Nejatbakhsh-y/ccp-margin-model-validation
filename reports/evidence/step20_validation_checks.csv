@@ -1,0 +1,30 @@
+check_name,status,detail
+Independent validation report created,PASS,reports/independent_validation_report.md
+Committee summary created,PASS,reports/model_risk_committee_summary.md
+Findings tracker created,PASS,reports/evidence/findings_tracker.csv
+Findings tracker columns exact,PASS,"finding_id, finding_title, finding_description, severity, affected_component, evidence, recommendation, owner, target_date, status, validation_status, closure_evidence"
+Finding IDs unique,PASS,Rows: 5
+Finding severities valid,PASS,"High, Low, Medium, Observation"
+Report section: Executive conclusion,PASS,Executive conclusion
+Report section: Model purpose and business use,PASS,Model purpose and business use
+Report section: Model inventory,PASS,Model inventory
+Report section: Scope and exclusions,PASS,Scope and exclusions
+Report section: Methodology summary,PASS,Methodology summary
+Report section: Data assessment,PASS,Data assessment
+Report section: Conceptual-soundness assessment,PASS,Conceptual-soundness assessment
+Report section: Implementation-verification results,PASS,Implementation-verification results
+Report section: Backtesting results,PASS,Backtesting results
+Report section: Benchmark and challenger comparison,PASS,Benchmark and challenger comparison
+Report section: Sensitivity results,PASS,Sensitivity results
+Report section: Stress-testing results,PASS,Stress-testing results
+Report section: Procyclicality assessment,PASS,Procyclicality assessment
+Report section: Margin-shortfall analysis,PASS,Margin-shortfall analysis
+Report section: Limitations,PASS,Limitations
+Report section: Findings,PASS,Findings
+Report section: Remediation requirements,PASS,Remediation requirements
+Report section: Validation conclusion,PASS,Validation conclusion
+Report section: Conditions for use,PASS,Conditions for use
+Report section: Monitoring recommendations,PASS,Monitoring recommendations
+Report section: Model-risk committee summary,PASS,Model-risk committee summary
+Report contains committee rating,PASS,Conditionally Satisfactory
+Committee summary includes high/medium findings,PASS,Required section present

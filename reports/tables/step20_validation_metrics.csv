@@ -1,0 +1,17 @@
+metric,value
+overall_validation_rating,Conditionally Satisfactory
+open_critical_findings,0
+open_high_findings,1
+open_medium_findings,2
+open_low_findings,1
+open_observations,1
+pytest_status,Passed
+backtesting_members,30
+backtesting_observations,7500
+backtesting_exceptions,0
+backtesting_exception_rate,0.0
+traffic_green_members,30
+traffic_yellow_members,0
+traffic_red_members,0
+sensitivity_scenarios,20
+stress_scenarios,20
