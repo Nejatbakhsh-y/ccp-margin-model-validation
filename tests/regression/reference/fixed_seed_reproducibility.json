@@ -1,0 +1,5 @@
+{
+  "source_file": "data/processed/clearing_member_positions.parquet",
+  "rows": 962360,
+  "sha256": "79ae7d39213e431243e327c08ebfcb3ead871ae816e2bb0c3ad85db031ad6453"
+}

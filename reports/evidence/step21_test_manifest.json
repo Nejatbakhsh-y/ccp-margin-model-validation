@@ -1,0 +1,25 @@
+{
+  "step": 21,
+  "required_test_files": [
+    "tests/unit/test_returns.py",
+    "tests/unit/test_historical_var.py",
+    "tests/unit/test_parametric_var.py",
+    "tests/unit/test_multi_day_var.py",
+    "tests/unit/test_liquidity_addon.py",
+    "tests/unit/test_concentration_addon.py",
+    "tests/unit/test_kupiec.py",
+    "tests/unit/test_christoffersen.py",
+    "tests/unit/test_traffic_light.py",
+    "tests/unit/test_margin_shortfall.py",
+    "tests/unit/test_portfolio_generator.py",
+    "tests/integration/test_data_pipeline.py",
+    "tests/integration/test_daily_margin_pipeline.py",
+    "tests/integration/test_validation_pipeline.py",
+    "tests/integration/test_report_generation.py",
+    "tests/regression/test_reference_portfolio_results.py",
+    "tests/regression/test_fixed_seed_reproducibility.py"
+  ],
+  "required_test_count": 17,
+  "backup_directory": "reports/evidence/step21_test_backups/20260713_234238",
+  "regression_baseline_refreshed": false
+}

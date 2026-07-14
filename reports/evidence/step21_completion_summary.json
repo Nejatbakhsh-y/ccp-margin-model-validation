@@ -1,0 +1,12 @@
+{
+  "step": 21,
+  "pytest_collection_passed": true,
+  "full_test_suite_passed": true,
+  "aggregate_core_coverage_percent": 90.39,
+  "aggregate_core_target_percent": 90.0,
+  "aggregate_core_status": "PASS",
+  "critical_coverage_target_percent": 100.0,
+  "critical_failures": [],
+  "margin_aggregation_contract_tested": true,
+  "step21_complete": true
+}

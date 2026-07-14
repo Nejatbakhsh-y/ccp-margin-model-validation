@@ -1,0 +1,16 @@
+scope,category,covered_lines,statements,coverage_percent,target_percent,status
+src/ccp_margin/models/primary/historical_var.py,core_module,115,119,96.64,90.0,INFORMATIONAL
+src/ccp_margin/models/primary/multi_day_returns.py,core_module,67,84,79.76,90.0,INFORMATIONAL
+src/ccp_margin/models/primary/portfolio_pnl.py,core_module,127,148,85.81,90.0,INFORMATIONAL
+src/ccp_margin/models/challenger/parametric_var.py,core_module,185,198,93.43,90.0,INFORMATIONAL
+src/ccp_margin/models/challenger/ewma_covariance.py,core_module,80,82,97.56,90.0,INFORMATIONAL
+src/ccp_margin/margin/base_margin.py,core_module,41,45,91.11,90.0,INFORMATIONAL
+src/ccp_margin/margin/liquidity_addon.py,core_module,61,67,91.04,90.0,INFORMATIONAL
+src/ccp_margin/margin/concentration_addon.py,core_module,80,87,91.95,90.0,INFORMATIONAL
+src/ccp_margin/margin/gap_risk_addon.py,core_module,55,65,84.62,90.0,INFORMATIONAL
+src/ccp_margin/margin/stress_buffer.py,core_module,49,61,80.33,90.0,INFORMATIONAL
+src/ccp_margin/margin/total_margin.py,core_module,90,95,94.74,90.0,INFORMATIONAL
+AGGREGATE_CORE_QUANTITATIVE_CALCULATIONS,core_aggregate,950,1051,90.39,90.0,PASS
+src/ccp_margin/validation/kupiec.py,critical_100,32,32,100.0,100.0,PASS
+src/ccp_margin/validation/christoffersen.py,critical_100,71,71,100.0,100.0,PASS
+src/ccp_margin/validation/margin_shortfall.py,critical_100,56,56,100.0,100.0,PASS
