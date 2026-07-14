@@ -10,7 +10,7 @@
     "maximum_lookback": 1000,
     "position_snapshot_mode": "dated_position_snapshots"
   },
-  "executed_at_utc": "2026-07-13T02:07:17+00:00",
+  "executed_at_utc": "2026-07-14T05:05:46+00:00",
   "limitations": [
     "Historical positions use the latest eligible snapshot.",
     "Numerical margin parameters remain preliminary calibrations.",

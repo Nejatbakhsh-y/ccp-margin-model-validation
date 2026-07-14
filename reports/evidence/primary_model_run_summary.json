@@ -1,10 +1,10 @@
 {
   "calculation_date": "2026-07-10",
-  "calculation_timestamp_utc": "2026-07-12T23:43:14+00:00",
+  "calculation_timestamp_utc": "2026-07-14T05:02:33+00:00",
   "confidence_level": 0.99,
   "lookback_days": 500,
   "member_count": 30,
-  "model_version": "97bc185",
+  "model_version": "099da12",
   "mpor_days": 5,
   "observations_per_member": 500,
   "output": "C:\\Users\\nejat\\OneDrive\\Desktop\\UN\\Skills\\GitHub 2026\\ccp-margin-model-validation\\data\\processed\\primary_member_margin.parquet",
