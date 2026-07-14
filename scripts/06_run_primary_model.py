@@ -31,7 +31,9 @@ EVIDENCE_PATH = "reports/evidence/primary_model_run_summary.json"
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--date", help="Requested calculation date in YYYY-MM-DD format.")
+    parser.add_argument(
+        "--date", help="Requested calculation date in YYYY-MM-DD format."
+    )
     parser.add_argument(
         "--mpor-days",
         type=int,
@@ -47,7 +49,9 @@ def main() -> None:
     as_of_date = resolve_as_of_date(returns, args.date)
     positions = load_positions(as_of_date)
 
-    confidence = float(nested(config, "primary_model", "confidence_level", default=0.99))
+    confidence = float(
+        nested(config, "primary_model", "confidence_level", default=0.99)
+    )
     lookback = int(nested(config, "primary_model", "lookback_days", default=500))
     configured_mpors = nested(config, "primary_model", "mpor_days", default=[1])
     mpor_days = int(args.mpor_days or max(int(value) for value in configured_mpors))

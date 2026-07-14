@@ -110,8 +110,8 @@ def _download_yahoo(
     end_exclusive = None
     if end_date:
         end_exclusive = (
-            pd.Timestamp(end_date) + pd.Timedelta(days=1)
-        ).date().isoformat()
+            (pd.Timestamp(end_date) + pd.Timedelta(days=1)).date().isoformat()
+        )
 
     frame = yf.download(
         tickers=ticker,
@@ -153,9 +153,7 @@ def _download_stooq(
         except Exception as exc:  # network/provider errors vary
             last_error = exc
 
-    raise RuntimeError(
-        f"Stooq returned no rows. Last error: {last_error}"
-    )
+    raise RuntimeError(f"Stooq returned no rows. Last error: {last_error}")
 
 
 def download_market_data(
@@ -173,8 +171,7 @@ def download_market_data(
     end_date = None if end_value in (None, "", "null") else str(end_value)
 
     tickers = [
-        str(ticker).upper()
-        for ticker in market_config.get("tickers", DEFAULT_TICKERS)
+        str(ticker).upper() for ticker in market_config.get("tickers", DEFAULT_TICKERS)
     ]
     fallback_enabled = (
         bool(market_config.get("allow_fallback", True))
@@ -233,9 +230,7 @@ def download_market_data(
                         fallback_used=True,
                     )
                     if normalized.empty:
-                        raise RuntimeError(
-                            "Stooq normalization produced no rows."
-                        )
+                        raise RuntimeError("Stooq normalization produced no rows.")
                     data_frames.append(normalized)
                     status["fallback_status"] = "SUCCESS"
                     status["selected_source"] = "stooq"
@@ -247,9 +242,7 @@ def download_market_data(
         statuses.append(status)
 
     status_frame = pd.DataFrame(statuses)
-    status_path = (
-        project_root / "data" / "manifests" / "market_download_status.csv"
-    )
+    status_path = project_root / "data" / "manifests" / "market_download_status.csv"
     status_path.parent.mkdir(parents=True, exist_ok=True)
     status_frame.to_csv(status_path, index=False)
 
@@ -282,9 +275,7 @@ def download_market_data(
         kind="mergesort",
     ).reset_index(drop=True)
 
-    output_path = (
-        project_root / "data" / "raw" / "market" / "market_prices_raw.parquet"
-    )
+    output_path = project_root / "data" / "raw" / "market" / "market_prices_raw.parquet"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     market_data.to_parquet(output_path, index=False)
 
@@ -315,15 +306,15 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    market_data, status = download_market_data(
-        allow_fallback=not args.no_fallback
-    )
+    market_data, status = download_market_data(allow_fallback=not args.no_fallback)
     print(
         "Market download completed: "
         f"{len(market_data):,} rows, "
         f"{market_data['security_id'].nunique()} securities."
     )
-    print(status[["security_id", "selected_source", "row_count"]].to_string(index=False))
+    print(
+        status[["security_id", "selected_source", "row_count"]].to_string(index=False)
+    )
     return 0
 
 

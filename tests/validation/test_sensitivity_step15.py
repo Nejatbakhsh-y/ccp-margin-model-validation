@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 from pathlib import Path
 
@@ -82,9 +82,7 @@ def test_each_non_baseline_scenario_changes_one_parameter() -> None:
 
     for _, row in manifest.loc[~manifest["is_baseline"]].iterrows():
         changed = [
-            name
-            for name in PARAMETER_COLUMNS
-            if str(row[name]) != str(baseline[name])
+            name for name in PARAMETER_COLUMNS if str(row[name]) != str(baseline[name])
         ]
         assert changed == [row["parameter"]]
 
@@ -126,4 +124,3 @@ def test_missing_scenario_is_rejected() -> None:
         assert "Missing runs" in str(exc)
     else:
         raise AssertionError("Missing scenario results were not rejected.")
-

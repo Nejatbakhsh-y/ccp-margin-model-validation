@@ -8,7 +8,12 @@ from typing import Any
 import numpy as np
 from scipy.stats import chi2
 
-from ._utils import as_binary_flags, bernoulli_log_likelihood, safe_divide, validate_probability
+from ._utils import (
+    as_binary_flags,
+    bernoulli_log_likelihood,
+    safe_divide,
+    validate_probability,
+)
 from .kupiec import KupiecResult, kupiec_unconditional_coverage
 
 
@@ -153,8 +158,7 @@ def christoffersen_conditional_coverage(
     )
 
     statistic = (
-        coverage.likelihood_ratio_statistic
-        + independence.likelihood_ratio_statistic
+        coverage.likelihood_ratio_statistic + independence.likelihood_ratio_statistic
     )
     p_value = float(chi2.sf(statistic, df=2))
 

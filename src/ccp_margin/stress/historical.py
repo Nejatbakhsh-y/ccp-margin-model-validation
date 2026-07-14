@@ -28,8 +28,7 @@ class HistoricalScenario:
         missing = required.difference(payload)
         if missing:
             raise ValueError(
-                "Historical scenario is missing required fields: "
-                f"{sorted(missing)}"
+                f"Historical scenario is missing required fields: {sorted(missing)}"
             )
         scenario = cls(
             scenario_id=str(payload["scenario_id"]).strip(),
@@ -55,9 +54,7 @@ class HistoricalScenario:
 def _validate_positions(positions: pd.DataFrame) -> pd.DataFrame:
     missing = _REQUIRED_POSITION_COLUMNS.difference(positions.columns)
     if missing:
-        raise ValueError(
-            f"Positions are missing required fields: {sorted(missing)}"
-        )
+        raise ValueError(f"Positions are missing required fields: {sorted(missing)}")
     frame = positions.copy()
     frame["member_id"] = frame["member_id"].astype(str).str.strip()
     frame["security_id"] = frame["security_id"].astype(str).str.strip()
@@ -151,9 +148,7 @@ def apply_security_shocks(
     shocks.index = shocks.index.astype(str)
     missing = sorted(set(frame["security_id"]).difference(shocks.index))
     if missing:
-        raise KeyError(
-            f"Scenario {scenario_id} has no shock for securities: {missing}"
-        )
+        raise KeyError(f"Scenario {scenario_id} has no shock for securities: {missing}")
     if not np.isfinite(shocks.to_numpy(dtype=float)).all():
         raise ValueError(f"Scenario {scenario_id} contains non-finite shocks.")
 

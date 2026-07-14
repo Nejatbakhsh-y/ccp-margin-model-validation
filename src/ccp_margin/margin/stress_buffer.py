@@ -77,8 +77,13 @@ def calculate_stress_buffer(
 
     stress = stress_losses[[member_col, scenario_col, stress_loss_col]].copy()
     stress[stress_loss_col] = pd.to_numeric(stress[stress_loss_col], errors="coerce")
-    if stress[stress_loss_col].isna().any() or (~np.isfinite(stress[stress_loss_col])).any():
-        raise ValueError(f"{stress_loss_col} contains missing, non-numeric, or non-finite values")
+    if (
+        stress[stress_loss_col].isna().any()
+        or (~np.isfinite(stress[stress_loss_col])).any()
+    ):
+        raise ValueError(
+            f"{stress_loss_col} contains missing, non-numeric, or non-finite values"
+        )
     if (stress[stress_loss_col] < 0).any():
         raise ValueError(f"{stress_loss_col} must be non-negative")
 
@@ -86,9 +91,10 @@ def calculate_stress_buffer(
     margin[pre_stress_margin_col] = pd.to_numeric(
         margin[pre_stress_margin_col], errors="coerce"
     )
-    if margin[pre_stress_margin_col].isna().any() or (
-        ~np.isfinite(margin[pre_stress_margin_col])
-    ).any():
+    if (
+        margin[pre_stress_margin_col].isna().any()
+        or (~np.isfinite(margin[pre_stress_margin_col])).any()
+    ):
         raise ValueError(
             f"{pre_stress_margin_col} contains missing, non-numeric, or non-finite values"
         )
@@ -125,7 +131,9 @@ def calculate_stress_buffer(
         missing_members = summary.loc[
             summary["maximum_stress_loss"].isna(), member_col
         ].tolist()
-        raise ValueError(f"Missing approved stress loss for member(s): {missing_members}")
+        raise ValueError(
+            f"Missing approved stress loss for member(s): {missing_members}"
+        )
 
     summary["target_stress_coverage"] = (
         required_coverage_ratio * summary["maximum_stress_loss"]
@@ -155,8 +163,12 @@ def calculate_stress_buffer(
     attribution["attribution_amount"] = attribution["stress_buffer"]
 
     return StressBufferResult(
-        member_buffer=summary.sort_values(member_col, kind="stable").reset_index(drop=True),
-        attribution=attribution.sort_values(member_col, kind="stable").reset_index(drop=True),
+        member_buffer=summary.sort_values(member_col, kind="stable").reset_index(
+            drop=True
+        ),
+        attribution=attribution.sort_values(member_col, kind="stable").reset_index(
+            drop=True
+        ),
         metadata={
             "business_rationale": BUSINESS_RATIONALE,
             "formula": (
@@ -166,7 +178,9 @@ def calculate_stress_buffer(
             "parameter_source": parameter_source,
             "minimum_behavior": "Zero when pre-stress margin already meets the coverage target",
             "maximum_behavior": (
-                "No cap" if maximum_usd is None else f"Absolute cap of {maximum_usd:.2f} USD"
+                "No cap"
+                if maximum_usd is None
+                else f"Absolute cap of {maximum_usd:.2f} USD"
             ),
             "required_coverage_ratio": required_coverage_ratio,
             "known_limitations": KNOWN_LIMITATIONS,

@@ -38,9 +38,7 @@ class VerificationSuiteResult:
 
     def to_dict(self) -> dict[str, Any]:
         return {
-            "checks": {
-                name: check.to_dict() for name, check in self.checks.items()
-            },
+            "checks": {name: check.to_dict() for name, check in self.checks.items()},
             "passed": self.passed,
         }
 
@@ -107,9 +105,7 @@ def independently_calculate_var(
     pnl = as_1d_float(portfolio_pnl, name="portfolio_pnl")
     confidence = validate_probability(confidence_level, name="confidence_level")
     losses = -pnl
-    quantile_loss = float(
-        np.quantile(losses, confidence, method=quantile_method)
-    )
+    quantile_loss = float(np.quantile(losses, confidence, method=quantile_method))
     return max(0.0, quantile_loss)
 
 

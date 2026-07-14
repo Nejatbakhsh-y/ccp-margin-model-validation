@@ -10,8 +10,7 @@ from tests._step21_support import ROOT, first_existing, read_table
 
 def test_latest_reference_portfolio_margin_matches_approved_baseline():
     baseline_path = (
-        ROOT / "tests" / "regression" / "reference" /
-        "reference_portfolio_results.json"
+        ROOT / "tests" / "regression" / "reference" / "reference_portfolio_results.json"
     )
     assert baseline_path.exists(), "Regression baseline was not generated."
 

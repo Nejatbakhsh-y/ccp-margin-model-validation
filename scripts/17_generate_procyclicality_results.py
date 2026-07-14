@@ -1,4 +1,3 @@
-﻿
 """Generate Step 17 procyclicality and monitoring evidence.
 
 The generator uses the empirical baseline observations contained in
@@ -20,7 +19,9 @@ import pandas as pd
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-INPUT_PATH = PROJECT_ROOT / "data" / "processed" / "sensitivity_scenario_results.parquet"
+INPUT_PATH = (
+    PROJECT_ROOT / "data" / "processed" / "sensitivity_scenario_results.parquet"
+)
 PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
 EVIDENCE_DIR = PROJECT_ROOT / "reports" / "evidence"
 
@@ -76,57 +77,139 @@ def status_for(metric_name: str, value: float) -> tuple[float | None, str, str]:
 
     if "daily_margin_pct_change" in name:
         warning, critical = 0.10, 0.20
-        status = "CRITICAL" if absolute_value > critical else "WARNING" if absolute_value > warning else "NORMAL"
+        status = (
+            "CRITICAL"
+            if absolute_value > critical
+            else "WARNING"
+            if absolute_value > warning
+            else "NORMAL"
+        )
         return warning, status, "Absolute daily change; warning >10%, critical >20%."
 
     if "weekly_margin_pct_change" in name:
         warning, critical = 0.20, 0.30
-        status = "CRITICAL" if absolute_value > critical else "WARNING" if absolute_value > warning else "NORMAL"
-        return warning, status, "Absolute five-observation change; warning >20%, critical >30%."
+        status = (
+            "CRITICAL"
+            if absolute_value > critical
+            else "WARNING"
+            if absolute_value > warning
+            else "NORMAL"
+        )
+        return (
+            warning,
+            status,
+            "Absolute five-observation change; warning >20%, critical >30%.",
+        )
 
     if "peak_to_trough" in name or "drawdown" in name:
         warning, critical = 0.20, 0.30
-        status = "CRITICAL" if absolute_value > critical else "WARNING" if absolute_value > warning else "NORMAL"
-        return warning, status, "Peak-to-trough margin decline; warning >20%, critical >30%."
+        status = (
+            "CRITICAL"
+            if absolute_value > critical
+            else "WARNING"
+            if absolute_value > warning
+            else "NORMAL"
+        )
+        return (
+            warning,
+            status,
+            "Peak-to-trough margin decline; warning >20%, critical >30%.",
+        )
 
     if "stressed_to_calm_margin_ratio" in name:
         warning, critical = 1.50, 2.00
-        status = "CRITICAL" if value > critical else "WARNING" if value > warning else "NORMAL"
-        return warning, status, "Stressed/calm average-margin ratio; warning >1.50, critical >2.00."
+        status = (
+            "CRITICAL"
+            if value > critical
+            else "WARNING"
+            if value > warning
+            else "NORMAL"
+        )
+        return (
+            warning,
+            status,
+            "Stressed/calm average-margin ratio; warning >1.50, critical >2.00.",
+        )
 
     if "correlation" in name:
         warning, critical = 0.75, 0.85
-        status = "CRITICAL" if absolute_value > critical else "WARNING" if absolute_value > warning else "NORMAL"
-        return warning, status, "Absolute Pearson correlation; warning >0.75, critical >0.85."
+        status = (
+            "CRITICAL"
+            if absolute_value > critical
+            else "WARNING"
+            if absolute_value > warning
+            else "NORMAL"
+        )
+        return (
+            warning,
+            status,
+            "Absolute Pearson correlation; warning >0.75, critical >0.85.",
+        )
 
     if "margin_call_volatility" in name:
         warning, critical = 0.10, 0.20
-        status = "CRITICAL" if value > critical else "WARNING" if value > warning else "NORMAL"
-        return warning, status, "Standard deviation of daily margin changes; warning >10%, critical >20%."
+        status = (
+            "CRITICAL"
+            if value > critical
+            else "WARNING"
+            if value > warning
+            else "NORMAL"
+        )
+        return (
+            warning,
+            status,
+            "Standard deviation of daily margin changes; warning >10%, critical >20%.",
+        )
 
     if "jumps_over_30pct" in name:
         warning = 0.0
-        return warning, "WARNING" if value > 0 else "NORMAL", "Any margin jump above 30% is escalated."
+        return (
+            warning,
+            "WARNING" if value > 0 else "NORMAL",
+            "Any margin jump above 30% is escalated.",
+        )
 
     if "jumps_over_20pct" in name:
         warning = 0.0
-        return warning, "WARNING" if value > 0 else "NORMAL", "Any margin jump above 20% is escalated."
+        return (
+            warning,
+            "WARNING" if value > 0 else "NORMAL",
+            "Any margin jump above 20% is escalated.",
+        )
 
     if "jumps_over_10pct" in name:
         warning = 5.0
-        return warning, "WARNING" if value > warning else "NORMAL", "More than five margin jumps above 10% is escalated."
+        return (
+            warning,
+            "WARNING" if value > warning else "NORMAL",
+            "More than five margin jumps above 10% is escalated.",
+        )
 
     if "buffer_depletion" in name:
         warning = 5.0
-        return warning, "WARNING" if value > warning else "NORMAL", "More than five buffer-depletion events is escalated."
+        return (
+            warning,
+            "WARNING" if value > warning else "NORMAL",
+            "More than five buffer-depletion events is escalated.",
+        )
 
     if "buffer_replenishment" in name:
         return None, "INFORMATIONAL", "Descriptive replenishment-event count."
 
     if "variant_average_margin_change" in name:
         warning, critical = 0.10, 0.20
-        status = "CRITICAL" if absolute_value > critical else "WARNING" if absolute_value > warning else "NORMAL"
-        return warning, status, "Absolute average scenario-versus-baseline margin change; warning >10%, critical >20%."
+        status = (
+            "CRITICAL"
+            if absolute_value > critical
+            else "WARNING"
+            if absolute_value > warning
+            else "NORMAL"
+        )
+        return (
+            warning,
+            status,
+            "Absolute average scenario-versus-baseline margin change; warning >10%, critical >20%.",
+        )
 
     return None, "INFORMATIONAL", "Descriptive monitoring metric."
 
@@ -157,11 +240,17 @@ def baseline_mask(frame: pd.DataFrame) -> pd.Series:
     if "is_baseline" in frame.columns:
         mask |= as_bool(frame["is_baseline"])
     if "scenario_id" in frame.columns:
-        mask |= frame["scenario_id"].astype("string").str.strip().str.lower().eq("baseline")
+        mask |= (
+            frame["scenario_id"].astype("string").str.strip().str.lower().eq("baseline")
+        )
     return mask
 
 
-def calculate_member_metrics(history: pd.DataFrame, stressed_dates: set[pd.Timestamp], calm_dates: set[pd.Timestamp]) -> pd.DataFrame:
+def calculate_member_metrics(
+    history: pd.DataFrame,
+    stressed_dates: set[pd.Timestamp],
+    calm_dates: set[pd.Timestamp],
+) -> pd.DataFrame:
     rows: list[dict[str, Any]] = []
 
     for member_id, group in history.groupby("member_id", sort=True):
@@ -173,12 +262,16 @@ def calculate_member_metrics(history: pd.DataFrame, stressed_dates: set[pd.Times
         stressed_average = pd.to_numeric(stressed["margin"], errors="coerce").mean()
         stress_calm_ratio = (
             stressed_average / calm_average
-            if pd.notna(calm_average) and calm_average != 0 and pd.notna(stressed_average)
+            if pd.notna(calm_average)
+            and calm_average != 0
+            and pd.notna(stressed_average)
             else math.nan
         )
 
         drawdown = pd.to_numeric(group["drawdown_from_peak"], errors="coerce")
-        peak_to_trough = abs(float(drawdown.min())) if drawdown.notna().any() else math.nan
+        peak_to_trough = (
+            abs(float(drawdown.min())) if drawdown.notna().any() else math.nan
+        )
 
         rows.append(
             {
@@ -186,18 +279,38 @@ def calculate_member_metrics(history: pd.DataFrame, stressed_dates: set[pd.Times
                 "member_id": str(member_id),
                 "observations": int(len(group)),
                 "latest_margin": finite_or_nan(latest["margin"]),
-                "latest_daily_margin_pct_change": finite_or_nan(latest["daily_margin_pct_change"]),
-                "latest_weekly_margin_pct_change": finite_or_nan(latest["weekly_margin_pct_change"]),
+                "latest_daily_margin_pct_change": finite_or_nan(
+                    latest["daily_margin_pct_change"]
+                ),
+                "latest_weekly_margin_pct_change": finite_or_nan(
+                    latest["weekly_margin_pct_change"]
+                ),
                 "peak_to_trough_margin_decline": peak_to_trough,
                 "stressed_to_calm_margin_ratio": finite_or_nan(stress_calm_ratio),
-                "margin_realized_volatility_correlation": safe_corr(group["margin"], group["realized_volatility_20d"]),
-                "margin_change_market_loss_correlation": safe_corr(group["daily_margin_pct_change"], group["market_loss_rate"]),
-                "jumps_over_10pct": int((group["daily_margin_pct_change"].abs() > 0.10).sum()),
-                "jumps_over_20pct": int((group["daily_margin_pct_change"].abs() > 0.20).sum()),
-                "jumps_over_30pct": int((group["daily_margin_pct_change"].abs() > 0.30).sum()),
-                "margin_call_volatility": finite_or_nan(group["daily_margin_pct_change"].std(ddof=1)),
-                "buffer_depletion_events": int((group["stress_buffer_change"] < 0).sum()),
-                "buffer_replenishment_events": int((group["stress_buffer_change"] > 0).sum()),
+                "margin_realized_volatility_correlation": safe_corr(
+                    group["margin"], group["realized_volatility_20d"]
+                ),
+                "margin_change_market_loss_correlation": safe_corr(
+                    group["daily_margin_pct_change"], group["market_loss_rate"]
+                ),
+                "jumps_over_10pct": int(
+                    (group["daily_margin_pct_change"].abs() > 0.10).sum()
+                ),
+                "jumps_over_20pct": int(
+                    (group["daily_margin_pct_change"].abs() > 0.20).sum()
+                ),
+                "jumps_over_30pct": int(
+                    (group["daily_margin_pct_change"].abs() > 0.30).sum()
+                ),
+                "margin_call_volatility": finite_or_nan(
+                    group["daily_margin_pct_change"].std(ddof=1)
+                ),
+                "buffer_depletion_events": int(
+                    (group["stress_buffer_change"] < 0).sum()
+                ),
+                "buffer_replenishment_events": int(
+                    (group["stress_buffer_change"] > 0).sum()
+                ),
                 "average_stress_buffer": finite_or_nan(group["stress_buffer"].mean()),
             }
         )
@@ -205,15 +318,21 @@ def calculate_member_metrics(history: pd.DataFrame, stressed_dates: set[pd.Times
     return pd.DataFrame(rows)
 
 
-def build_variant_comparison(all_scenarios: pd.DataFrame, baseline: pd.DataFrame) -> pd.DataFrame:
+def build_variant_comparison(
+    all_scenarios: pd.DataFrame, baseline: pd.DataFrame
+) -> pd.DataFrame:
     key_columns = ["date", "member_id"]
-    baseline_reference = baseline[key_columns + ["margin"]].rename(columns={"margin": "baseline_margin"})
+    baseline_reference = baseline[key_columns + ["margin"]].rename(
+        columns={"margin": "baseline_margin"}
+    )
 
     candidates = all_scenarios.copy()
     candidates["date"] = pd.to_datetime(candidates["date"], errors="coerce")
     candidates["member_id"] = candidates["member_id"].astype("string")
     candidates["margin"] = pd.to_numeric(candidates["margin"], errors="coerce")
-    candidates = candidates.merge(baseline_reference, on=key_columns, how="left", validate="many_to_one")
+    candidates = candidates.merge(
+        baseline_reference, on=key_columns, how="left", validate="many_to_one"
+    )
 
     if "scenario_id" not in candidates.columns:
         candidates["scenario_id"] = "unspecified"
@@ -222,7 +341,9 @@ def build_variant_comparison(all_scenarios: pd.DataFrame, baseline: pd.DataFrame
     if "parameter_value" not in candidates.columns:
         candidates["parameter_value"] = np.nan
 
-    candidates["scenario_margin_change"] = candidates["margin"] - candidates["baseline_margin"]
+    candidates["scenario_margin_change"] = (
+        candidates["margin"] - candidates["baseline_margin"]
+    )
     candidates["scenario_margin_pct_change"] = np.where(
         candidates["baseline_margin"].ne(0),
         candidates["margin"] / candidates["baseline_margin"] - 1.0,
@@ -253,10 +374,15 @@ def build_variant_comparison(all_scenarios: pd.DataFrame, baseline: pd.DataFrame
             average_scenario_margin=("margin", "mean"),
             average_margin_change=("scenario_margin_change", "mean"),
             average_margin_pct_change=("scenario_margin_pct_change", "mean"),
-            maximum_absolute_margin_pct_change=("scenario_margin_pct_change", lambda values: values.abs().max()),
+            maximum_absolute_margin_pct_change=(
+                "scenario_margin_pct_change",
+                lambda values: values.abs().max(),
+            ),
         )
         .reset_index()
-        .sort_values("maximum_absolute_margin_pct_change", ascending=False, na_position="last")
+        .sort_values(
+            "maximum_absolute_margin_pct_change", ascending=False, na_position="last"
+        )
     )
     return grouped
 
@@ -269,7 +395,9 @@ def main() -> int:
     EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
 
     all_scenarios = pd.read_parquet(INPUT_PATH)
-    all_scenarios.columns = [str(column).strip().lower() for column in all_scenarios.columns]
+    all_scenarios.columns = [
+        str(column).strip().lower() for column in all_scenarios.columns
+    ]
 
     missing = sorted(REQUIRED_COLUMNS - set(all_scenarios.columns))
     if missing:
@@ -278,32 +406,55 @@ def main() -> int:
     all_scenarios["date"] = pd.to_datetime(all_scenarios["date"], errors="coerce")
     all_scenarios["member_id"] = all_scenarios["member_id"].astype("string")
     all_scenarios["margin"] = pd.to_numeric(all_scenarios["margin"], errors="coerce")
-    all_scenarios["realized_loss"] = pd.to_numeric(all_scenarios["realized_loss"], errors="coerce")
+    all_scenarios["realized_loss"] = pd.to_numeric(
+        all_scenarios["realized_loss"], errors="coerce"
+    )
 
     baseline = all_scenarios[baseline_mask(all_scenarios)].copy()
     baseline = baseline.dropna(subset=["date", "member_id", "margin", "realized_loss"])
     baseline = baseline.sort_values(["member_id", "date"])
 
     if baseline.empty:
-        raise ValueError("No baseline rows were found in sensitivity_scenario_results.parquet.")
+        raise ValueError(
+            "No baseline rows were found in sensitivity_scenario_results.parquet."
+        )
 
     duplicate_count = int(baseline.duplicated(["date", "member_id"]).sum())
     if duplicate_count:
         numeric_columns = baseline.select_dtypes(include=[np.number]).columns.tolist()
-        aggregation: dict[str, str] = {column: "first" for column in baseline.columns if column not in {"date", "member_id"}}
+        aggregation: dict[str, str] = {
+            column: "first"
+            for column in baseline.columns
+            if column not in {"date", "member_id"}
+        }
         for column in numeric_columns:
             if column not in {"date", "member_id"}:
                 aggregation[column] = "mean"
-        baseline = baseline.groupby(["date", "member_id"], as_index=False).agg(aggregation)
+        baseline = baseline.groupby(["date", "member_id"], as_index=False).agg(
+            aggregation
+        )
 
-    for optional_column in ["gross_exposure", "stress_buffer", "primary_var", "challenger_var"]:
+    for optional_column in [
+        "gross_exposure",
+        "stress_buffer",
+        "primary_var",
+        "challenger_var",
+    ]:
         if optional_column not in baseline.columns:
-            baseline[optional_column] = 0.0 if optional_column == "stress_buffer" else np.nan
-        baseline[optional_column] = pd.to_numeric(baseline[optional_column], errors="coerce")
+            baseline[optional_column] = (
+                0.0 if optional_column == "stress_buffer" else np.nan
+            )
+        baseline[optional_column] = pd.to_numeric(
+            baseline[optional_column], errors="coerce"
+        )
 
     baseline = baseline.sort_values(["member_id", "date"]).reset_index(drop=True)
-    baseline["daily_margin_pct_change"] = baseline.groupby("member_id")["margin"].pct_change(fill_method=None)
-    baseline["weekly_margin_pct_change"] = baseline["margin"] / baseline.groupby("member_id")["margin"].shift(5) - 1.0
+    baseline["daily_margin_pct_change"] = baseline.groupby("member_id")[
+        "margin"
+    ].pct_change(fill_method=None)
+    baseline["weekly_margin_pct_change"] = (
+        baseline["margin"] / baseline.groupby("member_id")["margin"].shift(5) - 1.0
+    )
     baseline["running_peak_margin"] = baseline.groupby("member_id")["margin"].cummax()
     baseline["drawdown_from_peak"] = np.where(
         baseline["running_peak_margin"].ne(0),
@@ -321,7 +472,9 @@ def main() -> int:
         .std(ddof=1)
         .reset_index(level=0, drop=True)
     )
-    baseline["stress_buffer_change"] = baseline.groupby("member_id")["stress_buffer"].diff()
+    baseline["stress_buffer_change"] = baseline.groupby("member_id")[
+        "stress_buffer"
+    ].diff()
 
     system_history = (
         baseline.groupby("date", as_index=False)
@@ -334,8 +487,12 @@ def main() -> int:
         )
         .sort_values("date")
     )
-    system_history["daily_margin_pct_change"] = system_history["total_margin"].pct_change(fill_method=None)
-    system_history["weekly_margin_pct_change"] = system_history["total_margin"] / system_history["total_margin"].shift(5) - 1.0
+    system_history["daily_margin_pct_change"] = system_history[
+        "total_margin"
+    ].pct_change(fill_method=None)
+    system_history["weekly_margin_pct_change"] = (
+        system_history["total_margin"] / system_history["total_margin"].shift(5) - 1.0
+    )
     system_history["running_peak_margin"] = system_history["total_margin"].cummax()
     system_history["drawdown_from_peak"] = np.where(
         system_history["running_peak_margin"].ne(0),
@@ -343,7 +500,9 @@ def main() -> int:
         np.nan,
     )
     system_denominator = system_history["total_gross_exposure"].abs().replace(0, np.nan)
-    system_history["market_loss_rate"] = system_history["total_realized_loss"] / system_denominator
+    system_history["market_loss_rate"] = (
+        system_history["total_realized_loss"] / system_denominator
+    )
 
     stress_indicator = system_history["realized_volatility"].copy()
     if stress_indicator.notna().sum() < 5 or stress_indicator.nunique(dropna=True) < 2:
@@ -359,24 +518,57 @@ def main() -> int:
     member_metrics = calculate_member_metrics(baseline, stressed_dates, calm_dates)
 
     latest_date = pd.Timestamp(system_history["date"].max())
-    stressed_average = system_history.loc[system_history["date"].isin(stressed_dates), "total_margin"].mean()
-    calm_average = system_history.loc[system_history["date"].isin(calm_dates), "total_margin"].mean()
-    stressed_to_calm_ratio = stressed_average / calm_average if pd.notna(calm_average) and calm_average != 0 else math.nan
-    system_peak_to_trough = abs(float(system_history["drawdown_from_peak"].min())) if system_history["drawdown_from_peak"].notna().any() else math.nan
+    stressed_average = system_history.loc[
+        system_history["date"].isin(stressed_dates), "total_margin"
+    ].mean()
+    calm_average = system_history.loc[
+        system_history["date"].isin(calm_dates), "total_margin"
+    ].mean()
+    stressed_to_calm_ratio = (
+        stressed_average / calm_average
+        if pd.notna(calm_average) and calm_average != 0
+        else math.nan
+    )
+    system_peak_to_trough = (
+        abs(float(system_history["drawdown_from_peak"].min()))
+        if system_history["drawdown_from_peak"].notna().any()
+        else math.nan
+    )
 
     system_metric_values = {
-        "system_margin_daily_pct_change": finite_or_nan(system_history.iloc[-1]["daily_margin_pct_change"]),
-        "system_margin_weekly_pct_change": finite_or_nan(system_history.iloc[-1]["weekly_margin_pct_change"]),
+        "system_margin_daily_pct_change": finite_or_nan(
+            system_history.iloc[-1]["daily_margin_pct_change"]
+        ),
+        "system_margin_weekly_pct_change": finite_or_nan(
+            system_history.iloc[-1]["weekly_margin_pct_change"]
+        ),
         "system_peak_to_trough_margin_decline": finite_or_nan(system_peak_to_trough),
         "system_stressed_to_calm_margin_ratio": finite_or_nan(stressed_to_calm_ratio),
-        "system_margin_realized_volatility_correlation": safe_corr(system_history["total_margin"], system_history["realized_volatility"]),
-        "system_margin_change_market_loss_correlation": safe_corr(system_history["daily_margin_pct_change"], system_history["market_loss_rate"]),
-        "system_jumps_over_10pct": float((system_history["daily_margin_pct_change"].abs() > 0.10).sum()),
-        "system_jumps_over_20pct": float((system_history["daily_margin_pct_change"].abs() > 0.20).sum()),
-        "system_jumps_over_30pct": float((system_history["daily_margin_pct_change"].abs() > 0.30).sum()),
-        "system_margin_call_volatility": finite_or_nan(system_history["daily_margin_pct_change"].std(ddof=1)),
-        "system_buffer_depletion_events": float((system_history["total_stress_buffer"].diff() < 0).sum()),
-        "system_buffer_replenishment_events": float((system_history["total_stress_buffer"].diff() > 0).sum()),
+        "system_margin_realized_volatility_correlation": safe_corr(
+            system_history["total_margin"], system_history["realized_volatility"]
+        ),
+        "system_margin_change_market_loss_correlation": safe_corr(
+            system_history["daily_margin_pct_change"],
+            system_history["market_loss_rate"],
+        ),
+        "system_jumps_over_10pct": float(
+            (system_history["daily_margin_pct_change"].abs() > 0.10).sum()
+        ),
+        "system_jumps_over_20pct": float(
+            (system_history["daily_margin_pct_change"].abs() > 0.20).sum()
+        ),
+        "system_jumps_over_30pct": float(
+            (system_history["daily_margin_pct_change"].abs() > 0.30).sum()
+        ),
+        "system_margin_call_volatility": finite_or_nan(
+            system_history["daily_margin_pct_change"].std(ddof=1)
+        ),
+        "system_buffer_depletion_events": float(
+            (system_history["total_stress_buffer"].diff() < 0).sum()
+        ),
+        "system_buffer_replenishment_events": float(
+            (system_history["total_stress_buffer"].diff() > 0).sum()
+        ),
     }
 
     system_metrics_rows: list[dict[str, Any]] = []
@@ -397,8 +589,16 @@ def main() -> int:
     variant_comparison = build_variant_comparison(all_scenarios, baseline)
 
     buffer_events = baseline.loc[
-        baseline["stress_buffer_change"].notna() & baseline["stress_buffer_change"].ne(0),
-        ["date", "member_id", "stress_buffer", "stress_buffer_change", "margin", "daily_margin_pct_change"],
+        baseline["stress_buffer_change"].notna()
+        & baseline["stress_buffer_change"].ne(0),
+        [
+            "date",
+            "member_id",
+            "stress_buffer",
+            "stress_buffer_change",
+            "margin",
+            "daily_margin_pct_change",
+        ],
     ].copy()
     if not buffer_events.empty:
         buffer_events["event_type"] = np.where(
@@ -407,7 +607,15 @@ def main() -> int:
             "REPLENISHMENT",
         )
         buffer_events = buffer_events[
-            ["date", "member_id", "event_type", "stress_buffer", "stress_buffer_change", "margin", "daily_margin_pct_change"]
+            [
+                "date",
+                "member_id",
+                "event_type",
+                "stress_buffer",
+                "stress_buffer_change",
+                "margin",
+                "daily_margin_pct_change",
+            ]
         ]
 
     monitoring_rows: list[dict[str, Any]] = []

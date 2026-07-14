@@ -40,8 +40,7 @@ def test_concentration_addon_falls_when_threshold_increases(
         "member_id"
     )
     assert (
-        high_threshold["concentration_addon"]
-        <= low_threshold["concentration_addon"]
+        high_threshold["concentration_addon"] <= low_threshold["concentration_addon"]
     ).all()
 
 

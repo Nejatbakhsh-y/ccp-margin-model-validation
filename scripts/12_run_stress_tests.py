@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import json
 import sys
 from pathlib import Path
 from typing import Any
@@ -45,7 +44,9 @@ EXPECTED_TOTAL_SCENARIOS = 20
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--date", help="Optional calculation date in YYYY-MM-DD format.")
+    parser.add_argument(
+        "--date", help="Optional calculation date in YYYY-MM-DD format."
+    )
     parser.add_argument(
         "--config",
         default="configs/stress_scenarios.yaml",
@@ -122,7 +123,9 @@ def load_margin_for_date(path: str | Path, as_of_date: pd.Timestamp) -> pd.DataF
             "same date before running stress tests."
         )
     if selected["member_id"].astype(str).duplicated().any():
-        raise ValueError("Daily member margin contains duplicate member rows for the date.")
+        raise ValueError(
+            "Daily member margin contains duplicate member rows for the date."
+        )
     numeric = ["total_margin", "liquidity_addon", "gross_exposure", "net_exposure"]
     selected[numeric] = selected[numeric].apply(pd.to_numeric, errors="raise")
     return selected.reset_index(drop=True)
@@ -157,16 +160,20 @@ def build_manifest(
         ignore_index=True,
         sort=False,
     )
-    manifest = manifest[
-        [
-            "scenario_id",
-            "scenario_type",
-            "scenario_name",
-            "start_date",
-            "end_date",
-            "description",
+    manifest = (
+        manifest[
+            [
+                "scenario_id",
+                "scenario_type",
+                "scenario_name",
+                "start_date",
+                "end_date",
+                "description",
+            ]
         ]
-    ].sort_values(["scenario_type", "scenario_id"]).reset_index(drop=True)
+        .sort_values(["scenario_type", "scenario_id"])
+        .reset_index(drop=True)
+    )
     if len(manifest) != EXPECTED_TOTAL_SCENARIOS:
         raise AssertionError(
             f"Expected {EXPECTED_TOTAL_SCENARIOS} manifest rows, found {len(manifest)}."
@@ -206,8 +213,12 @@ def add_margin_adequacy(
         validate="many_to_one",
     )
     if output["available_margin"].isna().any():
-        missing = sorted(output.loc[output["available_margin"].isna(), "member_id"].unique())
-        raise KeyError(f"Stress results have no available margin for members: {missing}")
+        missing = sorted(
+            output.loc[output["available_margin"].isna(), "member_id"].unique()
+        )
+        raise KeyError(
+            f"Stress results have no available margin for members: {missing}"
+        )
     output["stress_requirement"] = pd.to_numeric(
         output["stress_requirement"], errors="raise"
     ).clip(lower=0.0)
@@ -273,7 +284,9 @@ def main() -> None:
         stress_config["hypothetical_scenarios"],
     )
     if hypothetical_results["scenario_id"].nunique() != EXPECTED_HYPOTHETICAL_SCENARIOS:
-        raise AssertionError("The required fourteen hypothetical scenarios were not generated.")
+        raise AssertionError(
+            "The required fourteen hypothetical scenarios were not generated."
+        )
 
     stress_results = pd.concat(
         [
@@ -284,7 +297,9 @@ def main() -> None:
         sort=False,
     )
     if stress_results["scenario_id"].nunique() != EXPECTED_TOTAL_SCENARIOS:
-        raise AssertionError("The required twenty total stress scenarios were not generated.")
+        raise AssertionError(
+            "The required twenty total stress scenarios were not generated."
+        )
     stress_results = add_margin_adequacy(stress_results, margin)
     stress_results["as_of_date"] = as_of_date
     stress_results["model_version"] = model_version(project_config)
@@ -336,17 +351,23 @@ def main() -> None:
         "model_version": model_version(project_config),
         "configuration_status": stress_config.get("configuration_status"),
         "historical_scenario_count": int(
-            manifest.loc[manifest["scenario_type"] == "historical", "scenario_id"].nunique()
+            manifest.loc[
+                manifest["scenario_type"] == "historical", "scenario_id"
+            ].nunique()
         ),
         "hypothetical_scenario_count": int(
-            manifest.loc[manifest["scenario_type"] == "hypothetical", "scenario_id"].nunique()
+            manifest.loc[
+                manifest["scenario_type"] == "hypothetical", "scenario_id"
+            ].nunique()
         ),
         "total_scenario_count": int(manifest["scenario_id"].nunique()),
         "member_count": int(len(position_members)),
         "stress_result_rows": int(len(stress_results)),
         "margin_breach_rows": int(stress_results["margin_breach_flag"].sum()),
         "members_with_at_least_one_breach": int(
-            stress_results.loc[stress_results["margin_breach_flag"], "member_id"].nunique()
+            stress_results.loc[
+                stress_results["margin_breach_flag"], "member_id"
+            ].nunique()
         ),
         "worst_scenario_id": str(worst["scenario_id"]),
         "worst_member_id": str(worst["member_id"]),

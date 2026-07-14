@@ -84,8 +84,13 @@ def calculate_concentration_addon(
 
     work = positions[[member_col, security_col, sector_col, market_value_col]].copy()
     work[market_value_col] = pd.to_numeric(work[market_value_col], errors="coerce")
-    if work[market_value_col].isna().any() or (~np.isfinite(work[market_value_col])).any():
-        raise ValueError(f"{market_value_col} contains missing, non-numeric, or non-finite values")
+    if (
+        work[market_value_col].isna().any()
+        or (~np.isfinite(work[market_value_col])).any()
+    ):
+        raise ValueError(
+            f"{market_value_col} contains missing, non-numeric, or non-finite values"
+        )
     work["gross_position_value"] = work[market_value_col].abs()
 
     gross = (
@@ -130,8 +135,7 @@ def calculate_concentration_addon(
         0.0,
     )
     sector["scaled_excess"] = np.maximum(
-        (sector["concentration_ratio"] - sector_threshold)
-        / (1.0 - sector_threshold),
+        (sector["concentration_ratio"] - sector_threshold) / (1.0 - sector_threshold),
         0.0,
     )
     sector["raw_attribution_amount"] = (
@@ -141,7 +145,9 @@ def calculate_concentration_addon(
     sector["concentration_key"] = sector[sector_col].astype(str)
 
     security_total = (
-        security.groupby(member_col, as_index=False, sort=True)["raw_attribution_amount"]
+        security.groupby(member_col, as_index=False, sort=True)[
+            "raw_attribution_amount"
+        ]
         .sum()
         .rename(columns={"raw_attribution_amount": "single_name_charge"})
     )

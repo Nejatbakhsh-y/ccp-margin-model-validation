@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -114,7 +113,9 @@ def main() -> None:
             base_cfg.get("cap_usd"),
         )
 
-        member_positions["absolute_market_value"] = member_positions["market_value"].abs()
+        member_positions["absolute_market_value"] = member_positions[
+            "market_value"
+        ].abs()
 
         raw_liquidity = float(
             sum(
@@ -148,9 +149,7 @@ def main() -> None:
             largest_name_weight = 0.0
             largest_sector_weight = 0.0
 
-        single_threshold = float(
-            concentration_cfg.get("single_name_threshold", 0.20)
-        )
+        single_threshold = float(concentration_cfg.get("single_name_threshold", 0.20))
         sector_threshold = float(concentration_cfg.get("sector_threshold", 0.40))
         single_component = (
             max(0.0, largest_name_weight - single_threshold)
@@ -163,9 +162,7 @@ def main() -> None:
             * float(concentration_cfg.get("sector_rate", 0.05))
         )
 
-        method = str(
-            concentration_cfg.get("aggregation_method", "max")
-        ).strip().lower()
+        method = str(concentration_cfg.get("aggregation_method", "max")).strip().lower()
         if method == "max":
             raw_concentration = max(single_component, sector_component)
         elif method == "sum":
@@ -203,9 +200,7 @@ def main() -> None:
             gap_maximum,
         )
 
-        required_coverage_ratio = float(
-            stress_cfg.get("required_coverage_ratio", 1.0)
-        )
+        required_coverage_ratio = float(stress_cfg.get("required_coverage_ratio", 1.0))
         stress_requirement = required_coverage_ratio * float(primary_row.worst_loss)
         pre_stress_margin = (
             base_margin + liquidity_addon + concentration_addon + gap_risk_addon

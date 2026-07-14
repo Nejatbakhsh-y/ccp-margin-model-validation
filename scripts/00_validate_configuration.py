@@ -1,4 +1,5 @@
-﻿"""Validate the complete CCP margin model configuration."""
+# ruff: noqa: E402
+"""Validate the complete CCP margin model configuration."""
 
 from __future__ import annotations
 
@@ -101,13 +102,11 @@ def validate_configuration(config: dict[str, Any]) -> None:
         "minimum_positions must be at least 1.",
     )
     require(
-        portfolio["maximum_positions"]
-        >= portfolio["minimum_positions"],
+        portfolio["maximum_positions"] >= portfolio["minimum_positions"],
         "maximum_positions must not be below minimum_positions.",
     )
     require(
-        portfolio["gross_notional_max"]
-        > portfolio["gross_notional_min"],
+        portfolio["gross_notional_max"] > portfolio["gross_notional_min"],
         "gross_notional_max must exceed gross_notional_min.",
     )
 
@@ -157,9 +156,7 @@ def validate_configuration(config: dict[str, Any]) -> None:
         "EWMA lambda is outside the permitted development range.",
     )
 
-    reconciliation_tolerance = float(
-        validation["reconciliation_tolerance"]
-    )
+    reconciliation_tolerance = float(validation["reconciliation_tolerance"])
     require(
         reconciliation_tolerance > 0.0,
         "reconciliation_tolerance must be positive.",
@@ -194,12 +191,8 @@ def validate_configuration(config: dict[str, Any]) -> None:
         "One or more required margin add-on components are missing.",
     )
 
-    historical_ids = [
-        scenario["id"] for scenario in stress["historical"]
-    ]
-    hypothetical_ids = [
-        scenario["id"] for scenario in stress["hypothetical"]
-    ]
+    historical_ids = [scenario["id"] for scenario in stress["historical"]]
+    hypothetical_ids = [scenario["id"] for scenario in stress["hypothetical"]]
     all_scenario_ids = historical_ids + hypothetical_ids
 
     require(
@@ -242,10 +235,7 @@ def validate_configuration(config: dict[str, Any]) -> None:
     )
 
     require(
-        monitoring["configuration_change"][
-            "require_configuration_checksum"
-        ]
-        is True,
+        monitoring["configuration_change"]["require_configuration_checksum"] is True,
         "Configuration checksum control must remain enabled.",
     )
     require(
@@ -279,15 +269,10 @@ def main() -> int:
         f"at {config['challenger_model']['confidence_level']:.1%}"
     )
     print(f"MPOR values: {config['primary_model']['mpor_days']}")
-    print(
-        "Configured members: "
-        f"{config['portfolio']['number_of_members']}"
-    )
+    print(f"Configured members: {config['portfolio']['number_of_members']}")
     print("Loaded configuration files:")
 
-    for section_name, file_path in config["_metadata"][
-        "loaded_files"
-    ].items():
+    for section_name, file_path in config["_metadata"]["loaded_files"].items():
         print(f"  {section_name}: {file_path}")
 
     return 0

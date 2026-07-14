@@ -79,7 +79,9 @@ def main() -> int:
     findings: list[dict[str, object]] = []
 
     start_date = pd.Timestamp(project_config["data"]["start_date"])
-    end_date = pd.Timestamp(configured_observation_end(project_config["data"].get("end_date")))
+    end_date = pd.Timestamp(
+        configured_observation_end(project_config["data"].get("end_date"))
+    )
     minimum_completeness = float(project_config["data"]["minimum_completeness"])
 
     market_settings = data_config["market_data"]
@@ -247,7 +249,9 @@ def main() -> int:
                 "Calendar-day tolerance accommodates weekends and market holidays.",
             )
 
-        outside_range = int(((frame["date"] < start_date) | (frame["date"] > end_date)).sum())
+        outside_range = int(
+            ((frame["date"] < start_date) | (frame["date"] > end_date)).sum()
+        )
         finding(
             findings,
             "market",
@@ -364,7 +368,9 @@ def main() -> int:
         "validation_file": relative_path(output_csv),
         "validated_at_utc": utc_now_iso(),
     }
-    write_json(ROOT / "reports" / "evidence" / "raw_data_validation_summary.json", summary)
+    write_json(
+        ROOT / "reports" / "evidence" / "raw_data_validation_summary.json", summary
+    )
     write_json(ROOT / "data" / "manifests" / "raw_data_quality_summary.json", summary)
 
     LOGGER.info(

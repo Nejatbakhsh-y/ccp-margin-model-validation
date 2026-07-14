@@ -1,4 +1,5 @@
-﻿"""Run independent Step 15 sensitivity comparisons and create evidence files.
+# ruff: noqa: E402
+"""Run independent Step 15 sensitivity comparisons and create evidence files.
 
 This script analyzes actual model-generated scenario results. It does not create
 synthetic results and does not treat missing scenario runs as successful.
@@ -87,9 +88,7 @@ def main() -> None:
         manifest=manifest,
         significance_level=float(reporting.get("significance_level", 0.05)),
         top_member_count=int(reporting.get("top_member_count", 5)),
-        stability_review_thresholds=reporting.get(
-            "stability_review_thresholds", {}
-        ),
+        stability_review_thresholds=reporting.get("stability_review_thresholds", {}),
     )
     paths = write_sensitivity_report(analysis, output_directory)
 
@@ -102,4 +101,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

@@ -8,7 +8,6 @@ import yaml
 
 from ccp_margin.stress.historical import (
     HistoricalScenario,
-    apply_security_shocks,
     compound_scenario_returns,
 )
 from ccp_margin.stress.hypothetical import (
@@ -69,9 +68,7 @@ def test_historical_compounding_is_exact() -> None:
         pd.Timestamp("2020-01-02"),
         pd.Timestamp("2020-01-03"),
     )
-    shocks, observations, _, _ = compound_scenario_returns(
-        returns, scenario, ["SPY"]
-    )
+    shocks, observations, _, _ = compound_scenario_returns(returns, scenario, ["SPY"])
     assert observations == 2
     assert np.isclose(shocks["SPY"], -0.01)
 
@@ -100,11 +97,9 @@ def test_treasury_duration_convexity_formula() -> None:
 
 
 def test_volume_stress_recalculates_total_requirement() -> None:
-    result = trading_volume_scenario(
-        _margin(), decline_pct=0.80, impact_exponent=0.50
-    )
+    result = trading_volume_scenario(_margin(), decline_pct=0.80, impact_exponent=0.50)
     m1 = result.loc[result["member_id"] == "M1"].iloc[0]
-    multiplier = 0.20 ** -0.50
+    multiplier = 0.20**-0.50
     expected = 30.0 - 4.0 + 4.0 * multiplier
     assert np.isclose(m1["stress_requirement"], expected)
 

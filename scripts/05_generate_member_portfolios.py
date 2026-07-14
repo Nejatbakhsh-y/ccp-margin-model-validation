@@ -1,3 +1,4 @@
+# ruff: noqa: E402
 """Generate deterministic synthetic clearing-member portfolios.
 
 Run from the project root:
@@ -81,7 +82,11 @@ def load_yaml(path: Path) -> dict[str, Any]:
 
 def resolve_input(explicit_input: Path | None) -> Path:
     if explicit_input is not None:
-        path = explicit_input if explicit_input.is_absolute() else PROJECT_ROOT / explicit_input
+        path = (
+            explicit_input
+            if explicit_input.is_absolute()
+            else PROJECT_ROOT / explicit_input
+        )
         if not path.exists():
             raise FileNotFoundError(f"Market-data input not found: {path}")
         return path
@@ -186,7 +191,9 @@ def write_outputs(
     print(f"Seed: {config.random_seed}")
     print(f"Members: {config.number_of_members}")
     print(f"Position rows: {len(positions):,}")
-    print(f"Date range: {manifest['valuation_date_min']} to {manifest['valuation_date_max']}")
+    print(
+        f"Date range: {manifest['valuation_date_min']} to {manifest['valuation_date_max']}"
+    )
     print(f"SHA-256: {manifest['portfolio_sha256']}")
     print(f"Positions: {positions_path}")
     print(f"Manifest: {manifest_path}")
@@ -194,9 +201,13 @@ def write_outputs(
 
 def main() -> None:
     args = parse_args()
-    config_path = args.config if args.config.is_absolute() else PROJECT_ROOT / args.config
+    config_path = (
+        args.config if args.config.is_absolute() else PROJECT_ROOT / args.config
+    )
     output_dir = (
-        args.output_dir if args.output_dir.is_absolute() else PROJECT_ROOT / args.output_dir
+        args.output_dir
+        if args.output_dir.is_absolute()
+        else PROJECT_ROOT / args.output_dir
     )
     raw_config = load_yaml(config_path)
     generation_config = PortfolioGenerationConfig.from_mapping(raw_config)

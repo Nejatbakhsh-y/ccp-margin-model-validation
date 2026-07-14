@@ -50,12 +50,12 @@ def _apply_missing_policy(
     elif missing_policy == "fill_zero":
         cleaned = returns.fillna(0.0)
     else:
-        raise ValueError(
-            "missing_policy must be either 'drop_rows' or 'fill_zero'."
-        )
+        raise ValueError("missing_policy must be either 'drop_rows' or 'fill_zero'.")
 
     if cleaned.empty:
-        raise ValueError("No usable return observations remain after missing-data treatment.")
+        raise ValueError(
+            "No usable return observations remain after missing-data treatment."
+        )
     return cleaned
 
 

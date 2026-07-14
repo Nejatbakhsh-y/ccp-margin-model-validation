@@ -47,13 +47,10 @@ def clean_market_prices(
     data_config: dict[str, Any] = config["data"]
     market_config: dict[str, Any] = data_config.get("market", {})
 
-    raw_path = (
-        project_root / "data" / "raw" / "market" / "market_prices_raw.parquet"
-    )
+    raw_path = project_root / "data" / "raw" / "market" / "market_prices_raw.parquet"
     if not raw_path.exists():
         raise FileNotFoundError(
-            f"Raw market data not found: {raw_path}. "
-            "Run download_market.py first."
+            f"Raw market data not found: {raw_path}. Run download_market.py first."
         )
 
     frame = pd.read_parquet(raw_path)
@@ -61,15 +58,12 @@ def clean_market_prices(
     missing = required.difference(frame.columns)
     if missing:
         raise ValueError(
-            "Raw market data is missing required columns: "
-            + ", ".join(sorted(missing))
+            "Raw market data is missing required columns: " + ", ".join(sorted(missing))
         )
 
     frame = frame.copy()
     frame["date"] = pd.to_datetime(frame["date"], errors="coerce").dt.normalize()
-    frame["security_id"] = (
-        frame["security_id"].astype("string").str.strip().str.upper()
-    )
+    frame["security_id"] = frame["security_id"].astype("string").str.strip().str.upper()
     frame = frame.dropna(subset=["date", "security_id"])
 
     for column in NUMERIC_COLUMNS:
@@ -96,12 +90,10 @@ def clean_market_prices(
         keep="first",
     )
 
-    frame["is_non_positive_price"] = (
-        frame["adjusted_close"].notna() & (frame["adjusted_close"] <= 0)
+    frame["is_non_positive_price"] = frame["adjusted_close"].notna() & (
+        frame["adjusted_close"] <= 0
     )
-    frame["model_price"] = frame["adjusted_close"].where(
-        frame["adjusted_close"] > 0
-    )
+    frame["model_price"] = frame["adjusted_close"].where(frame["adjusted_close"] > 0)
 
     reference_security = str(
         market_config.get("calendar_reference_security", "SPY")
@@ -120,8 +112,7 @@ def clean_market_prices(
 
     reference_dates = (
         frame.loc[
-            (frame["security_id"] == reference_security)
-            & frame["model_price"].notna(),
+            (frame["security_id"] == reference_security) & frame["model_price"].notna(),
             "date",
         ]
         .drop_duplicates()
@@ -155,13 +146,11 @@ def clean_market_prices(
         validate="many_to_one",
     )
 
-    panel["pre_inception"] = (
-        panel["security_first_valid_date"].notna()
-        & (panel["date"] < panel["security_first_valid_date"])
+    panel["pre_inception"] = panel["security_first_valid_date"].notna() & (
+        panel["date"] < panel["security_first_valid_date"]
     )
-    panel["post_last_observation"] = (
-        panel["security_last_valid_date"].notna()
-        & (panel["date"] > panel["security_last_valid_date"])
+    panel["post_last_observation"] = panel["security_last_valid_date"].notna() & (
+        panel["date"] > panel["security_last_valid_date"]
     )
     panel["active_history"] = (
         panel["security_first_valid_date"].notna()
@@ -172,9 +161,7 @@ def clean_market_prices(
 
     panel["calendar_gap"] = panel["source"].isna()
     panel["model_price_missing"] = panel["model_price"].isna()
-    panel["active_calendar_gap"] = (
-        panel["active_history"] & panel["calendar_gap"]
-    )
+    panel["active_calendar_gap"] = panel["active_history"] & panel["calendar_gap"]
     panel["active_model_price_missing"] = (
         panel["active_history"] & panel["model_price_missing"]
     )
@@ -184,30 +171,25 @@ def clean_market_prices(
         kind="mergesort",
     ).reset_index(drop=True)
 
-    panel["return_1d"] = panel.groupby(
-        "security_id", sort=False
-    )["model_price"].pct_change(fill_method=None)
+    panel["return_1d"] = panel.groupby("security_id", sort=False)[
+        "model_price"
+    ].pct_change(fill_method=None)
     panel["log_return_1d"] = np.log1p(panel["return_1d"])
     panel["stale_run_length"] = panel.groupby(
         "security_id", group_keys=False, sort=False
     )["model_price"].transform(_stale_run_length)
 
-    panel["adjustment_ratio"] = (
-        panel["close"] / panel["adjusted_close"]
-    ).replace([np.inf, -np.inf], np.nan)
-    panel["adjustment_ratio_change"] = panel.groupby(
-        "security_id", sort=False
-    )["adjustment_ratio"].pct_change(fill_method=None)
+    panel["adjustment_ratio"] = (panel["close"] / panel["adjusted_close"]).replace(
+        [np.inf, -np.inf], np.nan
+    )
+    panel["adjustment_ratio_change"] = panel.groupby("security_id", sort=False)[
+        "adjustment_ratio"
+    ].pct_change(fill_method=None)
 
     panel["clean_run_id"] = make_run_id()
     panel["cleaned_timestamp_utc"] = utc_now()
 
-    output_path = (
-        project_root
-        / "data"
-        / "processed"
-        / "market_prices_clean.parquet"
-    )
+    output_path = project_root / "data" / "processed" / "market_prices_clean.parquet"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     panel.to_parquet(output_path, index=False)
 
@@ -218,9 +200,7 @@ def clean_market_prices(
         request_parameters={
             "raw_dataset": "data/raw/market/market_prices_raw.parquet",
             "reference_security": reference_security,
-            "price_field": str(
-                data_config.get("price_field", "adjusted_close")
-            ),
+            "price_field": str(data_config.get("price_field", "adjusted_close")),
             "cleaning_version": "2.0-pre-inception-aware",
         },
         run_id=str(panel["clean_run_id"].iloc[0]),
@@ -239,10 +219,7 @@ def main() -> int:
         f"{len(cleaned):,} panel rows, "
         f"{cleaned['security_id'].nunique()} securities."
     )
-    print(
-        "Reference calendar: "
-        f"{cleaned['calendar_reference_security'].iloc[0]}"
-    )
+    print(f"Reference calendar: {cleaned['calendar_reference_security'].iloc[0]}")
     return 0
 
 

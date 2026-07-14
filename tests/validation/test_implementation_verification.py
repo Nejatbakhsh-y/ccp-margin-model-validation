@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 
 from ccp_margin.validation.implementation_verification import (
@@ -13,9 +12,7 @@ from ccp_margin.validation.implementation_verification import (
 
 
 def test_independent_calculations():
-    prices = pd.DataFrame(
-        {"A": [100.0, 110.0, 99.0], "B": [50.0, 55.0, 60.5]}
-    )
+    prices = pd.DataFrame({"A": [100.0, 110.0, 99.0], "B": [50.0, 55.0, 60.5]})
     returns = independently_calculate_returns(prices).dropna()
     pnl = independently_calculate_portfolio_pnl(
         returns,

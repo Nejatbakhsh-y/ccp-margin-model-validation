@@ -85,12 +85,8 @@ def assess_procyclicality(
             where=base != 0.0,
         )
     finite_rolling = rolling_change[np.isfinite(rolling_change)]
-    max_rolling_increase = (
-        float(np.max(finite_rolling)) if finite_rolling.size else 0.0
-    )
-    max_rolling_decrease = (
-        float(np.min(finite_rolling)) if finite_rolling.size else 0.0
-    )
+    max_rolling_increase = float(np.max(finite_rolling)) if finite_rolling.size else 0.0
+    max_rolling_decrease = float(np.min(finite_rolling)) if finite_rolling.size else 0.0
 
     running_peak = np.maximum.accumulate(margin)
     drawdown = np.divide(
@@ -111,9 +107,7 @@ def assess_procyclicality(
             )
         volatility_correlation = (
             float(np.corrcoef(margin, volatility)[0, 1])
-            if margin.size > 1
-            and np.std(margin) > 0
-            and np.std(volatility) > 0
+            if margin.size > 1 and np.std(margin) > 0 and np.std(volatility) > 0
             else float("nan")
         )
 
@@ -128,9 +122,7 @@ def assess_procyclicality(
         if np.any(flags) and np.any(~flags):
             calm_mean = float(np.mean(margin[~flags]))
             stress_mean = float(np.mean(margin[flags]))
-            stress_ratio = (
-                stress_mean / calm_mean if calm_mean != 0.0 else float("nan")
-            )
+            stress_ratio = stress_mean / calm_mean if calm_mean != 0.0 else float("nan")
         else:
             stress_ratio = float("nan")
 

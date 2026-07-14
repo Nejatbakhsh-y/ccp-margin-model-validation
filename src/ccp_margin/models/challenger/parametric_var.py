@@ -157,7 +157,9 @@ class ParametricVaRModel:
         required = {security_column, exposure_column}
         missing = required.difference(positions.columns)
         if missing:
-            raise ValueError(f"positions is missing required columns: {sorted(missing)}")
+            raise ValueError(
+                f"positions is missing required columns: {sorted(missing)}"
+            )
 
         frame = positions[[security_column, exposure_column]].copy()
         frame[security_column] = frame[security_column].astype(str)
@@ -166,7 +168,10 @@ class ParametricVaRModel:
             raise ValueError("positions contains missing or non-numeric market values.")
 
         # If market values are all non-negative, use long_short_flag to establish sign.
-        if long_short_column in positions.columns and (frame[exposure_column] >= 0.0).all():
+        if (
+            long_short_column in positions.columns
+            and (frame[exposure_column] >= 0.0).all()
+        ):
             flags = positions[long_short_column].astype(str).str.strip().str.lower()
             sign_map = {
                 "long": 1.0,
@@ -266,13 +271,13 @@ class ParametricVaRModel:
 
         quantile = self._quantile(distribution, degrees_of_freedom)
         portfolio_volatility = self._portfolio_volatility(exposures, covariance)
-        expected_pnl = (
-            float(exposures @ mean_returns) if self.include_mean else 0.0
-        )
+        expected_pnl = float(exposures @ mean_returns) if self.include_mean else 0.0
         raw_var = -expected_pnl + quantile * portfolio_volatility
         var_value = max(0.0, raw_var)
 
-        covariance_times_exposure = covariance.to_numpy(dtype=float) @ exposures.to_numpy(dtype=float)
+        covariance_times_exposure = covariance.to_numpy(
+            dtype=float
+        ) @ exposures.to_numpy(dtype=float)
         if portfolio_volatility > 0.0:
             volatility_component = (
                 quantile
@@ -335,10 +340,13 @@ class ParametricVaRModel:
         return_frame = return_frame.apply(pd.to_numeric, errors="coerce")
         return_frame = return_frame.replace([np.inf, -np.inf], np.nan).sort_index()
 
-        missing_factors = tuple(sorted(set(exposures.index) - set(return_frame.columns)))
+        missing_factors = tuple(
+            sorted(set(exposures.index) - set(return_frame.columns))
+        )
         if missing_factors and self.missing_risk_factor_policy == "raise":
             raise ValueError(
-                "Return history is missing for risk factors: " + ", ".join(missing_factors)
+                "Return history is missing for risk factors: "
+                + ", ".join(missing_factors)
             )
         if missing_factors:
             exposures = exposures.drop(list(missing_factors))

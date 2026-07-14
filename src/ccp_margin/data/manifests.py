@@ -83,9 +83,7 @@ def load_project_config(root: Path | None = None) -> dict[str, Any]:
         config = yaml.safe_load(handle) or {}
 
     if "data" not in config or not isinstance(config["data"], dict):
-        raise KeyError(
-            "configs/project.yaml must contain a top-level 'data:' mapping."
-        )
+        raise KeyError("configs/project.yaml must contain a top-level 'data:' mapping.")
 
     return config
 
@@ -135,9 +133,7 @@ def dataframe_content_sha256(
 
     for column in normalized.columns:
         if pd.api.types.is_datetime64_any_dtype(normalized[column]):
-            normalized[column] = normalized[column].dt.strftime(
-                "%Y-%m-%dT%H:%M:%S"
-            )
+            normalized[column] = normalized[column].dt.strftime("%Y-%m-%dT%H:%M:%S")
         elif pd.api.types.is_float_dtype(normalized[column]):
             normalized[column] = normalized[column].round(12)
 
@@ -227,9 +223,7 @@ def record_dataset(
 ) -> dict[str, Any]:
     """Append a dataset record to data/manifests/market_data_manifest.csv."""
     project_root = root or find_project_root()
-    manifest_path = (
-        project_root / "data" / "manifests" / "market_data_manifest.csv"
-    )
+    manifest_path = project_root / "data" / "manifests" / "market_data_manifest.csv"
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
 
     config_path = project_root / "configs" / "project.yaml"

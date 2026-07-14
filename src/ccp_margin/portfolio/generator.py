@@ -11,7 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from hashlib import sha256
 from io import StringIO
-from typing import Any, Mapping, Sequence
+from typing import Any, Mapping
 
 import numpy as np
 import pandas as pd
@@ -116,9 +116,7 @@ class PortfolioGenerationConfig:
             number_of_members=int(portfolio.get("number_of_members", 30)),
             minimum_positions=int(portfolio.get("minimum_positions", 3)),
             maximum_positions=int(portfolio.get("maximum_positions", 10)),
-            gross_notional_min=float(
-                portfolio.get("gross_notional_min", 10_000_000)
-            ),
+            gross_notional_min=float(portfolio.get("gross_notional_min", 10_000_000)),
             gross_notional_max=float(
                 portfolio.get("gross_notional_max", 1_000_000_000)
             ),
@@ -207,9 +205,7 @@ def _canonicalize_market_data(market_data: pd.DataFrame) -> pd.DataFrame:
         subset=["valuation_date", "security_id"], keep=False
     )
     if duplicate_mask.any():
-        sample = frame.loc[
-            duplicate_mask, ["valuation_date", "security_id"]
-        ].head(10)
+        sample = frame.loc[duplicate_mask, ["valuation_date", "security_id"]].head(10)
         raise ValueError(
             "Duplicate security-date rows were found in market data. Sample:\n"
             + sample.to_string(index=False)
@@ -218,7 +214,9 @@ def _canonicalize_market_data(market_data: pd.DataFrame) -> pd.DataFrame:
     if "volume" in frame.columns:
         frame["volume"] = pd.to_numeric(frame["volume"], errors="coerce")
 
-    return frame.sort_values(["valuation_date", "security_id"], kind="mergesort").reset_index(drop=True)
+    return frame.sort_values(
+        ["valuation_date", "security_id"], kind="mergesort"
+    ).reset_index(drop=True)
 
 
 def _infer_metadata(frame: pd.DataFrame) -> pd.DataFrame:
@@ -252,9 +250,9 @@ def _infer_metadata(frame: pd.DataFrame) -> pd.DataFrame:
         latest["asset_class"] = (
             latest["asset_class"].astype("string").fillna(default_asset_class)
         )
-        latest.loc[
-            latest["asset_class"].str.strip() == "", "asset_class"
-        ] = default_asset_class
+        latest.loc[latest["asset_class"].str.strip() == "", "asset_class"] = (
+            default_asset_class
+        )
 
     # Prefer explicit liquidity buckets. Otherwise derive deterministic buckets
     # from average dollar volume when volume is available.
@@ -287,9 +285,9 @@ def _infer_metadata(frame: pd.DataFrame) -> pd.DataFrame:
             mapped_volume_bucket
         )
     latest["liquidity_bucket"] = latest["liquidity_bucket"].fillna(default_liquidity)
-    latest.loc[
-        latest["liquidity_bucket"].str.strip() == "", "liquidity_bucket"
-    ] = default_liquidity
+    latest.loc[latest["liquidity_bucket"].str.strip() == "", "liquidity_bucket"] = (
+        default_liquidity
+    )
 
     allowed_buckets = {"High", "Medium", "Low"}
     latest["liquidity_bucket"] = latest["liquidity_bucket"].str.title()
@@ -554,7 +552,9 @@ def generate_synthetic_portfolios(
         subset=["valuation_date", "member_id", "portfolio_id", "security_id"]
     )
     if duplicate_positions.any():
-        raise RuntimeError("The generated portfolio output contains duplicate positions.")
+        raise RuntimeError(
+            "The generated portfolio output contains duplicate positions."
+        )
 
     return positions
 
@@ -562,7 +562,9 @@ def generate_synthetic_portfolios(
 def canonical_portfolio_sha256(positions: pd.DataFrame) -> str:
     """Return a deterministic SHA-256 hash of the logical position content."""
 
-    missing = [column for column in REQUIRED_POSITION_COLUMNS if column not in positions]
+    missing = [
+        column for column in REQUIRED_POSITION_COLUMNS if column not in positions
+    ]
     if missing:
         raise ValueError(f"Position data is missing required columns: {missing}")
 
@@ -580,11 +582,13 @@ def canonical_portfolio_sha256(positions: pd.DataFrame) -> str:
         "asset_class",
         "liquidity_bucket",
     ]
-    ordered_columns = [column for column in ordered_columns if column in positions.columns]
+    ordered_columns = [
+        column for column in ordered_columns if column in positions.columns
+    ]
     canonical = positions.loc[:, ordered_columns].copy()
-    canonical["valuation_date"] = pd.to_datetime(canonical["valuation_date"]).dt.strftime(
-        "%Y-%m-%d"
-    )
+    canonical["valuation_date"] = pd.to_datetime(
+        canonical["valuation_date"]
+    ).dt.strftime("%Y-%m-%d")
     canonical = canonical.sort_values(
         ["valuation_date", "member_id", "portfolio_id", "security_id"],
         kind="mergesort",

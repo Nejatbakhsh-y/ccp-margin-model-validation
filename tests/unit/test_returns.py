@@ -29,7 +29,9 @@ def test_return_calculation_matches_arithmetic_or_log_definition():
         "price_returns",
     )
     if function is None:
-        pytest.skip(f"No public return-calculation function found in {module.__name__}.")
+        pytest.skip(
+            f"No public return-calculation function found in {module.__name__}."
+        )
 
     prices = pd.Series(
         [100.0, 110.0, 121.0],

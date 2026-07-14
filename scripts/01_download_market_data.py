@@ -91,7 +91,9 @@ def download_one_ticker(
                 if action_column not in frame.columns:
                     frame[action_column] = 0.0
 
-            frame["date"] = pd.to_datetime(frame["date"], errors="raise").dt.tz_localize(None)
+            frame["date"] = pd.to_datetime(
+                frame["date"], errors="raise"
+            ).dt.tz_localize(None)
             numeric_columns = [
                 "open",
                 "high",
@@ -115,7 +117,9 @@ def download_one_ticker(
             if attempt < retries:
                 time.sleep(pause_seconds)
 
-    raise RuntimeError(f"Download failed for {ticker} after {retries} attempts") from last_error
+    raise RuntimeError(
+        f"Download failed for {ticker} after {retries} attempts"
+    ) from last_error
 
 
 def main() -> int:
@@ -163,7 +167,9 @@ def main() -> int:
                 "missing_volume": int(frame["volume"].isna().sum()),
                 "dividend_observations": int((frame["dividends"].fillna(0) != 0).sum()),
                 "split_observations": int((frame["stock_splits"].fillna(0) != 0).sum()),
-                "capital_gain_observations": int((frame["capital_gains"].fillna(0) != 0).sum()),
+                "capital_gain_observations": int(
+                    (frame["capital_gains"].fillna(0) != 0).sum()
+                ),
                 "retrieved_at_utc": frame["retrieved_at_utc"].iloc[0],
             }
         )
@@ -175,13 +181,25 @@ def main() -> int:
 
     dictionary = pd.DataFrame(
         [
-            ("date", "date", "Trading date; timezone removed after daily-data retrieval."),
+            (
+                "date",
+                "date",
+                "Trading date; timezone removed after daily-data retrieval.",
+            ),
             ("ticker", "string", "Yahoo Finance ticker identifier."),
             ("open", "float", "Unadjusted daily opening price."),
             ("high", "float", "Unadjusted daily high price."),
             ("low", "float", "Unadjusted daily low price."),
-            ("close", "float", "Unadjusted daily closing price returned with auto_adjust=False."),
-            ("adj_close", "float", "Closing price adjusted for applicable distributions and splits."),
+            (
+                "close",
+                "float",
+                "Unadjusted daily closing price returned with auto_adjust=False.",
+            ),
+            (
+                "adj_close",
+                "float",
+                "Closing price adjusted for applicable distributions and splits.",
+            ),
             ("volume", "float", "Reported daily trading volume."),
             ("dividends", "float", "Cash dividend corporate action, when available."),
             ("stock_splits", "float", "Stock-split factor, when available."),
@@ -191,7 +209,9 @@ def main() -> int:
         ],
         columns=["field", "type", "definition"],
     )
-    dictionary.to_csv(ROOT / "data" / "manifests" / "market_data_dictionary.csv", index=False)
+    dictionary.to_csv(
+        ROOT / "data" / "manifests" / "market_data_dictionary.csv", index=False
+    )
 
     write_json(
         ROOT / "data" / "manifests" / "market_download_summary.json",

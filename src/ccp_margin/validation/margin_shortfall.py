@@ -109,9 +109,7 @@ def calculate_margin_shortfall(
     if (frame[available_margin_column] < 0).any():
         raise ValueError("available_margin must be non-negative.")
 
-    frame["exception_flag"] = (
-        frame[actual_loss_column] > frame[available_margin_column]
-    )
+    frame["exception_flag"] = frame[actual_loss_column] > frame[available_margin_column]
     frame["shortfall"] = (
         frame[actual_loss_column] - frame[available_margin_column]
     ).clip(lower=0.0)

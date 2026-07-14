@@ -87,7 +87,13 @@ def calculate_base_margin(
         raise KeyError(f"Missing required columns: {sorted(missing)}")
     if var_by_member.empty:
         empty = pd.DataFrame(
-            columns=[member_col, "base_var", "base_margin", "floor_applied", "cap_applied"]
+            columns=[
+                member_col,
+                "base_var",
+                "base_margin",
+                "floor_applied",
+                "cap_applied",
+            ]
         )
         return BaseMarginResult(
             member_margin=empty.copy(),

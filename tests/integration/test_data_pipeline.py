@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import numpy as np
-import pandas as pd
 
-from tests._step21_support import ROOT, first_existing, read_table
+from tests._step21_support import first_existing, read_table
 
 
 def test_processed_market_data_and_returns_are_available_and_valid():

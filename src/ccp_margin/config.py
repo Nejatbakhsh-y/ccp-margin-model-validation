@@ -1,4 +1,4 @@
-﻿"""Configuration loading utilities for the CCP margin model project."""
+"""Configuration loading utilities for the CCP margin model project."""
 
 from __future__ import annotations
 
@@ -77,14 +77,11 @@ def load_project_config(
 
     if not isinstance(referenced_files, dict) or not referenced_files:
         raise ConfigurationError(
-            "configs/project.yaml must contain a non-empty "
-            "'config_files' mapping."
+            "configs/project.yaml must contain a non-empty 'config_files' mapping."
         )
 
     combined_config: dict[str, Any] = {
-        key: value
-        for key, value in project_config.items()
-        if key != "config_files"
+        key: value for key, value in project_config.items() if key != "config_files"
     }
 
     loaded_files: dict[str, str] = {
@@ -110,14 +107,11 @@ def load_project_config(
 
         if section_name not in section_document:
             raise ConfigurationError(
-                f"Expected top-level section '{section_name}' in "
-                f"{section_path}."
+                f"Expected top-level section '{section_name}' in {section_path}."
             )
 
         combined_config[section_name] = section_document[section_name]
-        loaded_files[section_name] = str(
-            section_path.relative_to(project_root)
-        )
+        loaded_files[section_name] = str(section_path.relative_to(project_root))
 
     combined_config["_metadata"] = {
         "project_root": str(project_root),

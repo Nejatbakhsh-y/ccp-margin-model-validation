@@ -3,11 +3,10 @@ from __future__ import annotations
 import dataclasses
 import importlib
 import inspect
-import itertools
 import math
 import re
 from pathlib import Path
-from typing import Any, get_args, get_origin
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -36,9 +35,48 @@ DATES = pd.date_range("2025-01-02", periods=12, freq="B")
 
 RETURNS = pd.DataFrame(
     {
-        "EQ_A": [0.010, -0.015, 0.008, -0.004, 0.012, -0.020, 0.006, 0.003, -0.008, 0.011, -0.002, 0.004],
-        "EQ_B": [0.004, -0.006, 0.005, -0.002, 0.009, -0.011, 0.002, 0.001, -0.004, 0.006, -0.001, 0.003],
-        "UST10Y": [-0.002, 0.003, -0.001, 0.002, -0.003, 0.004, -0.001, 0.000, 0.002, -0.002, 0.001, -0.001],
+        "EQ_A": [
+            0.010,
+            -0.015,
+            0.008,
+            -0.004,
+            0.012,
+            -0.020,
+            0.006,
+            0.003,
+            -0.008,
+            0.011,
+            -0.002,
+            0.004,
+        ],
+        "EQ_B": [
+            0.004,
+            -0.006,
+            0.005,
+            -0.002,
+            0.009,
+            -0.011,
+            0.002,
+            0.001,
+            -0.004,
+            0.006,
+            -0.001,
+            0.003,
+        ],
+        "UST10Y": [
+            -0.002,
+            0.003,
+            -0.001,
+            0.002,
+            -0.003,
+            0.004,
+            -0.001,
+            0.000,
+            0.002,
+            -0.002,
+            0.001,
+            -0.001,
+        ],
     },
     index=DATES,
 )
@@ -263,7 +301,9 @@ def _base_value(parameter: inspect.Parameter, owner: Any = None) -> Any:
     if any(token in name for token in ("floor", "tolerance", "epsilon")):
         return 1e-8
 
-    if any(token in name for token in ("rate", "ratio", "fraction", "threshold", "shock")):
+    if any(
+        token in name for token in ("rate", "ratio", "fraction", "threshold", "shock")
+    ):
         return 0.10
 
     if any(token in name for token in ("count", "number", "n_", "minimum", "maximum")):
@@ -354,7 +394,9 @@ def _mutations(parameter: inspect.Parameter, function: Any) -> list[Any]:
         )
         values.extend(_string_literals(function))
 
-    if "bool" in annotation or name.startswith(("use_", "include_", "apply_", "allow_")):
+    if "bool" in annotation or name.startswith(
+        ("use_", "include_", "apply_", "allow_")
+    ):
         values.extend([True, False, None])
 
     if (
@@ -490,8 +532,7 @@ def _exercise_callable(function: Any) -> dict[str, int]:
     ]
 
     base = {
-        parameter.name: _base_value(parameter, function)
-        for parameter in parameters
+        parameter.name: _base_value(parameter, function) for parameter in parameters
     }
 
     attempts = 0
@@ -580,10 +621,7 @@ def _construct_regular_class(cls: type[Any]) -> list[Any]:
         and parameter.kind
         not in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD)
     ]
-    base = {
-        parameter.name: _base_value(parameter, cls)
-        for parameter in parameters
-    }
+    base = {parameter.name: _base_value(parameter, cls) for parameter in parameters}
 
     def attempt(arguments: dict[str, Any]) -> None:
         positional = []
@@ -591,12 +629,9 @@ def _construct_regular_class(cls: type[Any]) -> list[Any]:
         for parameter in parameters:
             if parameter.kind is inspect.Parameter.POSITIONAL_ONLY:
                 positional.append(arguments[parameter.name])
-            elif (
-                parameter.name in arguments
-                and not (
-                    parameter.default is not inspect.Parameter.empty
-                    and arguments[parameter.name] is parameter.default
-                )
+            elif parameter.name in arguments and not (
+                parameter.default is not inspect.Parameter.empty
+                and arguments[parameter.name] is parameter.default
             ):
                 keyword[parameter.name] = arguments[parameter.name]
         try:
@@ -663,7 +698,9 @@ def _exercise_module(module_name: str) -> dict[str, int]:
                         totals["expected_exceptions"] += 1
                     totals["attempts"] += 1
 
-                for method_name, method in inspect.getmembers(instance, predicate=callable):
+                for method_name, method in inspect.getmembers(
+                    instance, predicate=callable
+                ):
                     if method_name.startswith("__"):
                         continue
                     if method_name in {"to_dict", "summary"}:
@@ -693,16 +730,15 @@ def _exercise_module(module_name: str) -> dict[str, int]:
 
 def test_source_aware_core_contract_exploration():
     results = {
-        module_name: _exercise_module(module_name)
-        for module_name in TARGET_MODULES
+        module_name: _exercise_module(module_name) for module_name in TARGET_MODULES
     }
 
     for module_name, metrics in results.items():
         assert metrics["callables"] > 0, f"No local callables found in {module_name}"
         assert metrics["attempts"] > 0, f"No calls attempted in {module_name}"
-        assert (
-            metrics["successes"] + metrics["expected_exceptions"] > 0
-        ), f"No callable contract was exercised in {module_name}"
+        assert metrics["successes"] + metrics["expected_exceptions"] > 0, (
+            f"No callable contract was exercised in {module_name}"
+        )
 
 
 def test_total_margin_configuration_and_required_value_helpers():
@@ -793,4 +829,3 @@ def test_total_margin_error_and_reconciliation_contracts():
     if hasattr(module, "_merge_components"):
         metrics = _exercise_callable(module._merge_components)
         assert metrics["attempts"] > 0
-

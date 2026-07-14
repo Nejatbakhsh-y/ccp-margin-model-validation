@@ -29,7 +29,13 @@ def test_portfolio_generation_is_reproducible_for_fixed_seed():
     universe = pd.DataFrame(
         {
             "security_id": ["A", "B", "C", "D", "E"],
-            "sector": ["Technology", "Financials", "Healthcare", "Industrials", "Energy"],
+            "sector": [
+                "Technology",
+                "Financials",
+                "Healthcare",
+                "Industrials",
+                "Energy",
+            ],
             "asset_class": ["Equity"] * 5,
             "liquidity_bucket": ["high", "high", "medium", "medium", "low"],
             "price": [100.0, 50.0, 80.0, 40.0, 25.0],

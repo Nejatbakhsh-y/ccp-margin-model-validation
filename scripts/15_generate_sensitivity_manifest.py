@@ -1,4 +1,5 @@
-﻿"""Generate the Step 15 one-at-a-time sensitivity scenario manifest."""
+# ruff: noqa: E402
+"""Generate the Step 15 one-at-a-time sensitivity scenario manifest."""
 
 from __future__ import annotations
 
@@ -56,4 +57,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

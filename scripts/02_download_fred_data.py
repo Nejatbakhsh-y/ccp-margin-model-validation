@@ -127,10 +127,14 @@ def main() -> int:
         required = {"date", "value"}
         missing = required.difference(frame.columns)
         if missing:
-            raise RuntimeError(f"FRED response for {series_id} lacks columns {sorted(missing)}")
+            raise RuntimeError(
+                f"FRED response for {series_id} lacks columns {sorted(missing)}"
+            )
 
         frame["date"] = pd.to_datetime(frame["date"], errors="raise")
-        frame["value"] = pd.to_numeric(frame["value"].replace(".", pd.NA), errors="coerce")
+        frame["value"] = pd.to_numeric(
+            frame["value"].replace(".", pd.NA), errors="coerce"
+        )
         frame["series_id"] = series_id
         frame["source"] = "fred_rest_api"
         frame["retrieved_at_utc"] = utc_now_iso()
@@ -154,7 +158,9 @@ def main() -> int:
             {
                 "series_id": series_id,
                 "configured_description": configured_metadata["description"],
-                "configured_expected_frequency": configured_metadata["expected_frequency"],
+                "configured_expected_frequency": configured_metadata[
+                    "expected_frequency"
+                ],
                 "file": relative_path(output_path),
                 "sha256": sha256_file(output_path),
                 "observations": int(len(frame)),
@@ -189,13 +195,19 @@ def main() -> int:
     manifest.to_csv(manifest_path, index=False)
 
     metadata_frame = pd.DataFrame(metadata_rows).sort_values("series_id")
-    metadata_frame.to_csv(ROOT / "data" / "manifests" / "fred_series_metadata.csv", index=False)
+    metadata_frame.to_csv(
+        ROOT / "data" / "manifests" / "fred_series_metadata.csv", index=False
+    )
 
     dictionary = pd.DataFrame(
         [
             ("series_id", "string", "FRED series identifier."),
             ("date", "date", "Observation date."),
-            ("value", "float", "Numeric observation; FRED period markers are converted to missing."),
+            (
+                "value",
+                "float",
+                "Numeric observation; FRED period markers are converted to missing.",
+            ),
             ("realtime_start", "date", "Beginning of the FRED real-time period."),
             ("realtime_end", "date", "End of the FRED real-time period."),
             ("source", "string", "Data-provider lineage."),
@@ -203,7 +215,9 @@ def main() -> int:
         ],
         columns=["field", "type", "definition"],
     )
-    dictionary.to_csv(ROOT / "data" / "manifests" / "fred_data_dictionary.csv", index=False)
+    dictionary.to_csv(
+        ROOT / "data" / "manifests" / "fred_data_dictionary.csv", index=False
+    )
 
     write_json(
         ROOT / "data" / "manifests" / "fred_download_summary.json",

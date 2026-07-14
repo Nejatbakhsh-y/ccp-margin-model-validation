@@ -23,9 +23,7 @@ _REQUIRED_POSITION_COLUMNS = {
 def _validate_positions(positions: pd.DataFrame) -> pd.DataFrame:
     missing = _REQUIRED_POSITION_COLUMNS.difference(positions.columns)
     if missing:
-        raise ValueError(
-            f"Positions are missing required fields: {sorted(missing)}"
-        )
+        raise ValueError(f"Positions are missing required fields: {sorted(missing)}")
     frame = positions.copy()
     frame["member_id"] = frame["member_id"].astype(str).str.strip()
     frame["security_id"] = frame["security_id"].astype(str).str.strip()
@@ -113,7 +111,9 @@ def equity_price_scenarios(
     equities = {str(value) for value in equity_securities}
     present = equities.intersection(frame["security_id"])
     if not present:
-        raise ValueError("No configured equity securities are present in the positions.")
+        raise ValueError(
+            "No configured equity securities are present in the positions."
+        )
     outputs: list[pd.DataFrame] = []
     securities = sorted(frame["security_id"].unique())
     for decline in declines:
@@ -148,7 +148,9 @@ def treasury_yield_scenarios(
     configured = {str(value) for value in treasury_securities}
     present = sorted(configured.intersection(frame["security_id"]))
     if not present:
-        raise ValueError("No configured Treasury securities are present in the positions.")
+        raise ValueError(
+            "No configured Treasury securities are present in the positions."
+        )
     missing_parameters = [
         security
         for security in present
@@ -198,7 +200,9 @@ def credit_spread_scenarios(
     configured = {str(value) for value in credit_securities}
     present = sorted(configured.intersection(frame["security_id"]))
     if not present:
-        raise ValueError("No configured credit securities are present in the positions.")
+        raise ValueError(
+            "No configured credit securities are present in the positions."
+        )
     missing_parameters = [
         security for security in present if security not in spread_duration_years
     ]
@@ -265,13 +269,19 @@ def volatility_doubled_scenario(
 
     results: list[dict[str, object]] = []
     for member_id, group in frame.groupby("member_id", sort=True):
-        exposure = group.groupby("security_id")["market_value"].sum().reindex(securities, fill_value=0.0)
+        exposure = (
+            group.groupby("security_id")["market_value"]
+            .sum()
+            .reindex(securities, fill_value=0.0)
+        )
         pnl = stressed.to_numpy(dtype=float) @ exposure.to_numpy(dtype=float)
         losses = -pnl
         try:
             requirement = float(np.quantile(losses, confidence_level, method="higher"))
         except TypeError:
-            requirement = float(np.quantile(losses, confidence_level, interpolation="higher"))
+            requirement = float(
+                np.quantile(losses, confidence_level, interpolation="higher")
+            )
         results.append(
             {
                 "member_id": member_id,
@@ -328,7 +338,11 @@ def correlation_convergence_scenario(
 
     rows: list[dict[str, object]] = []
     for member_id, group in frame.groupby("member_id", sort=True):
-        exposure = group.groupby("security_id")["market_value"].sum().reindex(securities, fill_value=0.0)
+        exposure = (
+            group.groupby("security_id")["market_value"]
+            .sum()
+            .reindex(securities, fill_value=0.0)
+        )
         vector = exposure.to_numpy(dtype=float)
         variance = float(vector @ covariance @ vector) * float(horizon_days)
         requirement = z_score * np.sqrt(max(variance, 0.0))
@@ -380,7 +394,9 @@ def trading_volume_scenario(
         scenario_id="HYP_VOLUME_DOWN_80",
         scenario_name="Trading volume falls by 80%",
         metric_basis="stressed_margin_requirement",
-        requirement=pd.Series(requirement.to_numpy(), index=frame["member_id"].astype(str)),
+        requirement=pd.Series(
+            requirement.to_numpy(), index=frame["member_id"].astype(str)
+        ),
         shock_description=(
             f"Liquidity add-ons scale by remaining_volume^(-{impact_exponent:g}); "
             f"an {decline_pct:.0%} decline produces a {multiplier:.6f} multiplier."
@@ -453,7 +469,11 @@ def largest_member_default_scenario(
             f"Margin data are missing fields for default scenario: {sorted(missing_margin)}"
         )
 
-    gross = frame.assign(_abs=frame["market_value"].abs()).groupby("member_id")["_abs"].sum()
+    gross = (
+        frame.assign(_abs=frame["market_value"].abs())
+        .groupby("member_id")["_abs"]
+        .sum()
+    )
     largest_member = str(gross.sort_values(ascending=False).index[0])
     member_positions = frame.loc[frame["member_id"] == largest_member].copy()
     all_securities = sorted(member_positions["security_id"].unique())
@@ -466,7 +486,10 @@ def largest_member_default_scenario(
         if security in equity_set:
             shocks.loc[security] = -float(equity_decline_pct)
         elif security in treasury_set:
-            if security not in treasury_duration_years or security not in treasury_convexity_years2:
+            if (
+                security not in treasury_duration_years
+                or security not in treasury_convexity_years2
+            ):
                 raise KeyError(f"Missing Treasury parameters for {security}.")
             dy = float(treasury_yield_shock_bps) / 10000.0
             shocks.loc[security] = (
@@ -480,12 +503,14 @@ def largest_member_default_scenario(
                 float(credit_spread_shock_bps) / 10000.0
             )
 
-    ranked = member_positions.assign(_abs=member_positions["market_value"].abs()).sort_values(
-        ["_abs", "security_id"], ascending=[False, True]
-    )
+    ranked = member_positions.assign(
+        _abs=member_positions["market_value"].abs()
+    ).sort_values(["_abs", "security_id"], ascending=[False, True])
     largest_position = ranked.iloc[0]
     largest_security = str(largest_position["security_id"])
-    adverse_gap = -gap_pct if float(largest_position["market_value"]) >= 0.0 else gap_pct
+    adverse_gap = (
+        -gap_pct if float(largest_position["market_value"]) >= 0.0 else gap_pct
+    )
     existing = float(shocks.loc[largest_security])
     existing_position_pnl = float(largest_position["market_value"]) * existing
     gap_position_pnl = float(largest_position["market_value"]) * adverse_gap

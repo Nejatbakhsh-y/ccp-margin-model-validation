@@ -1,4 +1,3 @@
-﻿
 """Structural and data-quality verification for the Step 18 DuckDB pipeline."""
 
 from pathlib import Path
@@ -10,7 +9,9 @@ import pandas as pd
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATABASE_PATH = PROJECT_ROOT / "data" / "database" / "ccp_margin_validation.duckdb"
 MANIFEST_PATH = PROJECT_ROOT / "reports" / "sql" / "load_manifest.csv"
-SENSITIVITY_PATH = PROJECT_ROOT / "data" / "processed" / "sensitivity_scenario_results.parquet"
+SENSITIVITY_PATH = (
+    PROJECT_ROOT / "data" / "processed" / "sensitivity_scenario_results.parquet"
+)
 
 REQUIRED_TABLES = {
     "market_prices",
@@ -69,9 +70,16 @@ def baseline_mask(frame: pd.DataFrame) -> pd.Series:
         if pd.api.types.is_bool_dtype(values):
             mask |= values.fillna(False)
         else:
-            mask |= values.astype("string").str.strip().str.lower().isin({"true", "1", "yes", "y", "baseline"})
+            mask |= (
+                values.astype("string")
+                .str.strip()
+                .str.lower()
+                .isin({"true", "1", "yes", "y", "baseline"})
+            )
     if "scenario_id" in frame.columns:
-        mask |= frame["scenario_id"].astype("string").str.strip().str.lower().eq("baseline")
+        mask |= (
+            frame["scenario_id"].astype("string").str.strip().str.lower().eq("baseline")
+        )
     return mask
 
 
@@ -114,7 +122,9 @@ def test_expected_tables_are_nonempty() -> None:
     expected_nonempty = REQUIRED_TABLES - {"validation_findings"}
     with duckdb.connect(str(DATABASE_PATH), read_only=True) as connection:
         counts = {
-            table: int(connection.execute(f'SELECT COUNT(*) FROM "{table}"').fetchone()[0])
+            table: int(
+                connection.execute(f'SELECT COUNT(*) FROM "{table}"').fetchone()[0]
+            )
             for table in expected_nonempty
         }
     assert all(count > 0 for count in counts.values()), counts
@@ -139,7 +149,9 @@ def test_risk_factor_returns_are_long_format() -> None:
     assert null_keys == 0
 
 
-def test_backtesting_contains_only_baseline_observations_and_valid_derivations() -> None:
+def test_backtesting_contains_only_baseline_observations_and_valid_derivations() -> (
+    None
+):
     source = pd.read_parquet(SENSITIVITY_PATH)
     source.columns = [str(column).strip().lower() for column in source.columns]
     expected_rows = int(baseline_mask(source).sum())
@@ -175,9 +187,21 @@ def test_monitoring_metrics_are_legitimate_step17_outputs() -> None:
         "system_margin_call_volatility",
     }
     with duckdb.connect(str(DATABASE_PATH), read_only=True) as connection:
-        count = int(connection.execute("SELECT COUNT(*) FROM monitoring_metrics").fetchone()[0])
-        metric_names = {row[0] for row in connection.execute("SELECT DISTINCT metric_name FROM monitoring_metrics").fetchall()}
-        sources = {row[0] for row in connection.execute("SELECT DISTINCT source_table FROM monitoring_metrics").fetchall()}
+        count = int(
+            connection.execute("SELECT COUNT(*) FROM monitoring_metrics").fetchone()[0]
+        )
+        metric_names = {
+            row[0]
+            for row in connection.execute(
+                "SELECT DISTINCT metric_name FROM monitoring_metrics"
+            ).fetchall()
+        }
+        sources = {
+            row[0]
+            for row in connection.execute(
+                "SELECT DISTINCT source_table FROM monitoring_metrics"
+            ).fetchall()
+        }
         null_core = int(
             connection.execute(
                 "SELECT COUNT(*) FROM monitoring_metrics WHERE metric_date IS NULL OR metric_name IS NULL OR status IS NULL OR source_table IS NULL"
@@ -185,7 +209,9 @@ def test_monitoring_metrics_are_legitimate_step17_outputs() -> None:
         )
     assert count > 0
     assert required_metric_names.issubset(metric_names)
-    assert sources.issubset({"procyclicality_margin_history", "sensitivity_scenario_results"})
+    assert sources.issubset(
+        {"procyclicality_margin_history", "sensitivity_scenario_results"}
+    )
     assert null_core == 0
 
 

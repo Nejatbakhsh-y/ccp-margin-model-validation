@@ -52,95 +52,193 @@ def find_callable(module: Any, *candidate_names: str, contains: Iterable[str] = 
 
 _ALIAS_GROUPS = {
     "prices": {
-        "prices", "price", "price_series", "price_data", "market_prices",
-        "adjusted_close", "close_prices", "dataframe", "df", "data",
+        "prices",
+        "price",
+        "price_series",
+        "price_data",
+        "market_prices",
+        "adjusted_close",
+        "close_prices",
+        "dataframe",
+        "df",
+        "data",
     },
     "returns": {
-        "returns", "return_series", "daily_returns", "historical_returns",
-        "risk_factor_returns", "portfolio_returns", "log_returns", "data",
+        "returns",
+        "return_series",
+        "daily_returns",
+        "historical_returns",
+        "risk_factor_returns",
+        "portfolio_returns",
+        "log_returns",
+        "data",
     },
     "losses": {
-        "losses", "loss_series", "historical_losses", "portfolio_losses",
-        "realized_losses", "pnl_losses",
+        "losses",
+        "loss_series",
+        "historical_losses",
+        "portfolio_losses",
+        "realized_losses",
+        "pnl_losses",
     },
     "pnl": {
-        "pnl", "pnl_series", "portfolio_pnl", "profit_and_loss",
+        "pnl",
+        "pnl_series",
+        "portfolio_pnl",
+        "profit_and_loss",
     },
     "confidence_level": {
-        "confidence_level", "confidence", "cl", "var_confidence",
+        "confidence_level",
+        "confidence",
+        "cl",
+        "var_confidence",
     },
     "alpha": {"alpha", "significance_level", "test_alpha"},
     "target_probability": {
-        "target_probability", "expected_probability", "exception_probability",
-        "expected_exception_rate", "p", "var_alpha",
+        "target_probability",
+        "expected_probability",
+        "exception_probability",
+        "expected_exception_rate",
+        "p",
+        "var_alpha",
     },
     "lookback": {
-        "lookback", "lookback_window", "window", "window_size", "history_window",
+        "lookback",
+        "lookback_window",
+        "window",
+        "window_size",
+        "history_window",
     },
     "mpor": {
-        "mpor", "holding_period", "horizon", "days", "n_days", "period",
+        "mpor",
+        "holding_period",
+        "horizon",
+        "days",
+        "n_days",
+        "period",
     },
     "weights": {
-        "weights", "portfolio_weights", "weight_vector", "exposures",
+        "weights",
+        "portfolio_weights",
+        "weight_vector",
+        "exposures",
     },
     "covariance": {
-        "covariance", "covariance_matrix", "cov_matrix", "sigma",
+        "covariance",
+        "covariance_matrix",
+        "cov_matrix",
+        "sigma",
     },
     "portfolio_value": {
-        "portfolio_value", "market_value", "notional", "gross_exposure",
-        "exposure", "position_value",
+        "portfolio_value",
+        "market_value",
+        "notional",
+        "gross_exposure",
+        "exposure",
+        "position_value",
     },
     "position_value": {
-        "position_value", "market_value", "notional", "exposure",
+        "position_value",
+        "market_value",
+        "notional",
+        "exposure",
     },
     "adv": {
-        "adv", "average_daily_volume", "daily_volume", "volume",
+        "adv",
+        "average_daily_volume",
+        "daily_volume",
+        "volume",
     },
     "participation_rate": {
-        "participation_rate", "adv_fraction", "liquidation_fraction",
+        "participation_rate",
+        "adv_fraction",
+        "liquidation_fraction",
     },
     "liquidity_factor": {
-        "liquidity_factor", "liquidity_rate", "addon_rate", "rate",
+        "liquidity_factor",
+        "liquidity_rate",
+        "addon_rate",
+        "rate",
     },
     "concentration_threshold": {
-        "concentration_threshold", "threshold", "limit", "threshold_pct",
+        "concentration_threshold",
+        "threshold",
+        "limit",
+        "threshold_pct",
     },
     "concentration_rate": {
-        "concentration_rate", "addon_rate", "penalty_rate", "rate",
+        "concentration_rate",
+        "addon_rate",
+        "penalty_rate",
+        "rate",
     },
     "positions": {
-        "positions", "position_data", "member_positions", "portfolio",
+        "positions",
+        "position_data",
+        "member_positions",
+        "portfolio",
     },
     "universe": {
-        "universe", "security_universe", "assets", "securities",
+        "universe",
+        "security_universe",
+        "assets",
+        "securities",
     },
     "config": {"config", "configuration", "settings", "params", "parameters"},
     "seed": {"seed", "random_seed", "rng_seed"},
     "n_members": {
-        "n_members", "num_members", "member_count", "number_of_members",
+        "n_members",
+        "num_members",
+        "member_count",
+        "number_of_members",
     },
     "n_securities": {
-        "n_securities", "num_securities", "security_count", "number_of_securities",
+        "n_securities",
+        "num_securities",
+        "security_count",
+        "number_of_securities",
     },
     "exceptions": {
-        "exceptions", "exception_flags", "breaches", "hits", "violations",
-        "indicator", "sequence",
+        "exceptions",
+        "exception_flags",
+        "breaches",
+        "hits",
+        "violations",
+        "indicator",
+        "sequence",
     },
     "n_observations": {
-        "n_observations", "observations", "n_obs", "sample_size", "n",
+        "n_observations",
+        "observations",
+        "n_obs",
+        "sample_size",
+        "n",
     },
     "n_exceptions": {
-        "n_exceptions", "exception_count", "exceptions_count", "x", "failures",
+        "n_exceptions",
+        "exception_count",
+        "exceptions_count",
+        "x",
+        "failures",
     },
     "margin": {
-        "margin", "margin_amount", "required_margin", "total_margin",
-        "initial_margin", "collateral",
+        "margin",
+        "margin_amount",
+        "required_margin",
+        "total_margin",
+        "initial_margin",
+        "collateral",
     },
     "realized_loss": {
-        "realized_loss", "loss", "actual_loss", "realized_losses",
+        "realized_loss",
+        "loss",
+        "actual_loss",
+        "realized_losses",
     },
     "components": {
-        "components", "margin_components", "component_values",
+        "components",
+        "margin_components",
+        "component_values",
     },
 }
 
@@ -201,9 +299,7 @@ def as_mapping(result: Any) -> dict[str, Any]:
         return dict(result._asdict())
     if hasattr(result, "__dict__") and not isinstance(result, type):
         return {
-            key: value
-            for key, value in vars(result).items()
-            if not key.startswith("_")
+            key: value for key, value in vars(result).items() if not key.startswith("_")
         }
     return {}
 
@@ -254,7 +350,8 @@ def extract_array(result: Any, preferred_keys: Iterable[str] = ()) -> np.ndarray
             if value is not None:
                 return extract_array(value)
         numeric_values = [
-            value for value in mapping.values()
+            value
+            for value in mapping.values()
             if isinstance(value, (int, float, np.number))
         ]
         if numeric_values:
@@ -263,7 +360,9 @@ def extract_array(result: Any, preferred_keys: Iterable[str] = ()) -> np.ndarray
     if isinstance(result, (int, float, np.number)):
         return np.asarray([float(result)], dtype=float)
 
-    raise AssertionError(f"Could not extract numeric values from result type {type(result)!r}.")
+    raise AssertionError(
+        f"Could not extract numeric values from result type {type(result)!r}."
+    )
 
 
 def extract_number(result: Any, preferred_keys: Iterable[str] = ()) -> float:

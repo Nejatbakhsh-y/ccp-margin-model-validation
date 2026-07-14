@@ -76,8 +76,13 @@ def calculate_liquidity_addon(
     if security_col not in work.columns:
         work[security_col] = np.arange(len(work)).astype(str)
     work[market_value_col] = pd.to_numeric(work[market_value_col], errors="coerce")
-    if work[market_value_col].isna().any() or (~np.isfinite(work[market_value_col])).any():
-        raise ValueError(f"{market_value_col} contains missing, non-numeric, or non-finite values")
+    if (
+        work[market_value_col].isna().any()
+        or (~np.isfinite(work[market_value_col])).any()
+    ):
+        raise ValueError(
+            f"{market_value_col} contains missing, non-numeric, or non-finite values"
+        )
 
     work[liquidity_bucket_col] = work[liquidity_bucket_col].astype(str)
     missing_buckets = sorted(set(work[liquidity_bucket_col]) - set(normalized_rates))
@@ -88,14 +93,13 @@ def calculate_liquidity_addon(
 
     work["gross_position_value"] = work[market_value_col].abs()
     work["liquidity_rate"] = work[liquidity_bucket_col].map(normalized_rates)
-    work["raw_attribution_amount"] = work["gross_position_value"] * work["liquidity_rate"]
+    work["raw_attribution_amount"] = (
+        work["gross_position_value"] * work["liquidity_rate"]
+    )
 
-    summary = (
-        work.groupby(member_col, as_index=False, sort=True)
-        .agg(
-            gross_market_value=("gross_position_value", "sum"),
-            raw_liquidity_addon=("raw_attribution_amount", "sum"),
-        )
+    summary = work.groupby(member_col, as_index=False, sort=True).agg(
+        gross_market_value=("gross_position_value", "sum"),
+        raw_liquidity_addon=("raw_attribution_amount", "sum"),
     )
     summary["liquidity_addon"] = summary["raw_liquidity_addon"].clip(lower=minimum_usd)
     summary["floor_applied"] = summary["raw_liquidity_addon"] < minimum_usd
@@ -118,7 +122,9 @@ def calculate_liquidity_addon(
         scale["liquidity_addon"] / scale["raw_liquidity_addon"],
         0.0,
     )
-    attribution = work.merge(scale[[member_col, "attribution_scale"]], on=member_col, how="left")
+    attribution = work.merge(
+        scale[[member_col, "attribution_scale"]], on=member_col, how="left"
+    )
     attribution["attribution_amount"] = (
         attribution["raw_attribution_amount"] * attribution["attribution_scale"]
     )
@@ -157,9 +163,11 @@ def calculate_liquidity_addon(
         "attribution_amount",
         "component",
     ]
-    attribution = attribution[columns].sort_values(
-        [member_col, security_col], kind="stable"
-    ).reset_index(drop=True)
+    attribution = (
+        attribution[columns]
+        .sort_values([member_col, security_col], kind="stable")
+        .reset_index(drop=True)
+    )
 
     return LiquidityAddonResult(
         member_addon=summary,

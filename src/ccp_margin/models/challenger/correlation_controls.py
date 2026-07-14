@@ -27,7 +27,9 @@ def _validate_square_matrix(matrix: pd.DataFrame, name: str) -> pd.DataFrame:
     if matrix.empty or matrix.shape[0] != matrix.shape[1]:
         raise ValueError(f"{name} must be a non-empty square matrix.")
     if list(matrix.index.map(str)) != list(matrix.columns.map(str)):
-        raise ValueError(f"{name} index and columns must contain the same labels in the same order.")
+        raise ValueError(
+            f"{name} index and columns must contain the same labels in the same order."
+        )
 
     validated = matrix.copy()
     validated.index = validated.index.map(str)
@@ -49,7 +51,9 @@ def covariance_to_correlation(
     if variance_floor <= 0.0:
         raise ValueError("variance_floor must be positive.")
 
-    values = 0.5 * (covariance.to_numpy(dtype=float) + covariance.to_numpy(dtype=float).T)
+    values = 0.5 * (
+        covariance.to_numpy(dtype=float) + covariance.to_numpy(dtype=float).T
+    )
     variances = np.clip(np.diag(values), variance_floor, None)
     volatilities = np.sqrt(variances)
     denominator = np.outer(volatilities, volatilities)
@@ -71,7 +75,9 @@ def correlation_to_covariance(
     """Reconstruct a covariance matrix from correlation and volatility inputs."""
 
     correlation = _validate_square_matrix(correlation, "correlation")
-    volatilities = pd.to_numeric(volatilities, errors="coerce").reindex(correlation.index)
+    volatilities = pd.to_numeric(volatilities, errors="coerce").reindex(
+        correlation.index
+    )
     if volatilities.isna().any() or (volatilities < 0.0).any():
         raise ValueError("volatilities must be finite, non-negative, and aligned.")
 
@@ -182,9 +188,7 @@ def stress_correlations(
     correlation, volatilities = covariance_to_correlation(covariance)
     stressed = correlation.to_numpy(dtype=float).copy()
     off_diagonal = ~np.eye(len(stressed), dtype=bool)
-    stressed[off_diagonal] = (
-        stressed[off_diagonal] * multiplier + absolute_shift
-    )
+    stressed[off_diagonal] = stressed[off_diagonal] * multiplier + absolute_shift
     stressed[off_diagonal] = np.clip(stressed[off_diagonal], -0.999, 0.999)
     np.fill_diagonal(stressed, 1.0)
 

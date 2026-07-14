@@ -191,9 +191,7 @@ def download_fred_data(
                 status["fallback_status"] = "SUCCESS"
                 status["selected_client"] = "pandas_datareader"
             except Exception as fallback_error:
-                status["error_message"] += (
-                    f" | pandas-datareader: {fallback_error}"
-                )
+                status["error_message"] += f" | pandas-datareader: {fallback_error}"
 
         if series_frame is not None and not series_frame.empty:
             series_frame = series_frame.dropna(subset=["date"]).copy()
@@ -208,15 +206,11 @@ def download_fred_data(
         statuses.append(status)
 
     status_frame = pd.DataFrame(statuses)
-    status_path = (
-        project_root / "data" / "manifests" / "fred_download_status.csv"
-    )
+    status_path = project_root / "data" / "manifests" / "fred_download_status.csv"
     status_path.parent.mkdir(parents=True, exist_ok=True)
     status_frame.to_csv(status_path, index=False)
 
-    output_path = (
-        project_root / "data" / "raw" / "macro" / "fred_series_raw.parquet"
-    )
+    output_path = project_root / "data" / "raw" / "macro" / "fred_series_raw.parquet"
 
     if not frames:
         record_dataset(
@@ -287,11 +281,7 @@ def main() -> int:
         f"{len(fred_data):,} rows, "
         f"{fred_data['series_id'].nunique()} series."
     )
-    print(
-        status[
-            ["series_id", "selected_client", "row_count"]
-        ].to_string(index=False)
-    )
+    print(status[["series_id", "selected_client", "row_count"]].to_string(index=False))
     return 0
 
 

@@ -14,9 +14,7 @@ def test_stress_buffer_is_residual_coverage_bridge() -> None:
             "stress_loss": [100.0, 150.0, 80.0],
         }
     )
-    pre = pd.DataFrame(
-        {"member_id": ["M1", "M2"], "pre_stress_margin": [120.0, 100.0]}
-    )
+    pre = pd.DataFrame({"member_id": ["M1", "M2"], "pre_stress_margin": [120.0, 100.0]})
     result = calculate_stress_buffer(
         stress,
         pre,

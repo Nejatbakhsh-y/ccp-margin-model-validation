@@ -18,6 +18,4 @@ def test_base_margin_applies_floor_and_cap() -> None:
 
 def test_base_margin_rejects_negative_var() -> None:
     with pytest.raises(ValueError, match="non-negative"):
-        calculate_base_margin(
-            pd.DataFrame({"member_id": ["M1"], "base_var": [-1.0]})
-        )
+        calculate_base_margin(pd.DataFrame({"member_id": ["M1"], "base_var": [-1.0]}))

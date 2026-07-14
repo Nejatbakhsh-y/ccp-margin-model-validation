@@ -84,9 +84,7 @@ def prepare_current_positions(positions: pd.DataFrame) -> pd.DataFrame:
 
     direction = pd.Series(np.nan, index=frame.index, dtype=float)
     if "long_short_flag" in frame.columns:
-        normalized_flag = (
-            frame["long_short_flag"].astype(str).str.strip().str.upper()
-        )
+        normalized_flag = frame["long_short_flag"].astype(str).str.strip().str.upper()
         direction.loc[normalized_flag.isin(_LONG_FLAGS)] = 1.0
         direction.loc[normalized_flag.isin(_SHORT_FLAGS)] = -1.0
         unknown = normalized_flag.notna() & ~normalized_flag.isin(
@@ -171,8 +169,8 @@ def simulate_portfolio_pnl(
     report["available_observations"] = report["security_id"].map(available_count)
     report["missing_observations"] = report["security_id"].map(missing_count)
     report["missing_entire_history"] = report["security_id"].map(missing_entirely)
-    report["history_coverage_ratio"] = (
-        report["available_observations"] / max(len(aligned), 1)
+    report["history_coverage_ratio"] = report["available_observations"] / max(
+        len(aligned), 1
     )
     report["treatment"] = "none"
 

@@ -1,3 +1,4 @@
+# ruff: noqa: E402
 """Generate empirical Step 15 sensitivity scenario results.
 
 This runner uses the sensitivity manifest as the source of scenario parameters,
@@ -16,7 +17,6 @@ from copy import deepcopy
 from datetime import datetime, timezone
 import json
 import math
-import os
 from pathlib import Path
 import sys
 from typing import Any, Iterable
@@ -77,7 +77,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output",
         type=Path,
-        default=REPO_ROOT / "data" / "processed" / "sensitivity_scenario_results.parquet",
+        default=REPO_ROOT
+        / "data"
+        / "processed"
+        / "sensitivity_scenario_results.parquet",
     )
     parser.add_argument(
         "--runtime-directory",
@@ -87,7 +90,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--summary",
         type=Path,
-        default=REPO_ROOT / "reports" / "evidence" / "sensitivity_execution_summary.json",
+        default=REPO_ROOT
+        / "reports"
+        / "evidence"
+        / "sensitivity_execution_summary.json",
     )
     parser.add_argument(
         "--backtest-dates",
@@ -285,8 +291,7 @@ def _discover_position_source() -> Path:
     if source is None:
         checked = "\n  - ".join(str(path) for path in candidates)
         raise FileNotFoundError(
-            "No clearing-member position dataset was found. Checked:\n  - "
-            + checked
+            "No clearing-member position dataset was found. Checked:\n  - " + checked
         )
     return source
 
@@ -345,10 +350,9 @@ def load_position_history() -> tuple[pd.DataFrame, Path, str]:
         if market_value_source:
             frame["market_value"] = frame[market_value_source]
         elif {"quantity", "price"}.issubset(frame.columns):
-            frame["market_value"] = (
-                pd.to_numeric(frame["quantity"], errors="raise")
-                * pd.to_numeric(frame["price"], errors="raise")
-            )
+            frame["market_value"] = pd.to_numeric(
+                frame["quantity"], errors="raise"
+            ) * pd.to_numeric(frame["price"], errors="raise")
         else:
             raise ValueError(
                 "Positions require market_value, a supported notional field, "
@@ -440,9 +444,7 @@ def positions_for_date(
     else:
         eligible = history.loc[history["valuation_date"] <= date].copy()
         if eligible.empty:
-            raise ValueError(
-                f"No position snapshot exists on or before {date.date()}."
-            )
+            raise ValueError(f"No position snapshot exists on or before {date.date()}.")
         keys = ["member_id"]
         if "portfolio_id" in eligible.columns:
             keys.append("portfolio_id")
@@ -452,9 +454,9 @@ def positions_for_date(
             .rename(columns={"valuation_date": "_latest"})
         )
         selected = eligible.merge(latest, on=keys, how="inner")
-        selected = selected.loc[
-            selected["valuation_date"] == selected["_latest"]
-        ].drop(columns="_latest")
+        selected = selected.loc[selected["valuation_date"] == selected["_latest"]].drop(
+            columns="_latest"
+        )
 
     aggregation: dict[str, str] = {
         "market_value": "sum",
@@ -476,7 +478,9 @@ def positions_for_date(
     return selected
 
 
-def _quantile_higher(matrix: np.ndarray, probability: float, axis: int = 0) -> np.ndarray:
+def _quantile_higher(
+    matrix: np.ndarray, probability: float, axis: int = 0
+) -> np.ndarray:
     try:
         return np.quantile(matrix, probability, axis=axis, method="higher")
     except TypeError:
@@ -509,9 +513,9 @@ def forward_compounded_return(
     horizon: int,
     securities: list[str],
 ) -> np.ndarray:
-    forward = returns.iloc[
-        date_position + 1 : date_position + 1 + horizon
-    ][securities].to_numpy(dtype=float)
+    forward = returns.iloc[date_position + 1 : date_position + 1 + horizon][
+        securities
+    ].to_numpy(dtype=float)
     if forward.shape[0] != horizon:
         raise ValueError("Incomplete forward return window.")
     if not np.isfinite(forward).all():
@@ -718,9 +722,7 @@ def run() -> None:
         unknown = sorted(requested - set(manifest["scenario_id"]))
         if unknown:
             raise ValueError(f"Unknown requested scenarios: {unknown}")
-        manifest_to_run = manifest.loc[
-            manifest["scenario_id"].isin(requested)
-        ].copy()
+        manifest_to_run = manifest.loc[manifest["scenario_id"].isin(requested)].copy()
     else:
         manifest_to_run = manifest.copy()
 
@@ -752,7 +754,9 @@ def run() -> None:
     all_securities: set[str] = set()
 
     for date in test_dates:
-        selected = positions_for_date(position_history, pd.Timestamp(date), position_mode)
+        selected = positions_for_date(
+            position_history, pd.Timestamp(date), position_mode
+        )
         members = sorted(selected["member_id"].astype(str).unique())
         if member_set is None:
             member_set = members
@@ -827,7 +831,9 @@ def run() -> None:
             checkpoint["scenario_id"].isin(set(manifest["scenario_id"]))
         ].copy()
 
-    date_positions = {pd.Timestamp(date): returns.index.get_loc(date) for date in test_dates}
+    date_positions = {
+        pd.Timestamp(date): returns.index.get_loc(date) for date in test_dates
+    }
     model_cache: dict[tuple[Any, ...], dict[str, np.ndarray]] = {}
 
     for scenario_number, (_, scenario) in enumerate(
@@ -854,9 +860,7 @@ def run() -> None:
             continue
 
         if not checkpoint.empty:
-            checkpoint = checkpoint.loc[
-                checkpoint["scenario_id"] != scenario_id
-            ].copy()
+            checkpoint = checkpoint.loc[checkpoint["scenario_id"] != scenario_id].copy()
 
         confidence = float(scenario["confidence_level"])
         lookback = int(scenario["lookback_days"])
@@ -882,10 +886,7 @@ def run() -> None:
         if stress_fraction < 0.0:
             raise ValueError(f"Invalid stress buffer in {scenario_id}.")
 
-        print(
-            f"[{scenario_number}/{len(manifest_to_run)}] "
-            f"Running {scenario_id}"
-        )
+        print(f"[{scenario_number}/{len(manifest_to_run)}] Running {scenario_id}")
         scenario_rows: list[pd.DataFrame] = []
 
         for date_number, date in enumerate(test_dates, start=1):
@@ -907,13 +908,11 @@ def run() -> None:
             )
             cached = model_cache.get(cache_key)
             if cached is None:
-                historical = returns.iloc[
-                    date_position - lookback : date_position
-                ][securities].to_numpy(dtype=float)
+                historical = returns.iloc[date_position - lookback : date_position][
+                    securities
+                ].to_numpy(dtype=float)
                 if historical.shape[0] != lookback:
-                    raise ValueError(
-                        f"Incomplete historical window for {date.date()}."
-                    )
+                    raise ValueError(f"Incomplete historical window for {date.date()}.")
                 if not np.isfinite(historical).all():
                     raise ValueError(
                         f"Historical return window contains missing values "
@@ -941,9 +940,7 @@ def run() -> None:
                 )
                 volatility = np.sqrt(np.maximum(variance, 0.0))
                 challenger_var = (
-                    float(norm.ppf(confidence))
-                    * volatility
-                    * math.sqrt(mpor)
+                    float(norm.ppf(confidence)) * volatility * math.sqrt(mpor)
                 )
                 challenger_var = np.maximum(challenger_var, 0.0)
                 base_var = np.maximum(primary_var, challenger_var)
@@ -967,26 +964,20 @@ def run() -> None:
                 largest_weight - concentration_threshold,
                 0.0,
             )
-            concentration_addon = (
-                gross * concentration_excess * concentration_rate
-            )
+            concentration_addon = gross * concentration_excess * concentration_rate
 
             volume_window = volume.iloc[
                 max(0, date_position - args.adv_window + 1) : date_position + 1
             ][securities]
             if len(volume_window) < args.adv_window:
-                raise ValueError(
-                    f"Insufficient ADV window for {date.date()}."
-                )
+                raise ValueError(f"Insufficient ADV window for {date.date()}.")
             adv = volume_window.mean(axis=0).to_numpy(dtype=float)
             if not np.isfinite(adv).all() or (adv <= 0.0).any():
                 affected = [
                     securities[i]
                     for i in np.where((~np.isfinite(adv)) | (adv <= 0.0))[0]
                 ]
-                raise ValueError(
-                    f"Invalid ADV values for {date.date()}: {affected}"
-                )
+                raise ValueError(f"Invalid ADV values for {date.date()}: {affected}")
             utilization = np.abs(quantity) / adv[:, None]
             liquidity_excess = np.maximum(
                 utilization - liquidity_threshold,
@@ -1046,9 +1037,7 @@ def run() -> None:
             scenario_rows.append(frame)
 
             if date_number % 50 == 0 or date_number == len(test_dates):
-                print(
-                    f"    dates completed: {date_number}/{len(test_dates)}"
-                )
+                print(f"    dates completed: {date_number}/{len(test_dates)}")
 
         scenario_result = pd.concat(scenario_rows, ignore_index=True)
         if len(scenario_result) != len(expected_keys):
@@ -1075,10 +1064,7 @@ def run() -> None:
             if args.output.is_relative_to(REPO_ROOT)
             else args.output,
         )
-        print(
-            f"    checkpoint written: {args.output} "
-            f"({len(checkpoint):,} total rows)"
-        )
+        print(f"    checkpoint written: {args.output} ({len(checkpoint):,} total rows)")
 
     final = _existing_checkpoint(args.output)
     expected_scenarios = (
@@ -1089,9 +1075,7 @@ def run() -> None:
     actual_scenarios = set(final["scenario_id"])
     missing_scenarios = sorted(expected_scenarios - actual_scenarios)
     if missing_scenarios:
-        raise ValueError(
-            f"Final checkpoint is missing scenarios: {missing_scenarios}"
-        )
+        raise ValueError(f"Final checkpoint is missing scenarios: {missing_scenarios}")
 
     final_subset = final.loc[final["scenario_id"].isin(expected_scenarios)].copy()
     if final_subset.duplicated(["scenario_id", "date", "member_id"]).any():

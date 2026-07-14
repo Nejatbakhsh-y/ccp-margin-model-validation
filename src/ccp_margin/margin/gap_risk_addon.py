@@ -84,8 +84,13 @@ def calculate_gap_risk_addon(
     if security_col not in work.columns:
         work[security_col] = np.arange(len(work)).astype(str)
     work[market_value_col] = pd.to_numeric(work[market_value_col], errors="coerce")
-    if work[market_value_col].isna().any() or (~np.isfinite(work[market_value_col])).any():
-        raise ValueError(f"{market_value_col} contains missing, non-numeric, or non-finite values")
+    if (
+        work[market_value_col].isna().any()
+        or (~np.isfinite(work[market_value_col])).any()
+    ):
+        raise ValueError(
+            f"{market_value_col} contains missing, non-numeric, or non-finite values"
+        )
 
     work[asset_class_col] = work[asset_class_col].astype(str)
     missing_classes = sorted(set(work[asset_class_col]) - set(normalized_shocks))
@@ -98,12 +103,9 @@ def calculate_gap_risk_addon(
     work["gap_shock"] = work[asset_class_col].map(normalized_shocks)
     work["raw_attribution_amount"] = work["gross_position_value"] * work["gap_shock"]
 
-    summary = (
-        work.groupby(member_col, as_index=False, sort=True)
-        .agg(
-            gross_market_value=("gross_position_value", "sum"),
-            raw_gap_risk_addon=("raw_attribution_amount", "sum"),
-        )
+    summary = work.groupby(member_col, as_index=False, sort=True).agg(
+        gross_market_value=("gross_position_value", "sum"),
+        raw_gap_risk_addon=("raw_attribution_amount", "sum"),
     )
     summary["gap_risk_addon"] = summary["raw_gap_risk_addon"].clip(lower=minimum_usd)
     summary["floor_applied"] = summary["raw_gap_risk_addon"] < minimum_usd
@@ -114,7 +116,9 @@ def calculate_gap_risk_addon(
     else:
         summary["cap_usd"] = summary["gross_market_value"] * maximum_fraction_of_gross
         summary["cap_applied"] = summary["gap_risk_addon"] > summary["cap_usd"]
-        summary["gap_risk_addon"] = np.minimum(summary["gap_risk_addon"], summary["cap_usd"])
+        summary["gap_risk_addon"] = np.minimum(
+            summary["gap_risk_addon"], summary["cap_usd"]
+        )
 
     scale = summary[[member_col, "raw_gap_risk_addon", "gap_risk_addon"]].copy()
     scale["attribution_scale"] = np.where(
@@ -122,7 +126,9 @@ def calculate_gap_risk_addon(
         scale["gap_risk_addon"] / scale["raw_gap_risk_addon"],
         0.0,
     )
-    attribution = work.merge(scale[[member_col, "attribution_scale"]], on=member_col, how="left")
+    attribution = work.merge(
+        scale[[member_col, "attribution_scale"]], on=member_col, how="left"
+    )
     attribution["attribution_amount"] = (
         attribution["raw_attribution_amount"] * attribution["attribution_scale"]
     )
@@ -159,9 +165,11 @@ def calculate_gap_risk_addon(
         "attribution_amount",
         "component",
     ]
-    attribution = attribution[columns].sort_values(
-        [member_col, security_col], kind="stable"
-    ).reset_index(drop=True)
+    attribution = (
+        attribution[columns]
+        .sort_values([member_col, security_col], kind="stable")
+        .reset_index(drop=True)
+    )
 
     return GapRiskAddonResult(
         member_addon=summary,

@@ -20,7 +20,9 @@ def as_1d_float(values: Iterable[float], *, name: str) -> np.ndarray:
     return array
 
 
-def as_binary_flags(values: Iterable[int | bool], *, name: str = "exceptions") -> np.ndarray:
+def as_binary_flags(
+    values: Iterable[int | bool], *, name: str = "exceptions"
+) -> np.ndarray:
     """Convert input to a one-dimensional integer array containing only 0 and 1."""
     array = np.asarray(values)
     if array.ndim != 1:

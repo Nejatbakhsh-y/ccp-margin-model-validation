@@ -1,4 +1,5 @@
 from __future__ import annotations
+import re
 
 import math
 import sqlite3
@@ -31,7 +32,6 @@ DATASETS = {
         "data/processed/backtesting_results.csv",
         "reports/tables/backtesting_results.csv",
         "reports/evidence/backtesting_results.csv",
-
     ],
     "validation_tests": [
         "data/processed/validation_test_results.parquet",
@@ -200,6 +200,7 @@ def load_dataset(name: str) -> tuple[pd.DataFrame, str]:
 
     return pd.DataFrame(), "Not found"
 
+
 def find_col(df: pd.DataFrame, candidates: Iterable[str]) -> str | None:
     lookup = {str(column).strip().lower(): str(column) for column in df.columns}
     for candidate in candidates:
@@ -211,7 +212,14 @@ def find_col(df: pd.DataFrame, candidates: Iterable[str]) -> str | None:
 def date_col(df: pd.DataFrame) -> str | None:
     return find_col(
         df,
-        ["date", "valuation_date", "as_of_date", "business_date", "test_date", "observation_date"],
+        [
+            "date",
+            "valuation_date",
+            "as_of_date",
+            "business_date",
+            "test_date",
+            "observation_date",
+        ],
     )
 
 
@@ -242,7 +250,14 @@ def margin_col(df: pd.DataFrame) -> str | None:
         normalized = re.sub(r"[^a-z0-9]+", "_", str(column).strip().lower()).strip("_")
         if "margin" in normalized and any(
             token in normalized
-            for token in ("total", "initial", "required", "requirement", "amount", "aggregate")
+            for token in (
+                "total",
+                "initial",
+                "required",
+                "requirement",
+                "amount",
+                "aggregate",
+            )
         ):
             return str(column)
 
@@ -252,7 +267,13 @@ def margin_col(df: pd.DataFrame) -> str | None:
 def realized_loss_col(df: pd.DataFrame) -> str | None:
     return find_col(
         df,
-        ["realized_loss", "loss", "realized_portfolio_loss", "forward_loss", "pnl_loss"],
+        [
+            "realized_loss",
+            "loss",
+            "realized_portfolio_loss",
+            "forward_loss",
+            "pnl_loss",
+        ],
     )
 
 
@@ -351,7 +372,9 @@ def prepare_backtesting(df: pd.DataFrame) -> pd.DataFrame:
 
     margin = margin_col(output)
     loss = realized_loss_col(output)
-    exception = find_col(output, ["exception", "is_exception", "breach", "margin_breach"])
+    exception = find_col(
+        output, ["exception", "is_exception", "breach", "margin_breach"]
+    )
     if margin:
         output[margin] = to_numeric(output[margin])
     if loss:
@@ -375,17 +398,30 @@ def prepare_backtesting(df: pd.DataFrame) -> pd.DataFrame:
     if margin and loss:
         output["_shortfall"] = (output[loss] - output[margin]).clip(lower=0)
     else:
-        shortfall = find_col(output, ["margin_shortfall", "shortfall", "shortfall_amount"])
-        output["_shortfall"] = to_numeric(output[shortfall]).clip(lower=0) if shortfall else 0.0
+        shortfall = find_col(
+            output, ["margin_shortfall", "shortfall", "shortfall_amount"]
+        )
+        output["_shortfall"] = (
+            to_numeric(output[shortfall]).clip(lower=0) if shortfall else 0.0
+        )
     return output
 
 
-def kupiec_test(exceptions: pd.Series, target_probability: float = 0.01) -> dict[str, float | int | bool]:
+def kupiec_test(
+    exceptions: pd.Series, target_probability: float = 0.01
+) -> dict[str, float | int | bool]:
     values = exceptions.fillna(False).astype(bool)
     n = int(len(values))
     x = int(values.sum())
     if n == 0:
-        return {"n": 0, "x": 0, "rate": np.nan, "lr": np.nan, "p_value": np.nan, "pass": False}
+        return {
+            "n": 0,
+            "x": 0,
+            "rate": np.nan,
+            "lr": np.nan,
+            "p_value": np.nan,
+            "pass": False,
+        }
     observed = x / n
     eps = 1e-12
     p = min(max(target_probability, eps), 1 - eps)
@@ -394,15 +430,27 @@ def kupiec_test(exceptions: pd.Series, target_probability: float = 0.01) -> dict
     log_alt = (n - x) * math.log(1 - phat) + x * math.log(phat)
     lr = max(0.0, -2.0 * (log_null - log_alt))
     p_value = float(chi2.sf(lr, 1))
-    return {"n": n, "x": x, "rate": observed, "lr": lr, "p_value": p_value, "pass": p_value >= 0.05}
+    return {
+        "n": n,
+        "x": x,
+        "rate": observed,
+        "lr": lr,
+        "p_value": p_value,
+        "pass": p_value >= 0.05,
+    }
 
 
 def christoffersen_test(exceptions: pd.Series) -> dict[str, float | int | bool]:
     values = exceptions.fillna(False).astype(int).to_numpy()
     if len(values) < 2:
         return {
-            "n00": 0, "n01": 0, "n10": 0, "n11": 0,
-            "lr": np.nan, "p_value": np.nan, "pass": False,
+            "n00": 0,
+            "n01": 0,
+            "n10": 0,
+            "n11": 0,
+            "lr": np.nan,
+            "p_value": np.nan,
+            "pass": False,
         }
     previous = values[:-1]
     current = values[1:]
@@ -420,12 +468,22 @@ def christoffersen_test(exceptions: pd.Series) -> dict[str, float | int | bool]:
     pi = min(max(pi, eps), 1 - eps)
 
     log_null = (n00 + n10) * math.log(1 - pi) + (n01 + n11) * math.log(pi)
-    log_alt = n00 * math.log(1 - pi0) + n01 * math.log(pi0) + n10 * math.log(1 - pi1) + n11 * math.log(pi1)
+    log_alt = (
+        n00 * math.log(1 - pi0)
+        + n01 * math.log(pi0)
+        + n10 * math.log(1 - pi1)
+        + n11 * math.log(pi1)
+    )
     lr = max(0.0, -2.0 * (log_null - log_alt))
     p_value = float(chi2.sf(lr, 1))
     return {
-        "n00": n00, "n01": n01, "n10": n10, "n11": n11,
-        "lr": lr, "p_value": p_value, "pass": p_value >= 0.05,
+        "n00": n00,
+        "n01": n01,
+        "n10": n10,
+        "n11": n11,
+        "lr": lr,
+        "p_value": p_value,
+        "pass": p_value >= 0.05,
     }
 
 
@@ -471,7 +529,9 @@ def page_executive_summary() -> None:
     if not backtest.empty:
         prepared = prepare_backtesting(backtest)
         exceptions = int(prepared["_exception"].sum())
-        exception_rate = float(prepared["_exception"].mean()) if len(prepared) else np.nan
+        exception_rate = (
+            float(prepared["_exception"].mean()) if len(prepared) else np.nan
+        )
 
     open_high = 0 if findings_source != "Not found" else np.nan
     if not findings.empty:
@@ -479,16 +539,27 @@ def page_executive_summary() -> None:
         status = find_col(findings, ["status", "finding_status", "remediation_status"])
         mask = pd.Series(True, index=findings.index)
         if severity:
-            mask &= findings[severity].astype(str).str.lower().isin(["critical", "high"])
+            mask &= (
+                findings[severity].astype(str).str.lower().isin(["critical", "high"])
+            )
         if status:
-            mask &= ~findings[status].astype(str).str.lower().isin(["closed", "resolved", "complete", "completed"])
+            mask &= ~findings[status].astype(str).str.lower().isin(
+                ["closed", "resolved", "complete", "completed"]
+            )
         open_high = int(mask.sum())
 
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Latest total margin", money(latest_total))
     c2.metric("Active members", "N/A" if pd.isna(members) else f"{int(members):,}")
-    c3.metric("Backtesting exceptions", "N/A" if pd.isna(exceptions) else f"{int(exceptions):,}", pct(exception_rate))
-    c4.metric("Open Critical/High findings", "N/A" if pd.isna(open_high) else f"{int(open_high):,}")
+    c3.metric(
+        "Backtesting exceptions",
+        "N/A" if pd.isna(exceptions) else f"{int(exceptions):,}",
+        pct(exception_rate),
+    )
+    c4.metric(
+        "Open Critical/High findings",
+        "N/A" if pd.isna(open_high) else f"{int(open_high):,}",
+    )
 
     if not daily.empty:
         dc, mm = date_col(daily), margin_col(daily)
@@ -506,13 +577,54 @@ def page_executive_summary() -> None:
     st.subheader("Prepared-data readiness")
     readiness = pd.DataFrame(
         [
-            {"Area": "Daily member margin", "Status": "Ready" if not daily.empty else "Missing", "Source": daily_source, "Rows": len(daily)},
-            {"Area": "Backtesting", "Status": "Ready" if not backtest.empty else "Missing", "Source": back_source, "Rows": len(backtest)},
-            {"Area": "Validation tests", "Status": "Ready" if (not validation.empty or not backtest.empty) else "Missing", "Source": validation_source if not validation.empty else (f"Derived from {back_source}" if not backtest.empty else "Not found"), "Rows": len(validation) if not validation.empty else len(backtest)},
-            {"Area": "Sensitivity analysis", "Status": "Ready" if not sensitivity.empty else "Missing", "Source": sensitivity_source, "Rows": len(sensitivity)},
-            {"Area": "Stress testing", "Status": "Ready" if not stress.empty else "Missing", "Source": stress_source, "Rows": len(stress)},
-            {"Area": "Procyclicality", "Status": "Ready" if not procyclicality.empty else "Missing", "Source": procyclicality_source, "Rows": len(procyclicality)},
-            {"Area": "Findings", "Status": "Ready" if findings_source != "Not found" else "Missing", "Source": findings_source, "Rows": len(findings)},
+            {
+                "Area": "Daily member margin",
+                "Status": "Ready" if not daily.empty else "Missing",
+                "Source": daily_source,
+                "Rows": len(daily),
+            },
+            {
+                "Area": "Backtesting",
+                "Status": "Ready" if not backtest.empty else "Missing",
+                "Source": back_source,
+                "Rows": len(backtest),
+            },
+            {
+                "Area": "Validation tests",
+                "Status": "Ready"
+                if (not validation.empty or not backtest.empty)
+                else "Missing",
+                "Source": validation_source
+                if not validation.empty
+                else (
+                    f"Derived from {back_source}" if not backtest.empty else "Not found"
+                ),
+                "Rows": len(validation) if not validation.empty else len(backtest),
+            },
+            {
+                "Area": "Sensitivity analysis",
+                "Status": "Ready" if not sensitivity.empty else "Missing",
+                "Source": sensitivity_source,
+                "Rows": len(sensitivity),
+            },
+            {
+                "Area": "Stress testing",
+                "Status": "Ready" if not stress.empty else "Missing",
+                "Source": stress_source,
+                "Rows": len(stress),
+            },
+            {
+                "Area": "Procyclicality",
+                "Status": "Ready" if not procyclicality.empty else "Missing",
+                "Source": procyclicality_source,
+                "Rows": len(procyclicality),
+            },
+            {
+                "Area": "Findings",
+                "Status": "Ready" if findings_source != "Not found" else "Missing",
+                "Source": findings_source,
+                "Rows": len(findings),
+            },
         ]
     )
     st.dataframe(readiness, width="stretch", hide_index=True)
@@ -547,11 +659,17 @@ def page_daily_member_margin() -> None:
     c3.metric("Selected members", f"{df[mc].nunique():,}" if mc else "N/A")
 
     if dc and mc:
-        pivot = df.pivot_table(index=dc, columns=mc, values=mm, aggfunc="sum").sort_index()
+        pivot = df.pivot_table(
+            index=dc, columns=mc, values=mm, aggfunc="sum"
+        ).sort_index()
         st.line_chart(pivot)
     elif dc:
         st.line_chart(df.groupby(dc)[mm].sum().sort_index())
-    st.dataframe(df.sort_values(dc, ascending=False) if dc else df, width="stretch", hide_index=True)
+    st.dataframe(
+        df.sort_values(dc, ascending=False) if dc else df,
+        width="stretch",
+        hide_index=True,
+    )
 
 
 def page_backtesting_exceptions() -> None:
@@ -609,9 +727,13 @@ def page_traffic_light() -> None:
     c1.metric("Green", int(counts.get("Green", 0)))
     c2.metric("Yellow", int(counts.get("Yellow", 0)))
     c3.metric("Red", int(counts.get("Red", 0)))
-    st.caption("Classification uses 250-observation equivalent exception counts: Green 0-4, Yellow 5-9, Red 10 or more.")
+    st.caption(
+        "Classification uses 250-observation equivalent exception counts: Green 0-4, Yellow 5-9, Red 10 or more."
+    )
     st.dataframe(
-        result.style.format({"Exception rate": "{:.2%}", "250-day equivalent exceptions": "{:.2f}"}),
+        result.style.format(
+            {"Exception rate": "{:.2%}", "250-day equivalent exceptions": "{:.2f}"}
+        ),
         width="stretch",
         hide_index=True,
     )
@@ -628,7 +750,10 @@ def page_validation_tests() -> None:
     raw, source = load_dataset("backtesting")
     if raw.empty:
         if existing.empty:
-            missing_panel("validation-test or backtesting", DATASETS["validation_tests"] + DATASETS["backtesting"])
+            missing_panel(
+                "validation-test or backtesting",
+                DATASETS["validation_tests"] + DATASETS["backtesting"],
+            )
         return
 
     df = prepare_backtesting(raw)
@@ -646,7 +771,9 @@ def page_validation_tests() -> None:
             if not pd.isna(kupiec["lr"]) and not pd.isna(independence["lr"])
             else np.nan
         )
-        conditional_p = float(chi2.sf(conditional_lr, 2)) if not pd.isna(conditional_lr) else np.nan
+        conditional_p = (
+            float(chi2.sf(conditional_lr, 2)) if not pd.isna(conditional_lr) else np.nan
+        )
         rows.append(
             {
                 "Member": str(member),
@@ -661,7 +788,9 @@ def page_validation_tests() -> None:
                 "Independence pass": independence["pass"],
                 "Conditional coverage LR": conditional_lr,
                 "Conditional coverage p-value": conditional_p,
-                "Conditional coverage pass": bool(conditional_p >= 0.05) if not pd.isna(conditional_p) else False,
+                "Conditional coverage pass": bool(conditional_p >= 0.05)
+                if not pd.isna(conditional_p)
+                else False,
             }
         )
     result = pd.DataFrame(rows)
@@ -697,13 +826,21 @@ def page_margin_shortfalls() -> None:
     c1, c2, c3 = st.columns(3)
     c1.metric("Total shortfall", money(shortfall.sum()))
     c2.metric("Maximum shortfall", money(shortfall.max() if len(shortfall) else np.nan))
-    c3.metric("Shortfall frequency", pct((shortfall > 0).mean() if len(shortfall) else np.nan))
+    c3.metric(
+        "Shortfall frequency", pct((shortfall > 0).mean() if len(shortfall) else np.nan)
+    )
 
     dc, mc = date_col(df), member_col(df)
     if dc:
-        trend = df.assign(_shortfall=shortfall).groupby(dc)["_shortfall"].sum().sort_index()
+        trend = (
+            df.assign(_shortfall=shortfall).groupby(dc)["_shortfall"].sum().sort_index()
+        )
         st.line_chart(trend)
-    columns = [column for column in [dc, mc, margin_col(df), realized_loss_col(df), "_shortfall"] if column]
+    columns = [
+        column
+        for column in [dc, mc, margin_col(df), realized_loss_col(df), "_shortfall"]
+        if column
+    ]
     st.dataframe(
         df.loc[shortfall > 0, columns].sort_values("_shortfall", ascending=False),
         width="stretch",
@@ -721,33 +858,51 @@ def page_sensitivity() -> None:
     source_caption(source, len(df))
     sc, mm, mc = scenario_col(df), margin_col(df), member_col(df)
     if not sc or not mm:
-        st.error("Sensitivity data must contain recognized scenario and margin columns.")
+        st.error(
+            "Sensitivity data must contain recognized scenario and margin columns."
+        )
         st.dataframe(df, width="stretch")
         return
     df[mm] = to_numeric(df[mm])
     members = sorted(df[mc].dropna().astype(str).unique().tolist()) if mc else []
     if members:
-        selected = st.multiselect("Clearing members", members, default=members, key="sens_member")
+        selected = st.multiselect(
+            "Clearing members", members, default=members, key="sens_member"
+        )
         df = df[df[mc].astype(str).isin(selected)]
 
     scenario_summary = (
         df.groupby(sc, dropna=False)[mm]
         .agg(["count", "mean", "median", "max"])
         .reset_index()
-        .rename(columns={"count": "Observations", "mean": "Mean margin", "median": "Median margin", "max": "Maximum margin"})
+        .rename(
+            columns={
+                "count": "Observations",
+                "mean": "Mean margin",
+                "median": "Median margin",
+                "max": "Maximum margin",
+            }
+        )
     )
     scenario_text = scenario_summary[sc].astype(str).str.lower()
-    baseline_rows = scenario_summary[scenario_text.str.contains("base|baseline", regex=True, na=False)]
+    baseline_rows = scenario_summary[
+        scenario_text.str.contains("base|baseline", regex=True, na=False)
+    ]
     baseline = (
         float(baseline_rows["Mean margin"].iloc[0])
         if not baseline_rows.empty
         else float(scenario_summary["Mean margin"].iloc[0])
     )
-    scenario_summary["Change versus baseline"] = scenario_summary["Mean margin"] / baseline - 1 if baseline else np.nan
+    scenario_summary["Change versus baseline"] = (
+        scenario_summary["Mean margin"] / baseline - 1 if baseline else np.nan
+    )
     c1, c2, c3 = st.columns(3)
     c1.metric("Scenarios", f"{scenario_summary[sc].nunique():,}")
     c2.metric("Largest mean margin", money(scenario_summary["Mean margin"].max()))
-    c3.metric("Largest increase versus baseline", pct(scenario_summary["Change versus baseline"].max()))
+    c3.metric(
+        "Largest increase versus baseline",
+        pct(scenario_summary["Change versus baseline"].max()),
+    )
     st.bar_chart(scenario_summary.set_index(sc)["Change versus baseline"])
     st.dataframe(
         scenario_summary.style.format(
@@ -773,7 +928,9 @@ def page_stress() -> None:
     source_caption(source, len(df))
     sc = scenario_col(df)
     mc = member_col(df)
-    loss = find_col(df, ["stress_loss", "loss", "scenario_loss", "stressed_loss", "realized_loss"])
+    loss = find_col(
+        df, ["stress_loss", "loss", "scenario_loss", "stressed_loss", "realized_loss"]
+    )
     shortfall = find_col(df, ["margin_shortfall", "shortfall", "stress_shortfall"])
     margin = margin_col(df)
     if sc:
@@ -796,7 +953,9 @@ def page_stress() -> None:
     c1, c2, c3 = st.columns(3)
     c1.metric("Scenarios selected", f"{df[sc].nunique():,}" if sc else "N/A")
     c2.metric("Maximum stress loss", money(df[loss].max()) if loss else "N/A")
-    c3.metric("Maximum stress shortfall", money(df[shortfall].max()) if shortfall else "N/A")
+    c3.metric(
+        "Maximum stress shortfall", money(df[shortfall].max()) if shortfall else "N/A"
+    )
     if sc and loss:
         summary = df.groupby(sc)[loss].sum().sort_values(ascending=False)
         st.bar_chart(summary)
@@ -816,13 +975,25 @@ def page_procyclicality() -> None:
         source_caption(source, len(metrics))
         numeric_columns = metrics.select_dtypes(include=[np.number]).columns.tolist()
         if numeric_columns:
-            selected_metric = st.selectbox("Prepared monitoring metric", numeric_columns)
+            selected_metric = st.selectbox(
+                "Prepared monitoring metric", numeric_columns
+            )
             dc = date_col(metrics)
             if dc:
-                trend = metrics.dropna(subset=[dc]).groupby(dc)[selected_metric].mean().sort_index()
+                trend = (
+                    metrics.dropna(subset=[dc])
+                    .groupby(dc)[selected_metric]
+                    .mean()
+                    .sort_index()
+                )
                 st.line_chart(trend)
             c1, c2, c3 = st.columns(3)
-            c1.metric("Latest", f"{to_numeric(metrics[selected_metric]).dropna().iloc[-1]:,.4f}" if to_numeric(metrics[selected_metric]).notna().any() else "N/A")
+            c1.metric(
+                "Latest",
+                f"{to_numeric(metrics[selected_metric]).dropna().iloc[-1]:,.4f}"
+                if to_numeric(metrics[selected_metric]).notna().any()
+                else "N/A",
+            )
             c2.metric("Maximum", f"{to_numeric(metrics[selected_metric]).max():,.4f}")
             c3.metric("Minimum", f"{to_numeric(metrics[selected_metric]).min():,.4f}")
         st.dataframe(metrics, width="stretch", hide_index=True)
@@ -839,7 +1010,9 @@ def page_procyclicality() -> None:
         return
     source_caption(f"{daily_source} (fallback summary)", len(daily))
     daily[mm] = to_numeric(daily[mm])
-    aggregate = daily.groupby(dc)[mm].sum().sort_index().rename("Total margin").to_frame()
+    aggregate = (
+        daily.groupby(dc)[mm].sum().sort_index().rename("Total margin").to_frame()
+    )
     aggregate["Daily change"] = aggregate["Total margin"].pct_change()
     aggregate["Weekly change"] = aggregate["Total margin"].pct_change(5)
     running_max = aggregate["Total margin"].cummax()
@@ -892,10 +1065,14 @@ def page_findings() -> None:
 
     open_mask = pd.Series(True, index=df.index)
     if status:
-        open_mask = ~df[status].astype(str).str.lower().isin(["closed", "resolved", "complete", "completed"])
+        open_mask = ~df[status].astype(str).str.lower().isin(
+            ["closed", "resolved", "complete", "completed"]
+        )
     overdue = pd.Series(False, index=df.index)
     if due:
-        overdue = open_mask & df[due].notna() & (df[due] < pd.Timestamp.today().normalize())
+        overdue = (
+            open_mask & df[due].notna() & (df[due] < pd.Timestamp.today().normalize())
+        )
     high = pd.Series(False, index=df.index)
     if severity:
         high = df[severity].astype(str).str.lower().isin(["critical", "high"])
@@ -932,4 +1109,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

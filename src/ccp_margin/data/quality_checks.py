@@ -143,13 +143,13 @@ def _exception_frame(
     output["check_id"] = check_id
     output["check_name"] = check_name
     output["severity"] = severity
-    output["security_id"] = rows.get(
-        "security_id", rows.get("series_id", "")
-    ).astype(str)
+    output["security_id"] = rows.get("security_id", rows.get("series_id", "")).astype(
+        str
+    )
     if "date" in rows.columns:
-        output["date"] = pd.to_datetime(
-            rows["date"], errors="coerce"
-        ).dt.strftime("%Y-%m-%d")
+        output["date"] = pd.to_datetime(rows["date"], errors="coerce").dt.strftime(
+            "%Y-%m-%d"
+        )
     else:
         output["date"] = ""
     output["field"] = field
@@ -205,48 +205,25 @@ def run_quality_checks(
     data_config: dict[str, Any] = config["data"]
     quality_config: dict[str, Any] = data_config.get("quality", {})
 
-    minimum_completeness = float(
-        data_config.get("minimum_completeness", 0.995)
-    )
+    minimum_completeness = float(data_config.get("minimum_completeness", 0.995))
     stale_days = int(quality_config.get("stale_price_days", 5))
-    extreme_return = float(
-        quality_config.get("extreme_absolute_return", 0.20)
-    )
+    extreme_return = float(quality_config.get("extreme_absolute_return", 0.20))
     corporate_return = float(
         quality_config.get(
             "corporate_action_absolute_return",
             0.50,
         )
     )
-    adjustment_ratio_change = float(
-        quality_config.get("adjustment_ratio_change", 0.20)
-    )
-    calendar_gap_ratio = float(
-        quality_config.get("maximum_calendar_gap_ratio", 0.01)
-    )
+    adjustment_ratio_change = float(quality_config.get("adjustment_ratio_change", 0.20))
+    calendar_gap_ratio = float(quality_config.get("maximum_calendar_gap_ratio", 0.01))
 
-    primary_lookback = int(
-        config.get("primary_model", {}).get("lookback_days", 500)
-    )
-    minimum_history = int(
-        quality_config.get("minimum_history_rows", primary_lookback)
-    )
+    primary_lookback = int(config.get("primary_model", {}).get("lookback_days", 500))
+    minimum_history = int(quality_config.get("minimum_history_rows", primary_lookback))
 
-    raw_path = (
-        project_root / "data" / "raw" / "market" / "market_prices_raw.parquet"
-    )
-    clean_path = (
-        project_root
-        / "data"
-        / "processed"
-        / "market_prices_clean.parquet"
-    )
-    status_path = (
-        project_root / "data" / "manifests" / "market_download_status.csv"
-    )
-    manifest_path = (
-        project_root / "data" / "manifests" / "market_data_manifest.csv"
-    )
+    raw_path = project_root / "data" / "raw" / "market" / "market_prices_raw.parquet"
+    clean_path = project_root / "data" / "processed" / "market_prices_clean.parquet"
+    status_path = project_root / "data" / "manifests" / "market_download_status.csv"
+    manifest_path = project_root / "data" / "manifests" / "market_data_manifest.csv"
 
     missing_inputs = [
         str(path)
@@ -255,8 +232,7 @@ def run_quality_checks(
     ]
     if missing_inputs:
         raise FileNotFoundError(
-            "Required Step 8 inputs are missing:\n- "
-            + "\n- ".join(missing_inputs)
+            "Required Step 8 inputs are missing:\n- " + "\n- ".join(missing_inputs)
         )
 
     raw = pd.read_parquet(raw_path)
@@ -297,9 +273,7 @@ def run_quality_checks(
     )
 
     name, severity, _ = definition_lookup["DQ002"]
-    duplicate_keys = raw[
-        raw.duplicated(["security_id", "date"], keep=False)
-    ].copy()
+    duplicate_keys = raw[raw.duplicated(["security_id", "date"], keep=False)].copy()
     results["DQ002"] = _exception_frame(
         duplicate_keys,
         run_id=run_id,
@@ -321,18 +295,14 @@ def run_quality_checks(
     else:
         completeness_scope = clean.copy()
 
-    missing_prices = completeness_scope[
-        completeness_scope["model_price"].isna()
-    ].copy()
+    missing_prices = completeness_scope[completeness_scope["model_price"].isna()].copy()
     completeness = (
         completeness_scope.groupby("security_id")["model_price"]
         .apply(lambda values: float(values.notna().mean()))
         .rename("completeness")
         .reset_index()
     )
-    incomplete = completeness[
-        completeness["completeness"] < minimum_completeness
-    ]
+    incomplete = completeness[completeness["completeness"] < minimum_completeness]
     results["DQ003"] = _exception_frame(
         incomplete,
         run_id=run_id,
@@ -382,15 +352,12 @@ def run_quality_checks(
         threshold="not missing",
         value_column="volume",
         message_builder=lambda row: (
-            f"{row['security_id']} is missing volume on "
-            f"{row['date'].date()}."
+            f"{row['security_id']} is missing volume on {row['date'].date()}."
         ),
     )
 
     name, severity, _ = definition_lookup["DQ006"]
-    stale = clean[
-        clean["stale_run_length"] >= stale_days
-    ].copy()
+    stale = clean[clean["stale_run_length"] >= stale_days].copy()
     results["DQ006"] = _exception_frame(
         stale,
         run_id=run_id,
@@ -407,9 +374,7 @@ def run_quality_checks(
     )
 
     name, severity, _ = definition_lookup["DQ007"]
-    extreme = clean[
-        clean["return_1d"].abs() > extreme_return
-    ].copy()
+    extreme = clean[clean["return_1d"].abs() > extreme_return].copy()
     results["DQ007"] = _exception_frame(
         extreme,
         run_id=run_id,
@@ -420,18 +385,14 @@ def run_quality_checks(
         threshold=f"absolute return <= {extreme_return:.2%}",
         value_column="return_1d",
         message_builder=lambda row: (
-            f"{row['security_id']} one-day return is "
-            f"{float(row['return_1d']):.2%}."
+            f"{row['security_id']} one-day return is {float(row['return_1d']):.2%}."
         ),
     )
 
     name, severity, _ = definition_lookup["DQ008"]
     corporate = clean[
         (clean["return_1d"].abs() > corporate_return)
-        | (
-            clean["adjustment_ratio_change"].abs()
-            > adjustment_ratio_change
-        )
+        | (clean["adjustment_ratio_change"].abs() > adjustment_ratio_change)
     ].copy()
     corporate["corporate_signal"] = np.where(
         corporate["return_1d"].abs() > corporate_return,
@@ -494,9 +455,7 @@ def run_quality_checks(
         .rename("valid_history_rows")
         .reset_index()
     )
-    insufficient = history[
-        history["valid_history_rows"] < minimum_history
-    ]
+    insufficient = history[history["valid_history_rows"] < minimum_history]
     results["DQ010"] = _exception_frame(
         insufficient,
         run_id=run_id,
@@ -533,9 +492,7 @@ def run_quality_checks(
 
     name, severity, _ = definition_lookup["DQ012"]
     fallback_rows = status[
-        status["fallback_attempted"].astype(str).str.lower().isin(
-            {"true", "1", "yes"}
-        )
+        status["fallback_attempted"].astype(str).str.lower().isin({"true", "1", "yes"})
     ].copy()
     results["DQ012"] = _exception_frame(
         fallback_rows,
@@ -560,8 +517,7 @@ def run_quality_checks(
         .tail(1)
     )
     changed = latest_manifest[
-        latest_manifest["reproducibility_status"]
-        == "CHANGED_SAME_PERIOD"
+        latest_manifest["reproducibility_status"] == "CHANGED_SAME_PERIOD"
     ].copy()
     if not changed.empty:
         changed = changed.rename(columns={"dataset_name": "security_id"})
@@ -658,8 +614,7 @@ def run_quality_checks(
                             observed_value=stored_path,
                             threshold="file exists",
                             message=(
-                                f"Manifested dataset file does not exist: "
-                                f"{stored_path}"
+                                f"Manifested dataset file does not exist: {stored_path}"
                             ),
                             security_id=str(row.get("dataset_name", "")),
                         )
@@ -681,10 +636,7 @@ def run_quality_checks(
         check_exceptions = results[check_id]
         exception_count = int(len(check_exceptions))
         affected_security_count = int(
-            check_exceptions["security_id"]
-            .replace("", np.nan)
-            .dropna()
-            .nunique()
+            check_exceptions["security_id"].replace("", np.nan).dropna().nunique()
         )
         if exception_count == 0:
             status_value = "PASS"
@@ -709,14 +661,9 @@ def run_quality_checks(
 
     summary = pd.DataFrame(summaries)
 
-    summary_path = (
-        project_root / "reports" / "tables" / "data_quality_summary.csv"
-    )
+    summary_path = project_root / "reports" / "tables" / "data_quality_summary.csv"
     exceptions_path = (
-        project_root
-        / "reports"
-        / "evidence"
-        / "data_quality_exceptions.csv"
+        project_root / "reports" / "evidence" / "data_quality_exceptions.csv"
     )
     summary_path.parent.mkdir(parents=True, exist_ok=True)
     exceptions_path.parent.mkdir(parents=True, exist_ok=True)

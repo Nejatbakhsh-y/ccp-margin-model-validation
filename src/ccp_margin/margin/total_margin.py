@@ -78,7 +78,9 @@ def calculate_total_margin(
     }
     missing_sections = required_sections.difference(config)
     if missing_sections:
-        raise KeyError(f"Missing margin configuration sections: {sorted(missing_sections)}")
+        raise KeyError(
+            f"Missing margin configuration sections: {sorted(missing_sections)}"
+        )
 
     base_cfg = dict(config["base_margin"])
     liquidity_cfg = dict(config["liquidity_addon"])
@@ -168,7 +170,9 @@ def calculate_total_margin(
         how="left",
         validate="one_to_one",
     )
-    summary["total_initial_margin"] = summary["pre_stress_margin"] + summary["stress_buffer"]
+    summary["total_initial_margin"] = (
+        summary["pre_stress_margin"] + summary["stress_buffer"]
+    )
 
     component_cols = [
         "base_margin",
@@ -216,7 +220,9 @@ def calculate_total_margin(
     }
 
     return TotalMarginResult(
-        member_margin=summary.sort_values(member_col, kind="stable").reset_index(drop=True),
+        member_margin=summary.sort_values(member_col, kind="stable").reset_index(
+            drop=True
+        ),
         attribution=attribution,
         component_metadata=metadata,
     )

@@ -70,9 +70,9 @@ def calculate_exposure_breakdown(
         net_exposure=("market_value", "sum"),
         gross_exposure=("gross_market_value", "sum"),
     ).reset_index()
-    portfolio_gross = result.groupby(_GROUP_KEYS, sort=True)["gross_exposure"].transform(
-        "sum"
-    )
+    portfolio_gross = result.groupby(_GROUP_KEYS, sort=True)[
+        "gross_exposure"
+    ].transform("sum")
     result["gross_exposure_share"] = np.where(
         portfolio_gross > 0.0, result["gross_exposure"] / portfolio_gross, 0.0
     )

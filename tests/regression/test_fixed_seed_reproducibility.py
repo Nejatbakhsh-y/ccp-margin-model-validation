@@ -2,13 +2,12 @@ from __future__ import annotations
 
 import json
 
-from tests._step21_support import ROOT, first_existing, read_table, stable_digest
+from tests._step21_support import ROOT, read_table, stable_digest
 
 
 def test_fixed_seed_portfolio_artifact_matches_regression_digest():
     baseline_path = (
-        ROOT / "tests" / "regression" / "reference" /
-        "fixed_seed_reproducibility.json"
+        ROOT / "tests" / "regression" / "reference" / "fixed_seed_reproducibility.json"
     )
     assert baseline_path.exists(), "Fixed-seed regression baseline was not generated."
 

@@ -1,4 +1,3 @@
-﻿
 """Build the deterministic Step 18 DuckDB SQL layer.
 
 Unlike the original discovery-based loader, this implementation uses explicit,
@@ -26,29 +25,80 @@ REPORT_DIR = PROJECT_ROOT / "reports" / "sql"
 DATABASE_PATH = DATABASE_DIR / "ccp_margin_validation.duckdb"
 
 SOURCE_PATHS = {
-    "market_prices": PROJECT_ROOT / "data" / "processed" / "market_prices_clean.parquet",
-    "risk_factor_returns": PROJECT_ROOT / "data" / "processed" / "log_returns_wide.parquet",
-    "member_positions": PROJECT_ROOT / "data" / "processed" / "clearing_member_positions.parquet",
-    "portfolio_exposures": PROJECT_ROOT / "data" / "processed" / "portfolio_exposures.parquet",
+    "market_prices": PROJECT_ROOT
+    / "data"
+    / "processed"
+    / "market_prices_clean.parquet",
+    "risk_factor_returns": PROJECT_ROOT
+    / "data"
+    / "processed"
+    / "log_returns_wide.parquet",
+    "member_positions": PROJECT_ROOT
+    / "data"
+    / "processed"
+    / "clearing_member_positions.parquet",
+    "portfolio_exposures": PROJECT_ROOT
+    / "data"
+    / "processed"
+    / "portfolio_exposures.parquet",
     "daily_margin": PROJECT_ROOT / "data" / "processed" / "daily_member_margin.parquet",
-    "backtesting_results": PROJECT_ROOT / "data" / "processed" / "sensitivity_scenario_results.parquet",
-    "stress_results": PROJECT_ROOT / "data" / "processed" / "stress_test_results.parquet",
-    "sensitivity_results": PROJECT_ROOT / "data" / "processed" / "sensitivity_scenario_results.parquet",
-    "monitoring_metrics": PROJECT_ROOT / "data" / "processed" / "procyclicality_monitoring_metrics.csv",
-    "validation_findings": PROJECT_ROOT / "reports" / "evidence" / "findings" / "finding_register.csv",
+    "backtesting_results": PROJECT_ROOT
+    / "data"
+    / "processed"
+    / "sensitivity_scenario_results.parquet",
+    "stress_results": PROJECT_ROOT
+    / "data"
+    / "processed"
+    / "stress_test_results.parquet",
+    "sensitivity_results": PROJECT_ROOT
+    / "data"
+    / "processed"
+    / "sensitivity_scenario_results.parquet",
+    "monitoring_metrics": PROJECT_ROOT
+    / "data"
+    / "processed"
+    / "procyclicality_monitoring_metrics.csv",
+    "validation_findings": PROJECT_ROOT
+    / "reports"
+    / "evidence"
+    / "findings"
+    / "finding_register.csv",
 }
 
 REQUIRED_TABLES = list(SOURCE_PATHS)
 EXPECTED_NONEMPTY = set(REQUIRED_TABLES) - {"validation_findings"}
 
 ALIASES: dict[str, tuple[str, ...]] = {
-    "valuation_date": ("date", "as_of_date", "business_date", "test_date", "observation_date"),
+    "valuation_date": (
+        "date",
+        "as_of_date",
+        "business_date",
+        "test_date",
+        "observation_date",
+    ),
     "metric_date": ("date", "valuation_date", "as_of_date", "observation_date"),
-    "finding_date": ("date_identified", "identified_date", "date", "issue_date", "created_date"),
-    "due_date": ("target_completion_date", "target_date", "remediation_due_date", "closure_due_date"),
+    "finding_date": (
+        "date_identified",
+        "identified_date",
+        "date",
+        "issue_date",
+        "created_date",
+    ),
+    "due_date": (
+        "target_completion_date",
+        "target_date",
+        "remediation_due_date",
+        "closure_due_date",
+    ),
     "security_id": ("ticker", "symbol", "asset_id", "instrument_id", "risk_factor_id"),
     "risk_factor_id": ("security_id", "ticker", "symbol", "factor_id", "asset_id"),
-    "adjusted_close": ("adj_close", "adjclose", "adjusted_price", "close_adjusted", "price"),
+    "adjusted_close": (
+        "adj_close",
+        "adjclose",
+        "adjusted_price",
+        "close_adjusted",
+        "price",
+    ),
     "price": ("close", "adjusted_close", "adj_close", "market_price", "current_price"),
     "volume": ("trading_volume", "daily_volume", "adv", "average_daily_volume"),
     "source": ("data_source", "provider"),
@@ -60,32 +110,86 @@ ALIASES: dict[str, tuple[str, ...]] = {
     "sector": ("industry_sector", "gics_sector"),
     "asset_class": ("asset_type", "product_type", "instrument_type"),
     "liquidity_bucket": ("liquidity_class", "liquidity_tier", "liquidity_category"),
-    "gross_exposure": ("gross_market_value", "gross_notional", "gross_value", "absolute_notional"),
-    "net_exposure": ("net_market_value", "net_notional", "net_value", "signed_notional"),
+    "gross_exposure": (
+        "gross_market_value",
+        "gross_notional",
+        "gross_value",
+        "absolute_notional",
+    ),
+    "net_exposure": (
+        "net_market_value",
+        "net_notional",
+        "net_value",
+        "signed_notional",
+    ),
     "long_exposure": ("long_market_value", "long_notional", "long_value"),
     "short_exposure": ("short_market_value", "short_notional", "short_value"),
-    "top_position_weight": ("largest_position_weight", "largest_single_name_weight", "max_position_weight", "top_weight", "position_weight"),
+    "top_position_weight": (
+        "largest_position_weight",
+        "largest_single_name_weight",
+        "max_position_weight",
+        "top_weight",
+        "position_weight",
+    ),
     "concentration_hhi": ("hhi", "herfindahl_index", "concentration_index"),
-    "illiquid_exposure": ("illiquid_market_value", "low_liquidity_exposure", "illiquid_notional"),
+    "illiquid_exposure": (
+        "illiquid_market_value",
+        "low_liquidity_exposure",
+        "illiquid_notional",
+    ),
     "leverage_ratio": ("leverage", "gross_to_net_ratio"),
     "scenario_id": ("stress_scenario_id", "sensitivity_scenario_id", "scenario"),
-    "scenario_name": ("stress_scenario_name", "scenario_description", "scenario_label", "scenario_id"),
+    "scenario_name": (
+        "stress_scenario_name",
+        "scenario_description",
+        "scenario_label",
+        "scenario_id",
+    ),
     "stressed_loss": ("stress_loss", "scenario_loss", "loss_under_stress", "loss"),
-    "available_margin": ("margin_available", "total_initial_margin", "initial_margin", "margin_amount", "margin", "total_margin"),
+    "available_margin": (
+        "margin_available",
+        "total_initial_margin",
+        "initial_margin",
+        "margin_amount",
+        "margin",
+        "total_margin",
+    ),
     "margin_shortfall": ("shortfall", "margin_deficit", "uncovered_loss"),
     "breach_flag": ("stress_breach", "is_breach", "exception_flag", "breach"),
     "metric_name": ("metric", "measure_name", "monitoring_measure"),
     "metric_value": ("value", "measure_value", "result", "current_result"),
-    "threshold_value": ("threshold", "limit_value", "trigger_value", "warning_threshold"),
-    "status": ("result_status", "finding_status", "traffic_light", "rating", "current_status", "current_classification"),
+    "threshold_value": (
+        "threshold",
+        "limit_value",
+        "trigger_value",
+        "warning_threshold",
+    ),
+    "status": (
+        "result_status",
+        "finding_status",
+        "traffic_light",
+        "rating",
+        "current_status",
+        "current_classification",
+    ),
     "source_table": ("source", "data_source", "origin"),
     "details": ("description", "notes", "comment", "monitoring_objective"),
     "finding_id": ("issue_id", "validation_finding_id", "id"),
     "test_name": ("validation_test", "test", "finding_type", "affected_component"),
-    "finding_scope": ("scope", "member_scope", "model_scope", "affected_component", "affected_portfolios"),
+    "finding_scope": (
+        "scope",
+        "member_scope",
+        "model_scope",
+        "affected_component",
+        "affected_portfolios",
+    ),
     "severity": ("risk_rating", "priority", "finding_severity"),
     "finding": ("finding_title", "issue", "finding_description", "observation"),
-    "evidence": ("remediation_evidence_reference", "supporting_evidence", "evidence_reference"),
+    "evidence": (
+        "remediation_evidence_reference",
+        "supporting_evidence",
+        "evidence_reference",
+    ),
     "recommendation": ("recommended_action", "remediation", "action"),
     "finding_owner": ("responsible_owner", "owner", "assigned_to", "responsible_party"),
 }
@@ -121,21 +225,34 @@ def read_sql(filename: str) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def table_columns(connection: duckdb.DuckDBPyConnection, table_name: str) -> list[tuple[str, str]]:
+def table_columns(
+    connection: duckdb.DuckDBPyConnection, table_name: str
+) -> list[tuple[str, str]]:
     rows = connection.execute(f"PRAGMA table_info({qlit(table_name)})").fetchall()
     return [(str(row[1]), str(row[2])) for row in rows if str(row[1]) != "loaded_at"]
 
 
-def create_raw_view(connection: duckdb.DuckDBPyConnection, table_name: str, source_path: Path) -> tuple[str, int, dict[str, str]]:
+def create_raw_view(
+    connection: duckdb.DuckDBPyConnection, table_name: str, source_path: Path
+) -> tuple[str, int, dict[str, str]]:
     view_name = f"raw_{table_name}"
     source_sql = qlit(source_path.resolve().as_posix())
     if source_path.suffix.lower() == ".parquet":
         reader = f"read_parquet({source_sql}, union_by_name=true)"
     else:
         reader = f"read_csv_auto({source_sql}, header=true, union_by_name=true, ignore_errors=true, sample_size=-1)"
-    connection.execute(f"CREATE OR REPLACE TEMP VIEW {qid(view_name)} AS SELECT * FROM {reader}")
-    source_rows = int(connection.execute(f"SELECT COUNT(*) FROM {qid(view_name)}").fetchone()[0])
-    columns = [str(row[0]) for row in connection.execute(f"DESCRIBE SELECT * FROM {qid(view_name)}").fetchall()]
+    connection.execute(
+        f"CREATE OR REPLACE TEMP VIEW {qid(view_name)} AS SELECT * FROM {reader}"
+    )
+    source_rows = int(
+        connection.execute(f"SELECT COUNT(*) FROM {qid(view_name)}").fetchone()[0]
+    )
+    columns = [
+        str(row[0])
+        for row in connection.execute(
+            f"DESCRIBE SELECT * FROM {qid(view_name)}"
+        ).fetchall()
+    ]
     return view_name, source_rows, {normalize(column): column for column in columns}
 
 
@@ -147,7 +264,9 @@ def find_column(lookup: dict[str, str], target: str, *extra_aliases: str) -> str
     return None
 
 
-def cast_column(lookup: dict[str, str], target: str, data_type: str, *extra_aliases: str) -> str | None:
+def cast_column(
+    lookup: dict[str, str], target: str, data_type: str, *extra_aliases: str
+) -> str | None:
     actual = find_column(lookup, target, *extra_aliases)
     return f"TRY_CAST({qid(actual)} AS {data_type})" if actual else None
 
@@ -181,7 +300,9 @@ def create_generic_stage(
     return source_rows, matched, missing
 
 
-def market_derivation(source_path: Path) -> Callable[[str, str, dict[str, str]], str | None]:
+def market_derivation(
+    source_path: Path,
+) -> Callable[[str, str, dict[str, str]], str | None]:
     def derive(target: str, data_type: str, lookup: dict[str, str]) -> str | None:
         if target == "source":
             return f"CAST({qlit(source_path.name)} AS {data_type})"
@@ -190,10 +311,13 @@ def market_derivation(source_path: Path) -> Callable[[str, str, dict[str, str]],
         if target == "price":
             return cast_column(lookup, "adjusted_close", data_type)
         return None
+
     return derive
 
 
-def exposure_derivation(target: str, data_type: str, lookup: dict[str, str]) -> str | None:
+def exposure_derivation(
+    target: str, data_type: str, lookup: dict[str, str]
+) -> str | None:
     member = find_column(lookup, "member_id")
     signed = find_column(lookup, "net_exposure", "signed_notional")
     gross = find_column(lookup, "gross_exposure", "absolute_notional")
@@ -211,7 +335,9 @@ def exposure_derivation(target: str, data_type: str, lookup: dict[str, str]) -> 
     return None
 
 
-def stress_derivation(target: str, data_type: str, lookup: dict[str, str]) -> str | None:
+def stress_derivation(
+    target: str, data_type: str, lookup: dict[str, str]
+) -> str | None:
     member = find_column(lookup, "member_id")
     portfolio = find_column(lookup, "portfolio_id")
     scenario_id = find_column(lookup, "scenario_id")
@@ -230,21 +356,36 @@ def stress_derivation(target: str, data_type: str, lookup: dict[str, str]) -> st
     return None
 
 
-def findings_derivation(target: str, data_type: str, lookup: dict[str, str]) -> str | None:
+def findings_derivation(
+    target: str, data_type: str, lookup: dict[str, str]
+) -> str | None:
     if target == "recommendation":
-        remediation = find_column(lookup, "management_response", "management_response_received")
+        remediation = find_column(
+            lookup, "management_response", "management_response_received"
+        )
         return f"TRY_CAST({qid(remediation)} AS {data_type})" if remediation else None
     return None
 
 
-def create_risk_return_stage(connection: duckdb.DuckDBPyConnection, source_path: Path) -> tuple[int, int, list[str]]:
-    raw_view, source_rows, lookup = create_raw_view(connection, "risk_factor_returns", source_path)
+def create_risk_return_stage(
+    connection: duckdb.DuckDBPyConnection, source_path: Path
+) -> tuple[int, int, list[str]]:
+    raw_view, source_rows, lookup = create_raw_view(
+        connection, "risk_factor_returns", source_path
+    )
     date_column = find_column(lookup, "valuation_date")
     if date_column is None:
         raise ValueError("log_returns_wide.parquet has no date column.")
 
-    raw_columns = [str(row[0]) for row in connection.execute(f"DESCRIBE SELECT * FROM {qid(raw_view)}").fetchall()]
-    factor_columns = [column for column in raw_columns if normalize(column) != normalize(date_column)]
+    raw_columns = [
+        str(row[0])
+        for row in connection.execute(
+            f"DESCRIBE SELECT * FROM {qid(raw_view)}"
+        ).fetchall()
+    ]
+    factor_columns = [
+        column for column in raw_columns if normalize(column) != normalize(date_column)
+    ]
     if not factor_columns:
         raise ValueError("log_returns_wide.parquet contains no risk-factor columns.")
 
@@ -293,24 +434,40 @@ def create_risk_return_stage(connection: duckdb.DuckDBPyConnection, source_path:
     return source_rows, 7, []
 
 
-def create_daily_margin_stage(connection: duckdb.DuckDBPyConnection, source_path: Path) -> tuple[int, int, list[str]]:
-    raw_view, source_rows, lookup = create_raw_view(connection, "daily_margin", source_path)
+def create_daily_margin_stage(
+    connection: duckdb.DuckDBPyConnection, source_path: Path
+) -> tuple[int, int, list[str]]:
+    raw_view, source_rows, lookup = create_raw_view(
+        connection, "daily_margin", source_path
+    )
 
     def required(target: str, data_type: str, *aliases: str) -> str:
         expression = cast_column(lookup, target, data_type, *aliases)
         if expression is None:
-            raise ValueError(f"daily_member_margin.parquet is missing required field for {target}.")
+            raise ValueError(
+                f"daily_member_margin.parquet is missing required field for {target}."
+            )
         return expression
 
     date = required("valuation_date", "DATE")
     member = required("member_id", "VARCHAR")
     portfolio_actual = find_column(lookup, "portfolio_id")
-    portfolio = f"TRY_CAST({qid(portfolio_actual)} AS VARCHAR)" if portfolio_actual else member
+    portfolio = (
+        f"TRY_CAST({qid(portfolio_actual)} AS VARCHAR)" if portfolio_actual else member
+    )
     model_actual = find_column(lookup, "model_name")
-    model = f"TRY_CAST({qid(model_actual)} AS VARCHAR)" if model_actual else "'primary_historical_simulation'"
+    model = (
+        f"TRY_CAST({qid(model_actual)} AS VARCHAR)"
+        if model_actual
+        else "'primary_historical_simulation'"
+    )
     mpor = required("mpor_days", "INTEGER", "primary_mpor_days")
     confidence_actual = find_column(lookup, "confidence_level")
-    confidence = f"TRY_CAST({qid(confidence_actual)} AS DOUBLE)" if confidence_actual else "CAST(0.99 AS DOUBLE)"
+    confidence = (
+        f"TRY_CAST({qid(confidence_actual)} AS DOUBLE)"
+        if confidence_actual
+        else "CAST(0.99 AS DOUBLE)"
+    )
 
     mappings = {
         "base_var": required("base_var", "DOUBLE"),
@@ -318,10 +475,16 @@ def create_daily_margin_stage(connection: duckdb.DuckDBPyConnection, source_path
         "concentration_addon": required("concentration_addon", "DOUBLE"),
         "gap_risk_addon": required("gap_risk_addon", "DOUBLE"),
         "stress_buffer": required("stress_buffer", "DOUBLE"),
-        "total_initial_margin": required("total_initial_margin", "DOUBLE", "total_margin"),
+        "total_initial_margin": required(
+            "total_initial_margin", "DOUBLE", "total_margin"
+        ),
     }
     realized_actual = find_column(lookup, "realized_loss")
-    realized = f"TRY_CAST({qid(realized_actual)} AS DOUBLE)" if realized_actual else "CAST(NULL AS DOUBLE)"
+    realized = (
+        f"TRY_CAST({qid(realized_actual)} AS DOUBLE)"
+        if realized_actual
+        else "CAST(NULL AS DOUBLE)"
+    )
 
     connection.execute(
         f"""
@@ -333,12 +496,12 @@ def create_daily_margin_stage(connection: duckdb.DuckDBPyConnection, source_path
             {model} AS model_name,
             {mpor} AS mpor_days,
             {confidence} AS confidence_level,
-            {mappings['base_var']} AS base_var,
-            {mappings['liquidity_addon']} AS liquidity_addon,
-            {mappings['concentration_addon']} AS concentration_addon,
-            {mappings['gap_risk_addon']} AS gap_risk_addon,
-            {mappings['stress_buffer']} AS stress_buffer,
-            {mappings['total_initial_margin']} AS total_initial_margin,
+            {mappings["base_var"]} AS base_var,
+            {mappings["liquidity_addon"]} AS liquidity_addon,
+            {mappings["concentration_addon"]} AS concentration_addon,
+            {mappings["gap_risk_addon"]} AS gap_risk_addon,
+            {mappings["stress_buffer"]} AS stress_buffer,
+            {mappings["total_initial_margin"]} AS total_initial_margin,
             {realized} AS realized_loss
         FROM {qid(raw_view)}
         """
@@ -356,29 +519,53 @@ def baseline_filter(lookup: dict[str, str]) -> str:
             f"(TRY_CAST({qid(is_baseline)} AS BOOLEAN) = TRUE OR LOWER(TRIM(CAST({qid(is_baseline)} AS VARCHAR))) IN ('true','1','yes','y','baseline'))"
         )
     if scenario_id:
-        conditions.append(f"LOWER(TRIM(CAST({qid(scenario_id)} AS VARCHAR))) = 'baseline'")
+        conditions.append(
+            f"LOWER(TRIM(CAST({qid(scenario_id)} AS VARCHAR))) = 'baseline'"
+        )
     if not conditions:
-        raise ValueError("Sensitivity results have neither is_baseline nor scenario_id for baseline selection.")
+        raise ValueError(
+            "Sensitivity results have neither is_baseline nor scenario_id for baseline selection."
+        )
     return "(" + " OR ".join(conditions) + ")"
 
 
-def create_backtesting_stage(connection: duckdb.DuckDBPyConnection, source_path: Path) -> tuple[int, int, list[str]]:
-    raw_view, source_rows, lookup = create_raw_view(connection, "backtesting_results", source_path)
+def create_backtesting_stage(
+    connection: duckdb.DuckDBPyConnection, source_path: Path
+) -> tuple[int, int, list[str]]:
+    raw_view, source_rows, lookup = create_raw_view(
+        connection, "backtesting_results", source_path
+    )
     date = cast_column(lookup, "valuation_date", "DATE")
     member = cast_column(lookup, "member_id", "VARCHAR")
     margin = cast_column(lookup, "margin_amount", "DOUBLE", "margin")
     realized = cast_column(lookup, "realized_loss", "DOUBLE")
     if None in {date, member, margin, realized}:
-        raise ValueError("Sensitivity results do not contain date, member_id, margin, and realized_loss for backtesting.")
+        raise ValueError(
+            "Sensitivity results do not contain date, member_id, margin, and realized_loss for backtesting."
+        )
 
     portfolio_actual = find_column(lookup, "portfolio_id")
-    portfolio = f"TRY_CAST({qid(portfolio_actual)} AS VARCHAR)" if portfolio_actual else member
+    portfolio = (
+        f"TRY_CAST({qid(portfolio_actual)} AS VARCHAR)" if portfolio_actual else member
+    )
     model_actual = find_column(lookup, "model_name")
-    model = f"TRY_CAST({qid(model_actual)} AS VARCHAR)" if model_actual else "'primary_historical_simulation'"
+    model = (
+        f"TRY_CAST({qid(model_actual)} AS VARCHAR)"
+        if model_actual
+        else "'primary_historical_simulation'"
+    )
     mpor_actual = find_column(lookup, "mpor_days")
-    mpor = f"TRY_CAST({qid(mpor_actual)} AS INTEGER)" if mpor_actual else "CAST(1 AS INTEGER)"
+    mpor = (
+        f"TRY_CAST({qid(mpor_actual)} AS INTEGER)"
+        if mpor_actual
+        else "CAST(1 AS INTEGER)"
+    )
     confidence_actual = find_column(lookup, "confidence_level")
-    confidence = f"TRY_CAST({qid(confidence_actual)} AS DOUBLE)" if confidence_actual else "CAST(0.99 AS DOUBLE)"
+    confidence = (
+        f"TRY_CAST({qid(confidence_actual)} AS DOUBLE)"
+        if confidence_actual
+        else "CAST(0.99 AS DOUBLE)"
+    )
     where = baseline_filter(lookup)
 
     connection.execute(
@@ -432,21 +619,37 @@ def parameter_case(alias: str, lookup: dict[str, str]) -> str:
     return "CASE " + " ".join(clauses) + " ELSE NULL END"
 
 
-def create_sensitivity_stage(connection: duckdb.DuckDBPyConnection, source_path: Path) -> tuple[int, int, list[str]]:
-    raw_view, source_rows, lookup = create_raw_view(connection, "sensitivity_results", source_path)
+def create_sensitivity_stage(
+    connection: duckdb.DuckDBPyConnection, source_path: Path
+) -> tuple[int, int, list[str]]:
+    raw_view, source_rows, lookup = create_raw_view(
+        connection, "sensitivity_results", source_path
+    )
     date_actual = find_column(lookup, "valuation_date")
     member_actual = find_column(lookup, "member_id")
     scenario_actual = find_column(lookup, "scenario_id")
     parameter_actual = find_column(lookup, "parameter_name", "parameter")
     parameter_value_actual = find_column(lookup, "shocked_value", "parameter_value")
     margin_actual = find_column(lookup, "shocked_margin", "margin")
-    if not all([date_actual, member_actual, scenario_actual, parameter_actual, margin_actual]):
-        raise ValueError("Sensitivity source lacks required date/member/scenario/parameter/margin columns.")
+    if not all(
+        [date_actual, member_actual, scenario_actual, parameter_actual, margin_actual]
+    ):
+        raise ValueError(
+            "Sensitivity source lacks required date/member/scenario/parameter/margin columns."
+        )
 
     where = baseline_filter(lookup)
     portfolio_actual = find_column(lookup, "portfolio_id")
-    portfolio_expr = f"TRY_CAST(s.{qid(portfolio_actual)} AS VARCHAR)" if portfolio_actual else f"TRY_CAST(s.{qid(member_actual)} AS VARCHAR)"
-    shocked_value_expr = f"TRY_CAST(s.{qid(parameter_value_actual)} AS DOUBLE)" if parameter_value_actual else parameter_case("s", lookup)
+    portfolio_expr = (
+        f"TRY_CAST(s.{qid(portfolio_actual)} AS VARCHAR)"
+        if portfolio_actual
+        else f"TRY_CAST(s.{qid(member_actual)} AS VARCHAR)"
+    )
+    shocked_value_expr = (
+        f"TRY_CAST(s.{qid(parameter_value_actual)} AS DOUBLE)"
+        if parameter_value_actual
+        else parameter_case("s", lookup)
+    )
     baseline_value_expr = parameter_case("b", lookup)
 
     connection.execute(
@@ -457,7 +660,7 @@ def create_sensitivity_stage(connection: duckdb.DuckDBPyConnection, source_path:
         ), baseline AS (
             SELECT *
             FROM source_data
-            WHERE {where.replace(qid(find_column(lookup, 'is_baseline') or '__missing__'), qid(find_column(lookup, 'is_baseline') or '__missing__'))}
+            WHERE {where.replace(qid(find_column(lookup, "is_baseline") or "__missing__"), qid(find_column(lookup, "is_baseline") or "__missing__"))}
             QUALIFY ROW_NUMBER() OVER (
                 PARTITION BY TRY_CAST({qid(date_actual)} AS DATE), TRY_CAST({qid(member_actual)} AS VARCHAR)
                 ORDER BY TRY_CAST({qid(margin_actual)} AS DOUBLE) DESC NULLS LAST
@@ -493,28 +696,48 @@ def write_manifest(records: list[LoadRecord]) -> None:
     path = REPORT_DIR / "load_manifest.csv"
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.writer(handle)
-        writer.writerow(["table_name", "source_file", "source_rows", "loaded_rows", "status", "matched_columns", "missing_columns"])
+        writer.writerow(
+            [
+                "table_name",
+                "source_file",
+                "source_rows",
+                "loaded_rows",
+                "status",
+                "matched_columns",
+                "missing_columns",
+            ]
+        )
         for record in records:
-            writer.writerow([
-                record.table_name,
-                record.source_file,
-                record.source_rows,
-                record.loaded_rows,
-                record.status,
-                record.matched_columns,
-                record.missing_columns,
-            ])
+            writer.writerow(
+                [
+                    record.table_name,
+                    record.source_file,
+                    record.source_rows,
+                    record.loaded_rows,
+                    record.status,
+                    record.matched_columns,
+                    record.missing_columns,
+                ]
+            )
 
 
-def export_query(connection: duckdb.DuckDBPyConnection, query: str, filename: str) -> None:
+def export_query(
+    connection: duckdb.DuckDBPyConnection, query: str, filename: str
+) -> None:
     output = (REPORT_DIR / filename).resolve().as_posix()
     connection.execute(f"COPY ({query}) TO {qlit(output)} (FORMAT CSV, HEADER TRUE)")
 
 
 def validate_sources() -> None:
-    missing = [str(path.relative_to(PROJECT_ROOT)) for path in SOURCE_PATHS.values() if not path.exists()]
+    missing = [
+        str(path.relative_to(PROJECT_ROOT))
+        for path in SOURCE_PATHS.values()
+        if not path.exists()
+    ]
     if missing:
-        raise FileNotFoundError("Required Step 18 sources are missing:\n  " + "\n  ".join(missing))
+        raise FileNotFoundError(
+            "Required Step 18 sources are missing:\n  " + "\n  ".join(missing)
+        )
 
 
 def main() -> int:
@@ -543,24 +766,36 @@ def main() -> int:
             SOURCE_PATHS["market_prices"],
             market_derivation(SOURCE_PATHS["market_prices"]),
         )
-        details["risk_factor_returns"] = create_risk_return_stage(connection, SOURCE_PATHS["risk_factor_returns"])
-        details["member_positions"] = create_generic_stage(connection, "member_positions", SOURCE_PATHS["member_positions"])
+        details["risk_factor_returns"] = create_risk_return_stage(
+            connection, SOURCE_PATHS["risk_factor_returns"]
+        )
+        details["member_positions"] = create_generic_stage(
+            connection, "member_positions", SOURCE_PATHS["member_positions"]
+        )
         details["portfolio_exposures"] = create_generic_stage(
             connection,
             "portfolio_exposures",
             SOURCE_PATHS["portfolio_exposures"],
             exposure_derivation,
         )
-        details["daily_margin"] = create_daily_margin_stage(connection, SOURCE_PATHS["daily_margin"])
-        details["backtesting_results"] = create_backtesting_stage(connection, SOURCE_PATHS["backtesting_results"])
+        details["daily_margin"] = create_daily_margin_stage(
+            connection, SOURCE_PATHS["daily_margin"]
+        )
+        details["backtesting_results"] = create_backtesting_stage(
+            connection, SOURCE_PATHS["backtesting_results"]
+        )
         details["stress_results"] = create_generic_stage(
             connection,
             "stress_results",
             SOURCE_PATHS["stress_results"],
             stress_derivation,
         )
-        details["sensitivity_results"] = create_sensitivity_stage(connection, SOURCE_PATHS["sensitivity_results"])
-        details["monitoring_metrics"] = create_generic_stage(connection, "monitoring_metrics", SOURCE_PATHS["monitoring_metrics"])
+        details["sensitivity_results"] = create_sensitivity_stage(
+            connection, SOURCE_PATHS["sensitivity_results"]
+        )
+        details["monitoring_metrics"] = create_generic_stage(
+            connection, "monitoring_metrics", SOURCE_PATHS["monitoring_metrics"]
+        )
         details["validation_findings"] = create_generic_stage(
             connection,
             "validation_findings",
@@ -574,7 +809,11 @@ def main() -> int:
 
         for table_name in REQUIRED_TABLES:
             source_rows, matched, missing = details[table_name]
-            loaded_rows = int(connection.execute(f"SELECT COUNT(*) FROM {qid(table_name)}").fetchone()[0])
+            loaded_rows = int(
+                connection.execute(
+                    f"SELECT COUNT(*) FROM {qid(table_name)}"
+                ).fetchone()[0]
+            )
             if table_name in EXPECTED_NONEMPTY and loaded_rows == 0:
                 raise ValueError(f"Required table {table_name} loaded zero rows.")
             records.append(
@@ -589,13 +828,41 @@ def main() -> int:
                 )
             )
 
-        export_query(connection, "SELECT * FROM v_member_exception_summary ORDER BY total_shortfall DESC NULLS LAST", "member_exception_summary.csv")
-        export_query(connection, "SELECT * FROM v_model_backtesting_summary ORDER BY model_name, mpor_days", "model_backtesting_summary.csv")
-        export_query(connection, "SELECT * FROM v_stress_breach_summary ORDER BY aggregate_shortfall DESC NULLS LAST", "stress_breach_summary.csv")
-        export_query(connection, "SELECT * FROM v_sensitivity_largest_movements ORDER BY absolute_pct_change DESC NULLS LAST LIMIT 250", "sensitivity_largest_movements.csv")
-        export_query(connection, "SELECT * FROM v_margin_jump_counts ORDER BY jumps_over_30pct DESC, jumps_over_20pct DESC", "margin_jump_counts.csv")
-        export_query(connection, "SELECT * FROM v_member_margin_volatility ORDER BY margin_change_volatility DESC NULLS LAST", "member_margin_volatility.csv")
-        export_query(connection, "SELECT * FROM v_open_validation_findings ORDER BY severity, due_date", "open_validation_findings.csv")
+        export_query(
+            connection,
+            "SELECT * FROM v_member_exception_summary ORDER BY total_shortfall DESC NULLS LAST",
+            "member_exception_summary.csv",
+        )
+        export_query(
+            connection,
+            "SELECT * FROM v_model_backtesting_summary ORDER BY model_name, mpor_days",
+            "model_backtesting_summary.csv",
+        )
+        export_query(
+            connection,
+            "SELECT * FROM v_stress_breach_summary ORDER BY aggregate_shortfall DESC NULLS LAST",
+            "stress_breach_summary.csv",
+        )
+        export_query(
+            connection,
+            "SELECT * FROM v_sensitivity_largest_movements ORDER BY absolute_pct_change DESC NULLS LAST LIMIT 250",
+            "sensitivity_largest_movements.csv",
+        )
+        export_query(
+            connection,
+            "SELECT * FROM v_margin_jump_counts ORDER BY jumps_over_30pct DESC, jumps_over_20pct DESC",
+            "margin_jump_counts.csv",
+        )
+        export_query(
+            connection,
+            "SELECT * FROM v_member_margin_volatility ORDER BY margin_change_volatility DESC NULLS LAST",
+            "member_margin_volatility.csv",
+        )
+        export_query(
+            connection,
+            "SELECT * FROM v_open_validation_findings ORDER BY severity, due_date",
+            "open_validation_findings.csv",
+        )
 
         write_manifest(records)
 
@@ -612,8 +879,12 @@ def main() -> int:
         print("\nLoad summary")
         print("------------")
         for record in records:
-            print(f"{record.table_name:24s} {record.loaded_rows:12,d} rows  {record.source_file}")
-        print(f"\nRequired exception query executed successfully ({len(result_rows)} result rows).")
+            print(
+                f"{record.table_name:24s} {record.loaded_rows:12,d} rows  {record.source_file}"
+            )
+        print(
+            f"\nRequired exception query executed successfully ({len(result_rows)} result rows)."
+        )
         print(f"Load manifest: {REPORT_DIR / 'load_manifest.csv'}")
 
     return 0

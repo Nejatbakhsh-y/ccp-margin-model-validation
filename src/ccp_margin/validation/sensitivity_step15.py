@@ -165,7 +165,9 @@ def validate_manifest(manifest: pd.DataFrame) -> None:
             )
 
 
-def validate_scenario_results(results: pd.DataFrame, manifest: pd.DataFrame) -> pd.DataFrame:
+def validate_scenario_results(
+    results: pd.DataFrame, manifest: pd.DataFrame
+) -> pd.DataFrame:
     """Validate and normalize model-generated sensitivity results.
 
     Required input columns:
@@ -233,9 +235,9 @@ def validate_scenario_results(results: pd.DataFrame, manifest: pd.DataFrame) -> 
         )
 
     independent_exception = normalized["realized_loss"] > normalized["margin"]
-    independent_shortfall = (
-        normalized["realized_loss"] - normalized["margin"]
-    ).clip(lower=0.0)
+    independent_shortfall = (normalized["realized_loss"] - normalized["margin"]).clip(
+        lower=0.0
+    )
 
     if "exception" in normalized.columns:
         supplied_exception = normalized["exception"].astype(bool)
@@ -248,9 +250,7 @@ def validate_scenario_results(results: pd.DataFrame, manifest: pd.DataFrame) -> 
     normalized["exception"] = independent_exception.astype(int)
 
     if "shortfall" in normalized.columns:
-        supplied_shortfall = pd.to_numeric(
-            normalized["shortfall"], errors="raise"
-        )
+        supplied_shortfall = pd.to_numeric(normalized["shortfall"], errors="raise")
         mismatch = ~np.isclose(
             supplied_shortfall.to_numpy(),
             independent_shortfall.to_numpy(),
@@ -359,17 +359,15 @@ def run_sensitivity_analysis(
     if top_member_count <= 0:
         raise ValueError("top_member_count must be positive.")
 
-    baseline_row = manifest_clean.loc[
-        manifest_clean["is_baseline"].astype(bool)
-    ].iloc[0]
+    baseline_row = manifest_clean.loc[manifest_clean["is_baseline"].astype(bool)].iloc[
+        0
+    ]
     baseline_id = str(baseline_row["scenario_id"])
-    baseline_results = normalized.loc[
-        normalized["scenario_id"] == baseline_id
-    ].copy()
+    baseline_results = normalized.loc[normalized["scenario_id"] == baseline_id].copy()
 
     key_columns = ["date", "member_id"]
-    baseline_keys = baseline_results[key_columns].sort_values(key_columns).reset_index(
-        drop=True
+    baseline_keys = (
+        baseline_results[key_columns].sort_values(key_columns).reset_index(drop=True)
     )
 
     baseline_target = 1.0 - float(baseline_row["confidence_level"])
@@ -382,9 +380,9 @@ def run_sensitivity_analysis(
         .mean()
         .rename(columns={"margin": "baseline_average_margin"})
     )
-    baseline_member["baseline_rank"] = baseline_member[
-        "baseline_average_margin"
-    ].rank(method="min", ascending=False)
+    baseline_member["baseline_rank"] = baseline_member["baseline_average_margin"].rank(
+        method="min", ascending=False
+    )
 
     summary_rows: list[dict[str, Any]] = []
     ranking_rows: list[pd.DataFrame] = []
@@ -395,9 +393,11 @@ def run_sensitivity_analysis(
             normalized["scenario_id"] == scenario_id
         ].copy()
 
-        scenario_keys = scenario_results[key_columns].sort_values(
-            key_columns
-        ).reset_index(drop=True)
+        scenario_keys = (
+            scenario_results[key_columns]
+            .sort_values(key_columns)
+            .reset_index(drop=True)
+        )
         if not baseline_keys.equals(scenario_keys):
             raise ValueError(
                 f"Scenario '{scenario_id}' does not have identical date/member "
@@ -413,9 +413,6 @@ def run_sensitivity_analysis(
         )
 
         margin_delta = paired["margin_scenario"] - paired["margin_baseline"]
-        shortfall_delta = (
-            paired["shortfall_scenario"] - paired["shortfall_baseline"]
-        )
 
         target_probability = 1.0 - float(scenario_meta["confidence_level"])
         scenario_kupiec = _kupiec_metrics(
@@ -432,9 +429,9 @@ def run_sensitivity_analysis(
         member_detail = baseline_member.merge(
             scenario_member, on="member_id", how="inner", validate="one_to_one"
         )
-        member_detail["scenario_rank"] = member_detail[
-            "scenario_average_margin"
-        ].rank(method="min", ascending=False)
+        member_detail["scenario_rank"] = member_detail["scenario_average_margin"].rank(
+            method="min", ascending=False
+        )
         member_detail["rank_change"] = (
             member_detail["scenario_rank"] - member_detail["baseline_rank"]
         )
@@ -444,9 +441,11 @@ def run_sensitivity_analysis(
         member_detail["parameter_value"] = scenario_meta["parameter_value"]
         ranking_rows.append(member_detail)
 
-        rank_correlation = member_detail[
-            ["baseline_rank", "scenario_rank"]
-        ].corr(method="spearman").iloc[0, 1]
+        rank_correlation = (
+            member_detail[["baseline_rank", "scenario_rank"]]
+            .corr(method="spearman")
+            .iloc[0, 1]
+        )
         if pd.isna(rank_correlation):
             rank_correlation = 1.0
 
@@ -475,9 +474,8 @@ def run_sensitivity_analysis(
                 margin_change_pct = _safe_pct_change(
                     mean_scenario_margin, mean_baseline_margin
                 )
-                if (
-                    np.isfinite(parameter_change_pct)
-                    and not np.isclose(parameter_change_pct, 0.0)
+                if np.isfinite(parameter_change_pct) and not np.isclose(
+                    parameter_change_pct, 0.0
                 ):
                     margin_elasticity = margin_change_pct / parameter_change_pct
             except (TypeError, ValueError):
@@ -591,14 +589,10 @@ def run_sensitivity_analysis(
         review_reasons: list[str] = []
         if max_abs_margin > thresholds["max_absolute_margin_change_pct"]:
             review_reasons.append("margin_change")
-        if (
-            max_abs_exception_rate
-            > thresholds["max_absolute_exception_rate_change"]
-        ):
+        if max_abs_exception_rate > thresholds["max_absolute_exception_rate_change"]:
             review_reasons.append("exception_rate")
         if np.isfinite(max_abs_shortfall) and (
-            max_abs_shortfall
-            > thresholds["max_absolute_shortfall_change_pct"]
+            max_abs_shortfall > thresholds["max_absolute_shortfall_change_pct"]
         ):
             review_reasons.append("shortfall")
         if min_rank_correlation < thresholds["minimum_member_rank_correlation"]:
@@ -696,12 +690,8 @@ def write_sensitivity_report(
     }
 
     analysis.scenario_summary.to_csv(paths["scenario_summary"], index=False)
-    analysis.member_ranking_detail.to_csv(
-        paths["member_ranking_detail"], index=False
-    )
-    analysis.parameter_stability.to_csv(
-        paths["parameter_stability"], index=False
-    )
+    analysis.member_ranking_detail.to_csv(paths["member_ranking_detail"], index=False)
+    analysis.parameter_stability.to_csv(paths["parameter_stability"], index=False)
     paths["metadata"].write_text(
         json.dumps(analysis.metadata, indent=2, default=str),
         encoding="utf-8",

@@ -29,7 +29,9 @@ def main() -> int:
     project_config, data_config = load_configs()
 
     start_date = pd.Timestamp(project_config["data"]["start_date"])
-    end_date = pd.Timestamp(configured_observation_end(project_config["data"].get("end_date")))
+    end_date = pd.Timestamp(
+        configured_observation_end(project_config["data"].get("end_date"))
+    )
     minimum_completeness = float(project_config["data"]["minimum_completeness"])
     tickers = [str(item).upper() for item in data_config["market_data"]["tickers"]]
     cleaning_settings = data_config["cleaning"]
@@ -42,8 +44,12 @@ def main() -> int:
                 f"Missing {relative_path(path)}. Run scripts/01_download_market_data.py first."
             )
         frame = pd.read_parquet(path)
-        frame["date"] = pd.to_datetime(frame["date"], errors="raise").dt.tz_localize(None)
-        frame = frame[(frame["date"] >= start_date) & (frame["date"] <= end_date)].copy()
+        frame["date"] = pd.to_datetime(frame["date"], errors="raise").dt.tz_localize(
+            None
+        )
+        frame = frame[
+            (frame["date"] >= start_date) & (frame["date"] <= end_date)
+        ].copy()
         frames.append(frame)
 
     market = pd.concat(frames, ignore_index=True)
@@ -68,22 +74,32 @@ def main() -> int:
         market = market[market["adj_close"].notna()].copy()
 
     if (market["adj_close"] <= 0).any():
-        raise ValueError("Nonpositive adjusted prices remain after raw-data validation.")
+        raise ValueError(
+            "Nonpositive adjusted prices remain after raw-data validation."
+        )
 
-    market["simple_return"] = market.groupby("ticker", sort=False)["adj_close"].pct_change(
-        fill_method=None
-    )
+    market["simple_return"] = market.groupby("ticker", sort=False)[
+        "adj_close"
+    ].pct_change(fill_method=None)
     market["log_adjusted_close"] = np.log(market["adj_close"])
-    market["log_return"] = market.groupby("ticker", sort=False)["log_adjusted_close"].diff()
+    market["log_return"] = market.groupby("ticker", sort=False)[
+        "log_adjusted_close"
+    ].diff()
     market = market.drop(columns="log_adjusted_close")
 
     processed_directory = ROOT / "data" / "processed"
     long_path = processed_directory / "market_data_clean_long.parquet"
     market.to_parquet(long_path, index=False)
 
-    adjusted_close_all = market.pivot(index="date", columns="ticker", values="adj_close").sort_index()
-    close_all = market.pivot(index="date", columns="ticker", values="close").sort_index()
-    volume_all = market.pivot(index="date", columns="ticker", values="volume").sort_index()
+    adjusted_close_all = market.pivot(
+        index="date", columns="ticker", values="adj_close"
+    ).sort_index()
+    close_all = market.pivot(
+        index="date", columns="ticker", values="close"
+    ).sort_index()
+    volume_all = market.pivot(
+        index="date", columns="ticker", values="volume"
+    ).sort_index()
 
     union_dates = adjusted_close_all.index
     completeness = adjusted_close_all.notna().sum().div(len(union_dates)).sort_index()

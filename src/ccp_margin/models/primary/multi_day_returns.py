@@ -86,8 +86,7 @@ def coerce_return_matrix(
     if (matrix <= -1.0).any().any():
         bad = matrix.where(matrix <= -1.0).stack().head(5)
         raise ValueError(
-            "simple returns must be greater than -1.0; examples: "
-            f"{bad.to_dict()}"
+            f"simple returns must be greater than -1.0; examples: {bad.to_dict()}"
         )
 
     matrix.index.name = "scenario_date"
@@ -110,12 +109,9 @@ def overlapping_multi_day_returns(
     if horizon_days == 1:
         return matrix.copy()
 
-    compounded = (
-        (1.0 + matrix)
-        .rolling(window=horizon_days, min_periods=horizon_days)
-        .apply(np.prod, raw=True)
-        - 1.0
-    )
+    compounded = (1.0 + matrix).rolling(
+        window=horizon_days, min_periods=horizon_days
+    ).apply(np.prod, raw=True) - 1.0
     compounded.index.name = "scenario_date"
     return compounded
 
@@ -181,10 +177,7 @@ def build_horizon_return_matrices(
         if overlapping
         else non_overlapping_multi_day_returns
     )
-    return {
-        horizon: builder(daily_returns, horizon)
-        for horizon in normalized_horizons
-    }
+    return {horizon: builder(daily_returns, horizon) for horizon in normalized_horizons}
 
 
 def _validate_horizon(horizon_days: int) -> None:

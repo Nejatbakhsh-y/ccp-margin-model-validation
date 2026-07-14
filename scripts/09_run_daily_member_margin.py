@@ -145,7 +145,9 @@ def main() -> None:
             "rows_written": int(len(final)),
             "member_count": int(final["member_id"].nunique()),
             "history_row_count": int(len(full_history)),
-            "history_start_date": str(pd.to_datetime(full_history["date"]).min().date()),
+            "history_start_date": str(
+                pd.to_datetime(full_history["date"]).min().date()
+            ),
             "history_end_date": str(pd.to_datetime(full_history["date"]).max().date()),
             "total_margin_sum": float(final["total_margin"].sum()),
             "maximum_reconciliation_error": float(reconciliation_error.max()),

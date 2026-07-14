@@ -49,9 +49,7 @@ def main() -> None:
             exceptions,
             require_250_observations=True,
         ).to_dict(),
-        "margin_shortfall": calculate_margin_shortfall(
-            observations
-        ).to_dict(),
+        "margin_shortfall": calculate_margin_shortfall(observations).to_dict(),
         "benchmark_comparison": compare_with_benchmark(
             primary_margin,
             benchmark_margin,

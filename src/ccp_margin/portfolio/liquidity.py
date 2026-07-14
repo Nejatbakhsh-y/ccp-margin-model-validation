@@ -58,7 +58,9 @@ def calculate_liquidity_metrics(positions: pd.DataFrame) -> pd.DataFrame:
             columns={bucket: f"{bucket.lower()}_liquidity_exposure"}
         )
 
-    result = result.merge(bucket_amounts, on=_GROUP_KEYS, how="left", validate="one_to_one")
+    result = result.merge(
+        bucket_amounts, on=_GROUP_KEYS, how="left", validate="one_to_one"
+    )
     result["weighted_liquidity_score"] = np.where(
         result["gross_exposure"] > 0.0,
         result["liquidity_score_amount"] / result["gross_exposure"],
@@ -70,9 +72,8 @@ def calculate_liquidity_metrics(positions: pd.DataFrame) -> pd.DataFrame:
             result[f"{bucket}_liquidity_exposure"] / result["gross_exposure"],
             0.0,
         )
-    result["liquidity_stressed_flag"] = (
-        (result["weighted_liquidity_score"] >= 3.5)
-        | (result["low_liquidity_share"] >= 0.30)
+    result["liquidity_stressed_flag"] = (result["weighted_liquidity_score"] >= 3.5) | (
+        result["low_liquidity_share"] >= 0.30
     )
     result = result.drop(columns=["liquidity_score_amount"])
     return result.sort_values(_GROUP_KEYS, kind="mergesort").reset_index(drop=True)

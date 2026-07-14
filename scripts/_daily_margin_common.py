@@ -81,7 +81,9 @@ def resolve_as_of_date(returns: pd.DataFrame, requested: str | None) -> pd.Times
     return resolved
 
 
-def load_returns(path: str | Path = "data/processed/returns_wide.parquet") -> pd.DataFrame:
+def load_returns(
+    path: str | Path = "data/processed/returns_wide.parquet",
+) -> pd.DataFrame:
     """Load and validate the wide daily-return matrix."""
     source = project_path(path)
     if not source.exists():
@@ -100,7 +102,9 @@ def load_returns(path: str | Path = "data/processed/returns_wide.parquet") -> pd
 
     if frame.index.duplicated().any():
         duplicate_dates = frame.index[frame.index.duplicated()].unique().tolist()
-        raise ValueError(f"Duplicate dates found in return matrix: {duplicate_dates[:5]}")
+        raise ValueError(
+            f"Duplicate dates found in return matrix: {duplicate_dates[:5]}"
+        )
     if frame.columns.duplicated().any():
         raise ValueError("Duplicate security columns found in return matrix.")
     return frame
@@ -149,9 +153,7 @@ def load_positions(
     elif suffix == ".csv":
         positions = pd.read_csv(source)
     else:
-        raise ValueError(
-            f"Unsupported member-position file format: {source.suffix}"
-        )
+        raise ValueError(f"Unsupported member-position file format: {source.suffix}")
 
     if positions.empty:
         raise ValueError(f"Member-position source is empty: {source}")
@@ -172,10 +174,7 @@ def load_positions(
         positions.columns,
         ("valuation_date", "reference_date", "as_of_date", "date"),
     )
-    if (
-        valuation_date_column is not None
-        and valuation_date_column != "valuation_date"
-    ):
+    if valuation_date_column is not None and valuation_date_column != "valuation_date":
         rename_map[valuation_date_column] = "valuation_date"
 
     price_column = _first_existing(
@@ -208,12 +207,7 @@ def load_positions(
             positions["market_value"] = quantity * price
 
             if "long_short_flag" in positions.columns:
-                side = (
-                    positions["long_short_flag"]
-                    .astype(str)
-                    .str.strip()
-                    .str.upper()
-                )
+                side = positions["long_short_flag"].astype(str).str.strip().str.upper()
                 signs = side.map(
                     {
                         "LONG": 1.0,
@@ -226,17 +220,13 @@ def load_positions(
                         "-1": -1.0,
                     }
                 )
-                unknown_sides = sorted(
-                    set(side.loc[signs.isna()].dropna().astype(str))
-                )
+                unknown_sides = sorted(set(side.loc[signs.isna()].dropna().astype(str)))
                 if unknown_sides:
                     raise ValueError(
                         "Unrecognized long/short values while calculating "
                         f"market_value: {unknown_sides}"
                     )
-                positions["market_value"] = (
-                    positions["market_value"].abs() * signs
-                )
+                positions["market_value"] = positions["market_value"].abs() * signs
 
     required_core = {"member_id", "security_id", "market_value"}
     missing_core = required_core.difference(positions.columns)
@@ -251,9 +241,7 @@ def load_positions(
         "asset_class",
         "liquidity_bucket",
     }
-    missing_classifications = required_classifications.difference(
-        positions.columns
-    )
+    missing_classifications = required_classifications.difference(positions.columns)
     if missing_classifications:
         raise ValueError(
             "Member positions are missing required controlled classifications: "
@@ -262,12 +250,8 @@ def load_positions(
             "undocumented fallback classifications."
         )
 
-    positions["member_id"] = (
-        positions["member_id"].astype(str).str.strip()
-    )
-    positions["security_id"] = (
-        positions["security_id"].astype(str).str.strip()
-    )
+    positions["member_id"] = positions["member_id"].astype(str).str.strip()
+    positions["security_id"] = positions["security_id"].astype(str).str.strip()
     positions["market_value"] = pd.to_numeric(
         positions["market_value"],
         errors="raise",
@@ -285,9 +269,7 @@ def load_positions(
             positions["valuation_date"],
             errors="raise",
         ).dt.normalize()
-        positions = positions.loc[
-            positions["valuation_date"] <= as_of_date
-        ].copy()
+        positions = positions.loc[positions["valuation_date"] <= as_of_date].copy()
         if positions.empty:
             raise ValueError(
                 f"No position snapshot exists on or before {as_of_date.date()}."
@@ -311,36 +293,23 @@ def load_positions(
         )
         positions = positions.merge(latest, on=keys, how="inner")
         positions = positions.loc[
-            positions["valuation_date"]
-            == positions["_latest_valuation_date"]
+            positions["valuation_date"] == positions["_latest_valuation_date"]
         ].drop(columns="_latest_valuation_date")
 
     positions["liquidity_bucket"] = (
-        positions["liquidity_bucket"]
-        .astype(str)
-        .str.strip()
-        .str.lower()
+        positions["liquidity_bucket"].astype(str).str.strip().str.lower()
     )
     positions["asset_class"] = (
-        positions["asset_class"]
-        .astype(str)
-        .str.strip()
-        .str.lower()
+        positions["asset_class"].astype(str).str.strip().str.lower()
     )
     positions["sector"] = (
-        positions["sector"]
-        .fillna("unknown")
-        .astype(str)
-        .str.strip()
-        .str.lower()
+        positions["sector"].fillna("unknown").astype(str).str.strip().str.lower()
     )
 
     for column in ("liquidity_bucket", "asset_class", "sector"):
         invalid = positions[column].isin({"", "nan", "none"})
         if invalid.any():
-            raise ValueError(
-                f"Member positions contain blank or null {column} values."
-            )
+            raise ValueError(f"Member positions contain blank or null {column} values.")
 
     duplicate_keys = ["member_id", "security_id"]
     if positions.duplicated(duplicate_keys).any():
@@ -364,10 +333,7 @@ def load_positions(
         for column in optional:
             aggregation[column] = "first"
 
-        positions = (
-            positions.groupby(duplicate_keys, as_index=False)
-            .agg(aggregation)
-        )
+        positions = positions.groupby(duplicate_keys, as_index=False).agg(aggregation)
 
     return positions.reset_index(drop=True)
 
@@ -401,11 +367,13 @@ def require_risk_factors(
 
     if missing and normalized_policy == "raise":
         raise KeyError(
-            "Missing return histories for position risk factors: "
-            + ", ".join(missing)
+            "Missing return histories for position risk factors: " + ", ".join(missing)
         )
     if missing and normalized_policy in {"drop", "exclude"}:
-        print("WARNING: excluding positions with missing return histories: " + ", ".join(missing))
+        print(
+            "WARNING: excluding positions with missing return histories: "
+            + ", ".join(missing)
+        )
         positions = positions.loc[~positions["security_id"].isin(missing)].copy()
         needed = sorted(set(positions["security_id"]))
     elif missing:
