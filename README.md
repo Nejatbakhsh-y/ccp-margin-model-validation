@@ -143,29 +143,29 @@ Raw data, secrets, credentials, and API keys must not be committed. Local secret
 
 ```text
 ccp-margin-model-validation/
-â”œâ”€â”€ .github/workflows/           # Continuous-integration workflows
-â”œâ”€â”€ .vscode/                     # VS Code project configuration
-â”œâ”€â”€ configs/                     # Project, model, validation, stress, and monitoring settings
-â”œâ”€â”€ dashboard/                   # Streamlit executive dashboard
-â”œâ”€â”€ data/
-â”‚   â”œâ”€â”€ raw/                     # Locally downloaded source data
-â”‚   â”œâ”€â”€ interim/                 # Intermediate transformations
-â”‚   â”œâ”€â”€ processed/               # Reproducible analytical datasets
-â”‚   â”œâ”€â”€ synthetic/               # Synthetic portfolio inputs
-â”‚   â””â”€â”€ manifests/               # Data lineage and ingestion manifests
-â”œâ”€â”€ docs/                        # Scope, charter, architecture, and supporting documentation
-â”œâ”€â”€ notebooks/exploratory/       # Non-production exploratory analysis
-â”œâ”€â”€ reports/
-â”‚   â”œâ”€â”€ figures/                 # Validation figures
-â”‚   â”œâ”€â”€ tables/                  # Validation tables
-â”‚   â””â”€â”€ evidence/                # Exceptions, findings, logs, and reproducibility evidence
-â”œâ”€â”€ scripts/                     # Ordered pipeline and validation entry points
-â”œâ”€â”€ sql/                         # Analytical database and SQL pipeline assets
-â”œâ”€â”€ src/ccp_margin/              # Reusable Python package
-â”œâ”€â”€ tests/                       # Unit and integration tests
-â”œâ”€â”€ requirements.txt             # Runtime dependencies
-â”œâ”€â”€ requirements-dev.txt         # Development and testing dependencies
-â””â”€â”€ README.md                    # Project overview and reproduction guide
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ .github/workflows/           # Continuous-integration workflows
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ .vscode/                     # VS Code project configuration
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ configs/                     # Project, model, validation, stress, and monitoring settings
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ dashboard/                   # Streamlit executive dashboard
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ data/
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ raw/                     # Locally downloaded source data
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ interim/                 # Intermediate transformations
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ processed/               # Reproducible analytical datasets
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ synthetic/               # Synthetic portfolio inputs
+Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ manifests/               # Data lineage and ingestion manifests
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ docs/                        # Scope, charter, architecture, and supporting documentation
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ notebooks/exploratory/       # Non-production exploratory analysis
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ reports/
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ figures/                 # Validation figures
+Ã¢â€â€š   Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ tables/                  # Validation tables
+Ã¢â€â€š   Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ evidence/                # Exceptions, findings, logs, and reproducibility evidence
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ scripts/                     # Ordered pipeline and validation entry points
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ sql/                         # Analytical database and SQL pipeline assets
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ src/ccp_margin/              # Reusable Python package
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ tests/                       # Unit and integration tests
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ requirements.txt             # Runtime dependencies
+Ã¢â€Å“Ã¢â€â‚¬Ã¢â€â‚¬ requirements-dev.txt         # Development and testing dependencies
+Ã¢â€â€Ã¢â€â‚¬Ã¢â€â‚¬ README.md                    # Project overview and reproduction guide
 ```
 
 ## Installation Instructions
@@ -367,3 +367,13 @@ Suggested BibTeX:
 ---
 
 README generated and validated on July 14, 2026.
+
+<!-- repository-screenshots:start -->
+
+## Repository Screenshots
+
+### Dashboard Overview
+
+![Dashboard Overview](docs/screenshots/dashboard-overview.png)
+
+<!-- repository-screenshots:end -->
