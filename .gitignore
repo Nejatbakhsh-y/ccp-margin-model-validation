@@ -27,3 +27,15 @@ ccp_step*_bundle*.zip
 data/database/*.duckdb
 data/database/*.wal
 data/database/*.duckdb.wal
+# Local Step 17/18 automation helpers
+COMPLETE_STEP17_STEP18.ps1
+FINALIZE_STEP17_STEP18.ps1
+# Generated DuckDB files
+data/database/*.duckdb
+data/database/*.wal
+# Local Step 17/18 automation helpers
+COMPLETE_STEP17_STEP18.ps1
+FINALIZE_STEP17_STEP18.ps1
+# Generated DuckDB files
+data/database/*.duckdb
+data/database/*.wal
